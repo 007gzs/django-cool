@@ -1,0 +1,54 @@
+# This file is distributed under the same license as the django-cool package.
+# 007gzs <007gzs@gmail.com>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: django-cool\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-04-23 16:27+0800\n"
+"PO-Revision-Date: 2020-04-03 10:34+0800\n"
+"Last-Translator: 007gzs <007gzs@gmail.com>\n"
+"Language-Team: 007gzs <007gzs@gmail.com>\n"
+"Language: ga\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : "
+"4);\n"
+
+#: .\admin\admin.py:272
+msgid "[None]"
+msgstr ""
+
+#: .\admin\admin.py:606
+msgid "Related items"
+msgstr ""
+
+#: .\admin\filters.py:102
+#, python-format
+msgid "Please select %(title)s"
+msgstr ""
+
+#: .\api_view\error_code.py:10
+msgid "Success"
+msgstr ""
+
+#: .\api_view\error_code.py:12
+msgid "Unknown Error"
+msgstr ""
+
+#: .\api_view\error_code.py:13
+msgid "System Error"
+msgstr ""
+
+#: .\api_view\error_code.py:15
+msgid "Bad Parameter Error"
+msgstr ""
+
+#: .\api_view\error_code.py:16
+msgid "Bad Format Error"
+msgstr ""
+
+#: .\api_view\error_code.py:17
+msgid "Permission Error"
+msgstr ""
