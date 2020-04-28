@@ -1,0 +1,34 @@
+{% load i18n %}
+</div>
+<div>
+  {% if request_info %}
+    {% trans 'Request Param :' %}
+    <div style="padding: 8px; background-color: #f7f7f9; border: 1px solid #e1e1e8; margin-bottom: 10px">
+      <table style="width: 100%">
+        <tr>
+          <th>{% trans 'Field name' %}</th>
+          <th>{% trans 'Label' %}</th>
+          <th>{% trans 'Type' %}</th>
+          <th>{% trans 'Required' %}</th>
+          <th>{% trans 'Default value' %}</th>
+          <th>{% trans 'Help text' %}</th>
+          <th>{% trans 'Field info' %}</th>
+        </tr>
+        {% for field_name, field in request_info.items %}
+          <tr>
+            <td>{{ field_name }}</td>
+            <td>{{ field.label }}</td>
+            <td>{{ field.type }}</td>
+            <td>{{ field.required_format }}</td>
+            <td>{{ field.default_format }}</td>
+            <td>{{ field.help_text|default_if_none:'' }}</td>
+            <td>{{ field.extend_info_format }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  {% endif %}
+  {% if response_info %}
+    {% trans 'Response Info :' %}
+    <pre class="prettyprint">{{response_info_format}}</pre>
+  {% endif %}

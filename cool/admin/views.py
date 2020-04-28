@@ -8,12 +8,11 @@ from django.apps import apps
 from django.contrib.admin.utils import (
     lookup_needs_distinct, prepare_lookup_value,
 )
-from django.core.exceptions import FieldDoesNotExist
 from django.db.models import Q
-from django.db.models.constants import LOOKUP_SEP
 from django.http import Http404, JsonResponse
 from django.views.generic.list import BaseListView
 
+from cool.core.utils import construct_search
 from cool.settings import cool_settings
 
 
@@ -67,36 +66,6 @@ class CoolAutocompleteJsonView(BaseListView):
         Return a tuple containing a queryset to implement the search
         and a boolean indicating if the results may contain duplicates.
         """
-        # Apply keyword searches.
-        def construct_search(field_name):
-            if field_name.startswith('^'):
-                return "%s__istartswith" % field_name[1:]
-            elif field_name.startswith('='):
-                return "%s__iexact" % field_name[1:]
-            elif field_name.startswith('@'):
-                return "%s__search" % field_name[1:]
-            # Use field_name if it includes a lookup.
-            opts = queryset.model._meta
-            lookup_fields = field_name.split(LOOKUP_SEP)
-            # Go through the fields, following all relations.
-            prev_field = None
-            for path_part in lookup_fields:
-                if path_part == 'pk':
-                    path_part = opts.pk.name
-                try:
-                    field = opts.get_field(path_part)
-                except FieldDoesNotExist:
-                    # Use valid query lookups.
-                    if prev_field and prev_field.get_lookup(path_part):
-                        return field_name
-                else:
-                    prev_field = field
-                    if hasattr(field, 'get_path_info'):
-                        # Update opts to follow the relation.
-                        opts = field.get_path_info()[-1].to_opts
-            # Otherwise, use the field with icontains.
-            return "%s__icontains" % field_name
-
         use_distinct = False
         get_search_fields = getattr(self.model, 'get_search_fields')
         search_fields = None
@@ -106,7 +75,7 @@ class CoolAutocompleteJsonView(BaseListView):
             raise Http404('%s must have get_search_fields for the autocomplete_view.' % type(self.model).__name__)
 
         if search_fields and search_term:
-            orm_lookups = [construct_search(str(search_field)) for search_field in search_fields]
+            orm_lookups = [construct_search(queryset, str(search_field)) for search_field in search_fields]
             for bit in search_term.split():
                 or_queries = [Q(**{orm_lookup: bit}) for orm_lookup in orm_lookups]
                 queryset = queryset.filter(reduce(operator.or_, or_queries))

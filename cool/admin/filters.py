@@ -10,7 +10,7 @@ from django.forms.widgets import MEDIA_TYPES, Media
 from django.utils.http import urlencode
 from django.utils.translation import gettext as _
 
-from .widgets import (
+from cool.admin.widgets import (
     CoolAutocompleteSelect, DateRangeFilterWidget, NumberRangeFilterWidget,
 )
 

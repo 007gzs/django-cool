@@ -4,7 +4,7 @@ from django.db.models.fields.related_descriptors import (
     ForwardManyToOneDescriptor, ForwardOneToOneDescriptor,
 )
 
-from . import models
+from cool.model import models
 
 
 class ForwardCacheDescriptorMixin:

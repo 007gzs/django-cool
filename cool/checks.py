@@ -5,6 +5,8 @@ from django.core.checks import Error, Tags, register
 from django.core.exceptions import FieldError
 from django.db.models import F
 
+from cool.core.utils import construct_search
+
 
 def register_checks():
     register(Tags.models)(check_models)
@@ -38,7 +40,7 @@ def _check_get_search_fields(model):
         try:
             # This only constructs the QuerySet and doesn't actually query the
             # DB, so it's fine for check phase.
-            model._default_manager.filter(**{lookup: F('pk')})
+            model._default_manager.filter(**{construct_search(model._default_manager, lookup): F('pk')})
         except FieldError:
             failures.append(lookup)
 
@@ -47,15 +49,13 @@ def _check_get_search_fields(model):
     else:
         return [
             Error(
-                "Model {app}.{model} returned bad entries for "
-                "get_search_fields: {failures}".format(
+                "Model {app}.{model} returned bad entries for get_search_fields: {failures}".format(
                     app=model._meta.app_label,
                     model=model._meta.model_name,
                     failures=",".join(failures)
                 ),
                 hint="A QuerySet for {model} could not be constructed. Fix "
-                     "the autocomplete_search_fields on it to return valid "
-                     "lookups.",
+                     "the autocomplete_search_fields on it to return valid lookups.",
                 id='cool.E001'
             )
         ]

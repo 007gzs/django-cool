@@ -14,20 +14,28 @@ DEFAULTS = {
     'RELATED_FIELD_FILTER_USE_AUTOCOMPLETE': True,
     'DATE_FIELD_FILTER_USE_RANGE': True,
     # APIView
+    'API_EXCEPTION_DEFAULT_STATUS_CODE': 400,
+
+    'API_SYSTEM_ERROR_STATUS_CODE': 500,
+    'API_PARAM_ERROR_STATUS_CODE': 400,
+    'API_SUCCESS_WITH_CODE': True,
+    'API_SHOW_PARAM_ERROR_INFO': True,
+
     'API_ERROR_CODES': (),
+
     'API_CODE_MSG_IN_SUCCESS_RESPONSE': True,
     'API_DEFAULT_CODE_KEY': 'code',
     'API_DEFAULT_MESSAGE_KEY': 'message',
     'API_DEFAULT_DATA_KEY': 'data',
-    'API_RESPONSE_DICT_FUNCTION': 'cool.api_view.get_response_dict',
-    'API_STATUS_CODE_FUNCTION': 'cool.api_view.get_status_code',
+
+    'API_RESPONSE_DICT_FUNCTION': 'cool.views.response.get_response_dict',
 
 }
 
 
 # List of settings that may be in string import notation.
 IMPORT_STRINGS = [
-
+    'API_RESPONSE_DICT_FUNCTION',
 ]
 
 

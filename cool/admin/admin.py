@@ -22,11 +22,10 @@ from django.urls import NoReverseMatch, reverse
 from django.utils.encoding import force_str
 from django.utils.http import urlencode
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
+from cool.admin import widgets
 from cool.settings import cool_settings
-
-from . import widgets
 
 
 def extend_admincls(*admin_classes):
@@ -40,7 +39,7 @@ def get_widget(field):
     return widgets.TagWidget
 
 
-def get_fieldwidget(field):
+def get_field_widget(field):
     if isinstance(field, models.ImageField):
         return widgets.ImageFieldWidget
     return widgets.FieldWidget
@@ -78,10 +77,10 @@ def format_field(verbose, field, options=None, **kwargs):
     def _format_field(obj):
         field, label, value = _lookup_field(name, obj)
         attrs = widget_opts.copy()
-        widgetclass = attrs.pop('widgetclass', None)
-        if widgetclass is None:
-            widgetclass = get_widget(field)
-        widget = widgetclass(attrs)
+        widget_class = attrs.pop('widget_class', None)
+        if widget_class is None:
+            widget_class = get_widget(field)
+        widget = widget_class(attrs)
         return mark_safe(widget.render(label, value, {}))
 
     _format_field.short_description = verbose
@@ -105,9 +104,9 @@ def collapse_fields(verbose, fields, options=None, **kwargs):
     for name in fields:
         if options:
             widget_kwargs = options.get(name, {})
-            widgetclass = widget_kwargs.pop('widgetclass', None)
+            widget_class = widget_kwargs.pop('widget_class', None)
             widget_map[name] = {
-                'widgetclass': widgetclass,
+                'widget_class': widget_class,
                 'attrs': widget_kwargs,
             }
         else:
@@ -117,8 +116,8 @@ def collapse_fields(verbose, fields, options=None, **kwargs):
         html = []
         for name in fields:
             field, label, value = _lookup_field(name, obj)
-            widgetclass = widget_map[name].get('widgetclass', None) or get_fieldwidget(field)
-            widget = widgetclass(widget_map[name].get('attrs', {}))
+            widget_class = widget_map[name].get('widget_class', None) or get_field_widget(field)
+            widget = widget_class(widget_map[name].get('attrs', {}))
             html.append(widget.render(name, (label, value), None))
         return mark_safe(''.join(html))
 
@@ -135,8 +134,6 @@ def get_related_model_fields(model, rel, is_foreign_key):
     # 多对多关联的REL对象本身不区分关系前后
     # 相关代理类做同样处理
     if is_foreign_key and rel.field.model._meta.concrete_model == model._meta.concrete_model:
-        from rest_framework import fields
-        fields
         return rel.field, rel.get_related_field()
     return rel.get_related_field(), rel.field
 

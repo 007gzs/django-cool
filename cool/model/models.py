@@ -5,7 +5,7 @@ from django.db import DatabaseError, models
 from django.db.models.manager import EmptyManager
 from django.utils.functional import cached_property
 
-from .cache import model_cache
+from cool.model.cache import model_cache
 
 
 class ModelChangeMixin:

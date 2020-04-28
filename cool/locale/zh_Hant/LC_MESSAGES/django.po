@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-cool\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-23 16:27+0800\n"
+"POT-Creation-Date: 2020-04-28 09:11+0800\n"
 "PO-Revision-Date: 2020-04-03 10:34+0800\n"
 "Last-Translator: 007gzs <007gzs@gmail.com>\n"
 "Language-Team: 007gzs <007gzs@gmail.com>\n"
@@ -15,39 +15,149 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: .\admin\admin.py:272
+#: .\admin\admin.py:225
 msgid "[None]"
 msgstr "[空]"
 
-#: .\admin\admin.py:606
+#: .\admin\admin.py:561
 msgid "Related items"
 msgstr "相關項"
 
-#: .\admin\filters.py:102
+#: .\admin\filters.py:177
 #, python-format
 msgid "Please select %(title)s"
 msgstr "請選擇%(title)s"
 
-#: .\api_view\error_code.py:10
+#: .\apps.py:15
+msgid "Django Cool"
+msgstr ""
+
+#: .\templates\cool\views\api_description.html:5
+#: .\templates\cool\views\api_doc.md:24
+msgid "Request Param :"
+msgstr ""
+
+#: .\templates\cool\views\api_description.html:9
+#: .\templates\cool\views\api_doc.md:26
+msgid "Field name"
+msgstr ""
+
+#: .\templates\cool\views\api_description.html:10
+#: .\templates\cool\views\api_doc.md:26
+msgid "Label"
+msgstr ""
+
+#: .\templates\cool\views\api_description.html:11
+#: .\templates\cool\views\api_doc.md:26
+msgid "Type"
+msgstr ""
+
+#: .\templates\cool\views\api_description.html:12
+#: .\templates\cool\views\api_doc.md:26
+msgid "Required"
+msgstr ""
+
+#: .\templates\cool\views\api_description.html:13
+#: .\templates\cool\views\api_doc.md:26
+msgid "Default value"
+msgstr ""
+
+#: .\templates\cool\views\api_description.html:14
+#: .\templates\cool\views\api_doc.md:26
+msgid "Help text"
+msgstr ""
+
+#: .\templates\cool\views\api_description.html:15
+#: .\templates\cool\views\api_doc.md:26
+msgid "Field info"
+msgstr ""
+
+#: .\templates\cool\views\api_description.html:32
+#: .\templates\cool\views\api_doc.md:32
+msgid "Response Info :"
+msgstr ""
+
+#: .\templates\cool\views\api_doc.md:2
+msgid "Api Document"
+msgstr ""
+
+#: .\templates\cool\views\api_doc.md:4
+msgid "Server Address"
+msgstr ""
+
+#: .\templates\cool\views\api_doc.md:8
+msgid "Error Code List"
+msgstr ""
+
+#: .\templates\cool\views\api_doc.md:10
+msgid "Tag"
+msgstr ""
+
+#: .\templates\cool\views\api_doc.md:10
+msgid "Code"
+msgstr ""
+
+#: .\templates\cool\views\api_doc.md:10
+msgid "Desc"
+msgstr ""
+
+#: .\templates\cool\views\api_doc.md:16
+msgid "Api List"
+msgstr ""
+
+#: .\templates\cool\views\api_doc.md:21
+msgid "Request Api :"
+msgstr ""
+
+#: .\views\error_code.py:9
 msgid "Success"
 msgstr "返回成功"
 
-#: .\api_view\error_code.py:12
+#: .\views\error_code.py:11
 msgid "Unknown Error"
 msgstr "未知錯誤"
 
-#: .\api_view\error_code.py:13
+#: .\views\error_code.py:12
 msgid "System Error"
 msgstr "系統錯誤"
 
-#: .\api_view\error_code.py:15
+#: .\views\error_code.py:14
 msgid "Bad Parameter Error"
 msgstr "參數錯誤"
 
-#: .\api_view\error_code.py:16
+#: .\views\error_code.py:15
 msgid "Bad Format Error"
 msgstr "格式錯誤"
 
-#: .\api_view\error_code.py:17
+#: .\views\error_code.py:16
 msgid "Permission Error"
 msgstr "權限錯誤"
+
+#: .\views\utils.py:25
+msgid "Yes"
+msgstr ""
+
+#: .\views\utils.py:25
+msgid "No"
+msgstr ""
+
+#: .\views\view.py:102 .\views\view.py:112
+msgid "Page number"
+msgstr ""
+
+#: .\views\view.py:102
+#, python-format
+msgid "Start with %(start)s"
+msgstr ""
+
+#: .\views\view.py:104 .\views\view.py:110
+msgid "Page size"
+msgstr ""
+
+#: .\views\view.py:113
+msgid "Total page"
+msgstr ""
+
+#: .\views\view.py:114
+msgid "Total data"
+msgstr ""

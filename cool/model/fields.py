@@ -2,7 +2,7 @@
 
 from django.db import models
 
-from . import descriptors
+from cool.model import descriptors
 
 
 class ForeignKey(models.ForeignKey):

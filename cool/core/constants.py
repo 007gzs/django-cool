@@ -70,30 +70,3 @@ class Constants(ConstantsItem, Enum):
     @classmethod
     def get_desc_dict(cls, name_key='tag'):
         return [item.get_dict(**{name_key: item.name}) for item in cls]
-
-
-class TestConstants(Constants):
-    TEST = (0, 'test')
-    TEST1 = (1, 'test1')
-    TEST2 = (2, 'test1')
-
-
-class Test2Constants(Constants):
-    TEST = (0, 'test1')
-    TEST1 = (1, 'test1')
-    TEST2 = (2, 'test1')
-
-
-
-if __name__ == '__main__':
-    from django.conf.urls import url
-    import logging
-
-    logging.setLoggerClass
-    Test.b
-    print(Test.b)
-    print(TestConstants.get_choices_list())
-    print(TestConstants.get_desc_dict())
-    print(0 == Test2Constants.TEST)
-    print(TestConstants.TEST == Test2Constants.TEST)
-    print(repr(TestConstants.TEST))

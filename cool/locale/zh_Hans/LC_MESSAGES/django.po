@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-cool\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-23 16:27+0800\n"
+"POT-Creation-Date: 2020-04-28 09:11+0800\n"
 "PO-Revision-Date: 2020-04-03 10:34+0800\n"
 "Last-Translator: 007gzs <007gzs@gmail.com>\n"
 "Language-Team: 007gzs <007gzs@gmail.com>\n"
@@ -15,39 +15,149 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: .\admin\admin.py:272
+#: .\admin\admin.py:225
 msgid "[None]"
 msgstr "[空]"
 
-#: .\admin\admin.py:606
+#: .\admin\admin.py:561
 msgid "Related items"
 msgstr "相关项"
 
-#: .\admin\filters.py:102
+#: .\admin\filters.py:177
 #, python-format
 msgid "Please select %(title)s"
 msgstr "请选择%(title)s"
 
-#: .\api_view\error_code.py:10
+#: .\apps.py:15
+msgid "Django Cool"
+msgstr ""
+
+#: .\templates\cool\views\api_description.html:5
+#: .\templates\cool\views\api_doc.md:24
+msgid "Request Param :"
+msgstr "请求参数："
+
+#: .\templates\cool\views\api_description.html:9
+#: .\templates\cool\views\api_doc.md:26
+msgid "Field name"
+msgstr "参数"
+
+#: .\templates\cool\views\api_description.html:10
+#: .\templates\cool\views\api_doc.md:26
+msgid "Label"
+msgstr "名称"
+
+#: .\templates\cool\views\api_description.html:11
+#: .\templates\cool\views\api_doc.md:26
+msgid "Type"
+msgstr "类型"
+
+#: .\templates\cool\views\api_description.html:12
+#: .\templates\cool\views\api_doc.md:26
+msgid "Required"
+msgstr "是否必填"
+
+#: .\templates\cool\views\api_description.html:13
+#: .\templates\cool\views\api_doc.md:26
+msgid "Default value"
+msgstr "默认值"
+
+#: .\templates\cool\views\api_description.html:14
+#: .\templates\cool\views\api_doc.md:26
+msgid "Help text"
+msgstr "说明"
+
+#: .\templates\cool\views\api_description.html:15
+#: .\templates\cool\views\api_doc.md:26
+msgid "Field info"
+msgstr "扩展信息"
+
+#: .\templates\cool\views\api_description.html:32
+#: .\templates\cool\views\api_doc.md:32
+msgid "Response Info :"
+msgstr "返回格式："
+
+#: .\templates\cool\views\api_doc.md:2
+msgid "Api Document"
+msgstr "接口文档"
+
+#: .\templates\cool\views\api_doc.md:4
+msgid "Server Address"
+msgstr "服务地址"
+
+#: .\templates\cool\views\api_doc.md:8
+msgid "Error Code List"
+msgstr "错误码列表"
+
+#: .\templates\cool\views\api_doc.md:10
+msgid "Tag"
+msgstr "标识"
+
+#: .\templates\cool\views\api_doc.md:10
+msgid "Code"
+msgstr "编码"
+
+#: .\templates\cool\views\api_doc.md:10
+msgid "Desc"
+msgstr "描述"
+
+#: .\templates\cool\views\api_doc.md:16
+msgid "Api List"
+msgstr "接口列表"
+
+#: .\templates\cool\views\api_doc.md:21
+msgid "Request Api :"
+msgstr "请求接口："
+
+#: .\views\error_code.py:9
 msgid "Success"
 msgstr "返回成功"
 
-#: .\api_view\error_code.py:12
+#: .\views\error_code.py:11
 msgid "Unknown Error"
 msgstr "未知错误"
 
-#: .\api_view\error_code.py:13
+#: .\views\error_code.py:12
 msgid "System Error"
 msgstr "系统错误"
 
-#: .\api_view\error_code.py:15
+#: .\views\error_code.py:14
 msgid "Bad Parameter Error"
 msgstr "参数错误"
 
-#: .\api_view\error_code.py:16
+#: .\views\error_code.py:15
 msgid "Bad Format Error"
 msgstr "格式错误"
 
-#: .\api_view\error_code.py:17
+#: .\views\error_code.py:16
 msgid "Permission Error"
 msgstr "权限错误"
+
+#: .\views\utils.py:25
+msgid "Yes"
+msgstr "是"
+
+#: .\views\utils.py:25
+msgid "No"
+msgstr "否"
+
+#: .\views\view.py:102 .\views\view.py:112
+msgid "Page number"
+msgstr "页码"
+
+#: .\views\view.py:102
+#, python-format
+msgid "Start with %(start)s"
+msgstr "从 %(start)s 开始"
+
+#: .\views\view.py:104 .\views\view.py:110
+msgid "Page size"
+msgstr "每页条数"
+
+#: .\views\view.py:113
+msgid "Total page"
+msgstr "总页数"
+
+#: .\views\view.py:114
+msgid "Total data"
+msgstr "数据总条数"
