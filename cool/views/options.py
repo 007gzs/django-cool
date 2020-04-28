@@ -74,7 +74,12 @@ class ViewOptions:
 
     def contribute_to_class(self, cls, name):
         self.view = cls
-
+        try:
+            func_extend_param_fields = getattr(cls, 'get_extend_param_fields')
+            if callable(func_extend_param_fields):
+                self.param_fields.update(func_extend_param_fields())
+        except Exception:
+            pass
         if not self.name:
             self.name = self.view.__name__
         if self.path is None:
@@ -87,59 +92,7 @@ class ViewOptions:
 
         self.gen_param_form(cls)
 
-        # if cls.__doc__ is None:
-        #     cls.__doc__ = ''
-        # cls.__doc__ += '\nParameters:\n'
-        # cls.__doc__ += self.format_document(with_header=True)
-
         setattr(cls, name, self)
-
-    @cached_property
-    def param_document(self):
-        return self.format_document()
-
-    def format_document(self, fields=None, with_header=True):
-        if not self.param_fields:
-            return ''
-
-        if fields:
-            f_attrs = fields
-        else:
-            f_attrs = ['type_name', 'required', 'omit', 'default', 'help_text', 'field_info']
-        fields = ['name'] + f_attrs
-        f_lens = [_size_len(field) for field in fields]
-        rows = []
-        if with_header:
-            rows.append(fields)
-        for name, field in self.param_fields.items():
-            if field.required:
-                field_name = '*%s*' % name
-            else:
-                field_name = '[%s]' % name
-            row = [field_name]
-            if f_lens[0] < _size_len(field_name):
-                f_lens[0] = _size_len(field_name)
-            idx = 1
-            for att in f_attrs:
-                f_val = force_str(getattr(field, att))
-                if f_lens[idx] < _size_len(f_val):
-                    f_lens[idx] = _size_len(f_val)
-                row.append(f_val)
-                idx += 1
-            rows.append(row)
-
-        doc_list = []
-        final_idx = len(rows[0]) - 1
-        for row in rows:
-            row_doc = []
-            for idx, val in enumerate(row):
-                if idx == final_idx:
-                    row_doc.append(val)
-                else:
-                    row_doc.append(_format(val, f_lens[idx]))
-            doc_list.append(' | '.join(row_doc))
-
-        return '\n'.join(doc_list)
 
     def decorate_handler(self, handler):
         for decorator in self.decorators:

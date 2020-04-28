@@ -25,7 +25,7 @@
 
 | {% trans 'Field name' %} | {% trans 'Label' %} | {% trans 'Type' %} | {% trans 'Required' %} | {% trans 'Default value' %} | {% trans 'Help text' %} | {% trans 'Field info' %} |
 | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
-{% for field_name, field in api.info.request_info.items %}| `{{ field_name }}` | {{ field.label }} | {{ field.type }} | {{ field.required_format }} | {{ field.default_format }} | {{ field.help_text|default_if_none:'' }} | {{ field.extend_info_format }} |
+{% for field_name, field in api.info.request_info.items %}| {% if param.required %}**`{{ field_name }}`**{% else %}`{{ field_name }}`{% endif %} | {{ field.label }} | {{ field.type }} | {{ field.required_format }} | {{ field.default_format }} | {{ field.help_text|default_if_none:'' }} | {{ field.extend_info_format }} |
 {% endfor %}{% endif %}
 
 {% if api.info and api.info.response_info_format %}

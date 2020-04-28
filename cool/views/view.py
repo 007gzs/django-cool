@@ -97,12 +97,19 @@ class APIViewOptions(ViewOptions):
 
 class PageMixin:
     PAGE_SIZE_MAX = 200
-    param_fields = (
-        ('page', fields.IntegerField(
-            label=gettext_lazy('Page number'), default=1, help_text=gettext_lazy('Start with %(start)s') % {'start': 1}
-        )),
-        ('page_size', fields.IntegerField(label=gettext_lazy('Page size'), default=100)),
-    )
+
+    @classmethod
+    def get_extend_param_fields(cls):
+        return (
+            (
+                'page', fields.IntegerField(
+                    label=gettext_lazy('Page number'),
+                    default=1,
+                    help_text=gettext_lazy('Start with %(start)s') % {'start': 1}
+                )
+            ),
+            ('page_size', fields.IntegerField(label=gettext_lazy('Page size'), default=100)),
+        )
 
     @classmethod
     def response_info_data(cls):

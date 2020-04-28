@@ -16,7 +16,7 @@
         </tr>
         {% for field_name, field in request_info.items %}
           <tr>
-            <td>{{ field_name }}</td>
+            <td{% if field.required %} style="font-weight: bold"{% endif %}>{{ field_name }}</td>
             <td>{{ field.label }}</td>
             <td>{{ field.type }}</td>
             <td>{{ field.required_format }}</td>
