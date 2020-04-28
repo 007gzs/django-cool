@@ -5,8 +5,6 @@ from collections import OrderedDict
 from urllib.parse import urljoin
 
 from django import forms, http
-from django.utils.encoding import force_str
-from django.utils.functional import cached_property
 from django.views.generic import View as DjangoView
 
 from cool.core.utils import split_camel_name
