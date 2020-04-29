@@ -1,0 +1,38 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: test
+
+on:[push, pull_request]
+
+jobs:
+  build: test
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.5, 3.6, 3.7, 3.8]
+        django-version: ['Django>=2.2,<3.0', 'Django>=3.0,<3.1', 'https://github.com/django/django/archive/master.tar.gz']
+
+    steps:
+    - name: Check Out
+      uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install "${{ matrix.django-version }}"
+        pip install flake8 isort pytest djangorestframework
+        
+    - name: Lint with flake8
+      run: |
+        flake8
+    - name: Lint with isort
+      run: |
+        isort --recursive --check-only --diff cool tests
+    - name: Test with pytest
+      run: |
+        pytest
