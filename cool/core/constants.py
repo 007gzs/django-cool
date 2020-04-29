@@ -1,6 +1,13 @@
 # encoding: utf-8
 
-from enum import Enum, unique
+import enum
+
+
+class ConstantsMeta(enum.EnumMeta):
+
+    def __new__(metacls, classname, bases, classdict):
+        cls = super().__new__(metacls, classname, bases, classdict)
+        return enum.unique(cls)
 
 
 class ConstantsItemWrapper:
@@ -11,7 +18,7 @@ class ConstantsItemWrapper:
     def __eq__(self, other):
         if isinstance(other, ConstantsItemWrapper):
             other = other.value
-        if not isinstance(other, tuple) or len(self.value) > 0:
+        if not isinstance(other, tuple) or not len(self.value) > 0:
             return False
         return self.value[0] == other[0]
 
@@ -46,8 +53,7 @@ class ConstantsItem:
         return ret
 
 
-@unique
-class Constants(ConstantsItem, Enum):
+class Constants(ConstantsItem, enum.Enum, metaclass=ConstantsMeta):
     """
 
         class TestConstants(Constants):
@@ -56,6 +62,7 @@ class Constants(ConstantsItem, Enum):
             TEST2 = (2, _('test desc'))
         InlineConstants = Enum('InlineConstants', (('a', (1,2)), ('b', (3,4))))
     """
+
     @classmethod
     def _missing_(cls, value):
         return ConstantsItem(*value)

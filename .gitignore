@@ -90,6 +90,7 @@ ENV/
 .pytest_cache
 
 .idea/
-
 .DS_Store
 
+tests/model/migrations/**
+!tests/model/migrations/__init__.py

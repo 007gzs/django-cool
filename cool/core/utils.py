@@ -5,7 +5,8 @@ from django.db.models.constants import LOOKUP_SEP
 
 
 def split_camel_name(name, fall=False):
-    """Split camel formated names:
+    """
+    Split camel formated names:
 
     GenerateURLs => [Generate, URLs]
     generateURLsLite => [generate, URLs, Lite]
@@ -28,9 +29,11 @@ def split_camel_name(name, fall=False):
     l_idx = 0
     name_items = []
     for r_idx in idx_list:
-        name_items.append(name[l_idx:r_idx])
+        if name[l_idx:r_idx]:
+            name_items.append(name[l_idx:r_idx])
         l_idx = r_idx
-    name_items.append(name[l_idx:])
+    if name[l_idx:]:
+        name_items.append(name[l_idx:])
 
     return name_items
 
