@@ -2,3 +2,4 @@ include README.rst
 include LICENSE
 recursive-include cool/static *
 recursive-include cool/templates *
+recursive-include cool/locale *
