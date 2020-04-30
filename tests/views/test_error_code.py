@@ -41,7 +41,6 @@ class ErrorCodeTests(TestCase):
         self.assertEqual(error_code.ErrorCode.ERROR_BAD_FORMAT.desc, 'Bad Format Error')
         self.assertEqual(error_code.ErrorCode.ERROR_PERMISSION.desc, 'Permission Error')
 
-    @unittest.skip
     @override_settings(USE_L10N=True, LANGUAGE_CODE='zh-hans')
     def test_error_code_desc_hans(self):
         error_code = get_error_code()
@@ -52,7 +51,6 @@ class ErrorCodeTests(TestCase):
         self.assertEqual(error_code.ErrorCode.ERROR_BAD_FORMAT.desc, '格式错误')
         self.assertEqual(error_code.ErrorCode.ERROR_PERMISSION.desc, '权限错误')
 
-    @unittest.skip
     @override_settings(DJANGO_COOL={'API_ERROR_CODES': (
         ('EXTEND_ERROR_1', (101, 'Extend Error1')),
         ('EXTEND_ERROR_2', (102, 'Extend Error2')),

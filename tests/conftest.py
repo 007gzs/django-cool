@@ -56,5 +56,6 @@ def pytest_configure(config):
 
     django.setup()
     from django.core.management import call_command
+    call_command('compilemessages')
     call_command('makemigrations')
     call_command('migrate')
