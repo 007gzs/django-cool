@@ -17,7 +17,7 @@ def get_field_info(field):
     if field_type.endswith("Field") and field_type != 'Field':
         field_type = field_type[:-5]
     info = {
-        'label': field.label,
+        'label': str(field.label),
         'type': field_type,
         'default': field.default,
         'default_format': '' if field.default is empty else field.default,
@@ -39,7 +39,7 @@ def get_list_info(serializer_obj):
     child = serializer_obj.child
     if hasattr(child, 'fields'):
         return get_serializer_info(child, force_many=True)
-    return [serializer_obj.label]
+    return [str(serializer_obj.label)]
 
 
 def get_serializer_info(serializer_obj, force_many=False):
@@ -50,9 +50,9 @@ def get_serializer_info(serializer_obj, force_many=False):
         elif hasattr(field, 'child'):
             ret[field_name] = get_list_info(field)
         elif hasattr(field, 'child_relation'):
-            ret[field_name] = [field.child_relation.label]
+            ret[field_name] = [str(field.child_relation.label)]
         else:
-            ret[field_name] = field.label
+            ret[field_name] = str(field.label)
     return [ret] if force_many else ret
 
 
