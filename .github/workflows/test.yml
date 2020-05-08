@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, pypy3]
-        django-version: [2.2, 3.0, master]
+        python-version: [3.6, 3.7, 3.8]
+        django-version: [django-2.2, django-3.0, django-master]
 
     steps:
     - name: Check Out
@@ -29,15 +29,15 @@ jobs:
     - name: Install Django 2.2
       run: |
         pip install 'Django>=2.2,<3.0'
-      if: matrix.django-version == '2.2'
+      if: matrix.django-version == 'django-2.2'
     - name: Install Django 3.0
       run: |
         pip install 'Django>=3.0,<3.1'
-      if: matrix.django-version == '3.0'
+      if: matrix.django-version == 'django-3.0'
     - name: Install Django master
       run: |
         pip install 'https://github.com/django/django/archive/master.tar.gz'
-      if: matrix.django-version == 'master'
+      if: matrix.django-version == 'django-master'
     - name: Install djangorestframework
       run: |
         pip install djangorestframework
