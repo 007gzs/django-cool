@@ -49,7 +49,7 @@ class ParamSerializer(serializers.Serializer):
     @property
     def cleaned_data(self):
         self.is_valid()
-        data = self.data.copy()
+        data = self.validated_data.copy()
         for key, field in self.fields.items():
             if key not in data:
                 data[key] = getattr(field, 'default', empty)
