@@ -55,7 +55,7 @@ def _check_get_search_fields(model):
                     failures=",".join(failures)
                 ),
                 hint="A QuerySet for {model} could not be constructed. Fix "
-                     "the autocomplete_search_fields on it to return valid lookups.",
+                     "the get_search_fields on it to return valid lookups.".format(model=model._meta.model_name),
                 id='cool.E001'
             )
         ]
