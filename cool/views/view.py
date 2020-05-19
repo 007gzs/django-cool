@@ -203,8 +203,8 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
         pass
 
     def view(self, request, *args, **kwargs):
-        self.check_api_permissions(request, *args, **kwargs)
         self.init_params(request, *args, **kwargs)
+        self.check_api_permissions(request, *args, **kwargs)
         context = self.get_context(request, *args, **kwargs)
         return self.get_response(context)
 

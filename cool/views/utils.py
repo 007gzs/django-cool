@@ -26,11 +26,11 @@ def get_field_info(field):
         'help_text': field.help_text,
         'extend_info': OrderedDict()
     }
-    extend_keys = ['max_value', 'min_value', 'max_length', 'min_length', 'max_digits', 'regex', 'child']
+    extend_keys = ['max_value', 'min_value', 'max_length', 'min_length', 'max_digits', 'regex', 'child', 'choices']
     for k in extend_keys:
         v = getattr(field, k, None)
         if v is not None:
-            info['extend_info'][k] = v
+            info['extend_info'][k] = ",".join(["%s:%s" % (k, v) for k, v in v.items()]) if isinstance(v, dict) else v
     info['extend_info_format'] = "; ".join(["%s:%s" % (k, v) for k, v in info['extend_info'].items()])
     return info
 
