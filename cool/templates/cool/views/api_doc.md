@@ -1,4 +1,5 @@
 {% load i18n %}
+[TOC]
 # {% trans 'Api Document' %}
 {% if server %}
 ## {% trans 'Server Address' %}

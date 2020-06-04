@@ -1,0 +1,489 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% trans 'Api Document' %}</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta content="telephone=no" name="format-detection">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <style>
+    img {
+        max-width: 100%;
+    }
+    @media screen and (min-width: 1000px) {
+        body {
+            width: 1000px;
+            margin: 10px auto;
+        }
+    }
+    .markdown_views,.markdown_views blockquote {
+        word-break: break-word!important
+    }
+    .markdown_views pre code {
+        display: block;
+        font-size: 14px;
+        line-height: 22px;
+        overflow-x: auto;
+        padding: 0!important;
+        white-space: pre;
+        word-wrap: normal;
+        background-color: #f6f8fa;
+        border-radius: 4px
+    }
+
+    @media screen and (-webkit-min-device-pixel-ratio: 0) {
+        .markdown_views pre code {
+            min-width:94%
+        }
+    }
+
+    /*! normalize-scss | MIT/GPLv2 License | bit.ly/normalize-scss */
+    html {
+        -ms-text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%
+    }
+
+    body {
+        padding: 30px
+    }
+
+    article,aside,details,figcaption,figure,footer,header,main,menu,nav,section {
+        display: block
+    }
+
+    h1 {
+        font-size: 2em;
+        margin: .67em 0
+    }
+
+    figure {
+        margin: 1em 40px
+    }
+
+    hr {
+        box-sizing: content-box;
+        height: 0
+    }
+
+    .markdown_views *,legend {
+        box-sizing: border-box
+    }
+
+    code,kbd,pre,samp {
+        font-family: monospace,monospace;
+        font-size: 1em
+    }
+
+    a {
+        background-color: transparent;
+        -webkit-text-decoration-skip: objects
+    }
+
+    abbr[title] {
+        border-bottom: none;
+        text-decoration: underline;
+        text-decoration: underline dotted
+    }
+
+    b,strong {
+        font-weight: inherit;
+        font-weight: bolder
+    }
+
+    mark {
+        background-color: #ff0;
+        color: #000
+    }
+
+    small {
+        font-size: 80%
+    }
+
+    sub,sup {
+        font-size: 75%;
+        line-height: 0;
+        position: relative
+    }
+
+    sub {
+        bottom: -.25em
+    }
+
+    sup {
+        top: -.5em
+    }
+
+    audio:not([controls]) {
+        display: none;
+        height: 0
+    }
+
+    img {
+        border-style: none
+    }
+
+    .markdown_views,body,html {
+        font-family: -apple-system,SF UI Text,Arial,PingFang SC,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,sans-serif
+    }
+
+    body,html {
+        color: rgba(0,0,0,.75);
+        font-variant-ligatures: common-ligatures;
+        line-height: 1.625;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        tab-size: 4;
+        -moz-tab-size: 4;
+        -o-tab-size: 4
+    }
+
+    .markdown_views blockquote,.markdown_views dl,.markdown_views ol,.markdown_views p,.markdown_views pre,.markdown_views ul {
+        margin: 1.2em 0
+    }
+
+    .markdown_views ol ol,.markdown_views ol ul,.markdown_views ul ol,.markdown_views ul ul {
+        margin: 0
+    }
+
+    .markdown_views dt {
+        font-weight: 700
+    }
+
+    .markdown_views code *,.markdown_views pre *,.markdown_views samp * {
+        font-size: inherit
+    }
+
+    .markdown_views blockquote {
+        color: rgba(0,0,0,.5);
+        padding-left: 1.5em
+    }
+
+    .markdown_views code {
+        padding: 2px 4px
+    }
+
+    .markdown_views pre>code {
+        background-color: rgba(0,0,0,.05);
+        display: block;
+        padding: .5em;
+        -webkit-text-size-adjust: none;
+        overflow-x: auto;
+        white-space: pre
+    }
+
+    .markdown_views .toc ul {
+        list-style-type: none;
+        padding-left: 20px
+    }
+
+    .markdown_views table {
+        background-color: transparent;
+        border-spacing: 0
+    }
+
+    .markdown_views td,.markdown_views th {
+        border-right: 1px solid #dcdcdc;
+        padding: 8px 12px
+    }
+
+    .markdown_views td {
+        border-top: 1px solid #dcdcdc
+    }
+
+    .markdown_views mark {
+        background-color: #f8f840
+    }
+
+    .markdown_views abbr[title] {
+        cursor: help
+    }
+
+    .markdown_views img[src*="#pic_center"] {
+        display: block;
+        margin: auto
+    }
+
+    .markdown_views img[src*="#pic_right"] {
+        display: block;
+        margin: auto 0 auto auto
+    }
+
+    .markdown_views p {
+        font-size: 16px;
+        color: #4d4d4d;
+        font-weight: 400;
+        line-height: 26px;
+        margin: 0 0 16px
+    }
+
+    .markdown_views strong {
+        font-weight: 700
+    }
+
+    .markdown_views i,address,cite,dfn,em,var {
+        font-style: italic
+    }
+
+    .markdown_views h1,.markdown_views h2,.markdown_views h3,.markdown_views h4,.markdown_views h5,.markdown_views h6 {
+        color: #4f4f4f;
+        margin: 8px 0 16px;
+        font-weight: 700
+    }
+
+    .markdown_views ol,.markdown_views ul {
+        margin: 0 0 24px;
+        padding: 0;
+        font-size: 16px
+    }
+
+    .markdown_views ul ol {
+        margin: 0 0 24px 32px
+    }
+
+    .markdown_views ul li {
+        list-style-type: disc;
+        margin: 8px 0 0 32px
+    }
+
+    .markdown_views ol li {
+        list-style-type: decimal;
+        margin-left: 40px;
+        margin-top: 8px
+    }
+
+    .markdown_views img {
+        margin: 24px 0;
+        max-width: 100%;
+        height: auto
+    }
+
+    .markdown_views h1 {
+        font-size: 28px;
+        line-height: 36px
+    }
+
+    .markdown_views h2 {
+        font-size: 24px;
+        line-height: 32px
+    }
+
+    .markdown_views h3 {
+        font-size: 22px;
+        line-height: 30px
+    }
+
+    .markdown_views h4 {
+        font-size: 20px;
+        line-height: 28px
+    }
+
+    .markdown_views h5 {
+        font-size: 18px;
+        line-height: 26px
+    }
+
+    .markdown_views h6 {
+        font-size: 16px;
+        line-height: 24px
+    }
+
+    .markdown_views h1 code {
+        font-size: 28px
+    }
+
+    .markdown_views h2 code {
+        font-size: 24px
+    }
+
+    .markdown_views h3 code {
+        font-size: 22px
+    }
+
+    .markdown_views h4 code {
+        font-size: 20px
+    }
+
+    .markdown_views h5 code {
+        font-size: 18px
+    }
+
+    .markdown_views h6 code {
+        font-size: 16px
+    }
+
+    .markdown_views blockquote {
+        display: block;
+        padding: 16px;
+        margin: 0 0 24px;
+        border-left: 8px solid #dddfe4;
+        background: #eef0f4;
+        overflow: auto
+    }
+
+    .markdown_views blockquote ol,.markdown_views blockquote ul {
+        margin-bottom: 0;
+        padding: 0;
+        font-size: 14px;
+        line-height: 22px
+    }
+
+    .markdown_views blockquote ol li,.markdown_views blockquote ul li {
+        margin-bottom: 0
+    }
+
+    .markdown_views blockquote p {
+        font-size: 14px;
+        line-height: 22px;
+        color: #999;
+        font-weight: 400;
+        margin-bottom: 0
+    }
+
+    .markdown_views hr {
+        margin: 24px 0;
+        border: none;
+        border-bottom: 1px solid #ddd
+    }
+
+    .markdown_views table tr {
+        border: 0;
+        border-top: 1px solid #ddd;
+        background-color: #fff
+    }
+
+    .markdown_views table {
+        border-collapse: collapse;
+        display: table;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 24px
+    }
+
+    .markdown_views tbody {
+        border: 0
+    }
+
+    .markdown_views table tr:nth-child(2n) {
+        background-color: #f7f7f7
+    }
+
+    .markdown_views table tr td,.markdown_views table tr th {
+        font-size: 14px;
+        color: #4f4f4f;
+        line-height: 22px;
+        border: 1px solid #ddd;
+        padding: 8px;
+        word-break: normal!important;
+        vertical-align: middle
+    }
+
+    .markdown_views table tr td code,.markdown_views table tr th code {
+        white-space: normal;
+        word-break: normal!important
+    }
+
+    .markdown_views table tr th {
+        font-weight: 700;
+        background-color: #eff3f5
+    }
+
+    .markdown_views dl {
+        margin: 24px
+    }
+
+    .markdown_views dl dt {
+        margin: 8px;
+        font-weight: 700
+    }
+
+    .markdown_views dl dt dd {
+        margin: 8px
+    }
+
+    .markdown_views abbr[data-original-title],.markdown_views abbr[title] {
+        cursor: help;
+        border-bottom: 1px dotted #999
+    }
+
+    .markdown_views pre {
+        margin-bottom: 24px
+    }
+
+    .markdown_views pre code {
+        color: unset
+    }
+
+    .markdown_views code,.markdown_views kbd,.markdown_views pre,.markdown_views samp {
+        font-family: Source Code Pro,DejaVu Sans Mono,Ubuntu Mono,Anonymous Pro,Droid Sans Mono,Menlo,Monaco,Consolas,Inconsolata,Courier,monospace,PingFang SC,Microsoft YaHei,sans-serif;
+        font-size: 14px;
+        line-height: 22px;
+        color: #000
+    }
+
+    .markdown_views code {
+        color: #c7254e;
+        background-color: #f9f2f4;
+        border-radius: 2px
+    }
+
+    .markdown_views a {
+        text-decoration-skip: ink;
+        color: #4ea1db;
+        text-decoration: none
+    }
+
+    .markdown_views a:focus,.markdown_views a:hover {
+        text-decoration: none;
+        color: #ca0c16
+    }
+
+    .markdown_views a:visited {
+        color: #6795b5
+    }
+
+    .markdown_views .toc {
+        font-size: 16px;
+        line-height: 24px;
+        margin: 0 0 24px;
+        padding: 0
+    }
+
+    .markdown_views .toc ul {
+        margin: 0 0 8px;
+        padding: 0
+    }
+
+    .markdown_views .toc ul ul {
+        padding-left: 24px
+    }
+
+    .markdown_views .toc ul li {
+        list-style-type: none;
+        margin: 8px 0 0 24px
+    }
+
+    .markdown_views dl dd {
+        margin: 0 0 8px 40px
+    }
+
+    .markdown_views kbd {
+        padding: 2px 8px;
+        border: 1px solid rgba(63,63,63,.25);
+        box-shadow: 0 1px 0 rgba(63,63,63,.25);
+        background-color: #fff;
+        color: #333;
+        border-radius: 4px;
+        display: inline-block;
+        margin: 0 2px;
+        white-space: nowrap
+    }
+  </style>
+</head>
+<body>
+<div class="markdown_views">
+{{ html|safe }}
+</div>
+</body>
+</html>

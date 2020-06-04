@@ -3,6 +3,7 @@ from collections import OrderedDict
 from importlib import import_module
 
 from django.conf import settings
+from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 from rest_framework import fields
@@ -150,3 +151,27 @@ def get_api_doc(
     api_info = get_api_info(base_view, exclude_params, exclude_base_view_params, exclude_views)
     api_info['server'] = request.build_absolute_uri("/")[:-1] if request is not None else '/'
     return render_to_string(template_name, api_info, request)
+
+
+def get_api_doc_html(request, *args, **kwargs):
+    md_template_name = kwargs.get('md_template_name', 'cool/views/api_doc.md')
+    base_view = kwargs.get('base_view', CoolBFFAPIView)
+    exclude_params = kwargs.get('exclude_params', ())
+    exclude_base_view_params = kwargs.get('exclude_base_view_params', True)
+    exclude_views = kwargs.get('exclude_views', ())
+    md = get_api_doc(
+        request=request,
+        template_name=md_template_name,
+        base_view=base_view,
+        exclude_params=exclude_params,
+        exclude_base_view_params=exclude_base_view_params,
+        exclude_views=exclude_views
+    )
+    import markdown
+    html = markdown.markdown(md, extensions=[
+        'markdown.extensions.toc',
+        'markdown.extensions.fenced_code',
+        'markdown.extensions.tables'
+    ])
+    md_style_template_name = kwargs.get('md_style_template_name', 'cool/views/markdown.html')
+    return render(request, md_style_template_name, context={'html': html})
