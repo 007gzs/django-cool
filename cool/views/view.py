@@ -149,6 +149,7 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
     description_template_name = 'cool/views/api_description.html'
 
     response_info_serializer_class = None
+    response_many = False
 
     def get_view_description(self, html=False):
         if not html or not self.description_template_name:
@@ -170,7 +171,7 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
     def response_info_data(cls):
         if cls.response_info_serializer_class is not None:
             from cool.views.utils import get_serializer_info
-            return get_serializer_info(cls.response_info_serializer_class())
+            return get_serializer_info(cls.response_info_serializer_class(), cls.response_many)
         return None
 
     @classmethod
