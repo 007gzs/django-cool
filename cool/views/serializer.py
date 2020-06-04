@@ -28,6 +28,15 @@ class BaseSerializer(serializers.ModelSerializer):
             kwargs["context"] = {"request": request}
         return super().__new__(cls, *args, **kwargs)
 
+    def build_property_field(self, field_name, model_class):
+        field_class, field_kwargs = super().build_property_field(field_name, model_class)
+        label = getattr(model_class, field_name).__doc__
+        if label:
+            label = label.strip()
+        if label:
+            field_kwargs.setdefault('help_text' if '\n' in label else 'label', label)
+        return field_class, field_kwargs
+
     @property
     def request(self):
         return self.context.get("request", None)
