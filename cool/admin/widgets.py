@@ -5,7 +5,7 @@ from urllib.parse import urlencode
 from django import forms
 from django.contrib.admin import widgets
 from django.forms.utils import flatatt
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils.html import format_html
 
 
@@ -150,6 +150,7 @@ class AdminDateInRangeWidget(forms.DateInput):
     class Media:
         js = [
             'admin/js/jquery.init.js',
+            reverse_lazy('admin:jsi18n'),
             'admin/js/calendar.js',
             'cool/admin/RangeDateShortcuts.js',
         ]
