@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-cool\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-28 09:11+0800\n"
+"POT-Creation-Date: 2020-06-08 17:24+0800\n"
 "PO-Revision-Date: 2020-04-03 10:34+0800\n"
 "Last-Translator: 007gzs <007gzs@gmail.com>\n"
 "Language-Team: 007gzs <007gzs@gmail.com>\n"
@@ -31,84 +31,84 @@ msgstr ""
 msgid "Please select %(title)s"
 msgstr ""
 
-#: .\apps.py:15
+#: .\apps.py:17
 msgid "Django Cool"
 msgstr ""
 
 #: .\templates\cool\views\api_description.html:5
-#: .\templates\cool\views\api_doc.md:24
+#: .\templates\cool\views\api_doc.md:25
 msgid "Request Param :"
 msgstr ""
 
 #: .\templates\cool\views\api_description.html:9
-#: .\templates\cool\views\api_doc.md:26
+#: .\templates\cool\views\api_doc.md:27
 msgid "Field name"
 msgstr ""
 
 #: .\templates\cool\views\api_description.html:10
-#: .\templates\cool\views\api_doc.md:26
+#: .\templates\cool\views\api_doc.md:27
 msgid "Label"
 msgstr ""
 
 #: .\templates\cool\views\api_description.html:11
-#: .\templates\cool\views\api_doc.md:26
+#: .\templates\cool\views\api_doc.md:27
 msgid "Type"
 msgstr ""
 
 #: .\templates\cool\views\api_description.html:12
-#: .\templates\cool\views\api_doc.md:26
+#: .\templates\cool\views\api_doc.md:27
 msgid "Required"
 msgstr ""
 
 #: .\templates\cool\views\api_description.html:13
-#: .\templates\cool\views\api_doc.md:26
+#: .\templates\cool\views\api_doc.md:27
 msgid "Default value"
 msgstr ""
 
 #: .\templates\cool\views\api_description.html:14
-#: .\templates\cool\views\api_doc.md:26
+#: .\templates\cool\views\api_doc.md:27
 msgid "Help text"
 msgstr ""
 
 #: .\templates\cool\views\api_description.html:15
-#: .\templates\cool\views\api_doc.md:26
+#: .\templates\cool\views\api_doc.md:27
 msgid "Field info"
 msgstr ""
 
 #: .\templates\cool\views\api_description.html:32
-#: .\templates\cool\views\api_doc.md:32
+#: .\templates\cool\views\api_doc.md:33
 msgid "Response Info :"
 msgstr ""
 
-#: .\templates\cool\views\api_doc.md:2
+#: .\templates\cool\views\api_doc.md:3 .\views\utils.py:162
 msgid "Api Document"
 msgstr ""
 
-#: .\templates\cool\views\api_doc.md:4
+#: .\templates\cool\views\api_doc.md:5
 msgid "Server Address"
 msgstr ""
 
-#: .\templates\cool\views\api_doc.md:8
+#: .\templates\cool\views\api_doc.md:9
 msgid "Error Code List"
 msgstr ""
 
-#: .\templates\cool\views\api_doc.md:10
+#: .\templates\cool\views\api_doc.md:11
 msgid "Tag"
 msgstr ""
 
-#: .\templates\cool\views\api_doc.md:10
+#: .\templates\cool\views\api_doc.md:11
 msgid "Code"
 msgstr ""
 
-#: .\templates\cool\views\api_doc.md:10
+#: .\templates\cool\views\api_doc.md:11
 msgid "Desc"
 msgstr ""
 
-#: .\templates\cool\views\api_doc.md:16
+#: .\templates\cool\views\api_doc.md:17
 msgid "Api List"
 msgstr ""
 
-#: .\templates\cool\views\api_doc.md:21
+#: .\templates\cool\views\api_doc.md:22
 msgid "Request Api :"
 msgstr ""
 
@@ -136,31 +136,31 @@ msgstr ""
 msgid "Permission Error"
 msgstr ""
 
-#: .\views\utils.py:25
+#: .\views\utils.py:26
 msgid "Yes"
 msgstr ""
 
-#: .\views\utils.py:25
+#: .\views\utils.py:26
 msgid "No"
 msgstr ""
 
-#: .\views\view.py:102 .\views\view.py:112
+#: .\views\view.py:106 .\views\view.py:119
 msgid "Page number"
 msgstr ""
 
-#: .\views\view.py:102
+#: .\views\view.py:108
 #, python-format
 msgid "Start with %(start)s"
 msgstr ""
 
-#: .\views\view.py:104 .\views\view.py:110
+#: .\views\view.py:111 .\views\view.py:117
 msgid "Page size"
 msgstr ""
 
-#: .\views\view.py:113
+#: .\views\view.py:120
 msgid "Total page"
 msgstr ""
 
-#: .\views\view.py:114
+#: .\views\view.py:121
 msgid "Total data"
 msgstr ""

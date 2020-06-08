@@ -159,6 +159,7 @@ def get_api_doc_html(request, *args, **kwargs):
     exclude_params = kwargs.get('exclude_params', ())
     exclude_base_view_params = kwargs.get('exclude_base_view_params', True)
     exclude_views = kwargs.get('exclude_views', ())
+    title = kwargs.get('title', _('Api Document'))
     md = get_api_doc(
         request=request,
         template_name=md_template_name,
@@ -174,4 +175,4 @@ def get_api_doc_html(request, *args, **kwargs):
         'markdown.extensions.tables'
     ])
     md_style_template_name = kwargs.get('md_style_template_name', 'cool/views/markdown.html')
-    return render(request, md_style_template_name, context={'html': html})
+    return render(request, md_style_template_name, context={'html': html, 'title': title})
