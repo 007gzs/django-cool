@@ -153,7 +153,7 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
 
     def initialize_request(self, request, *args, **kwargs):
         _ = request.body
-        super().initialize_request(request, *args, **kwargs)
+        return super().initialize_request(request, *args, **kwargs)
 
     def get_view_description(self, html=False):
         if not html or not self.description_template_name:
