@@ -400,19 +400,24 @@ class BaseModelAdmin(admin.ModelAdmin):
 
     def get_fieldsets(self, request, obj=None):
         fieldsets = list(super().get_fieldsets(request, obj))
-        if not self.has_change_permission(request, obj):
+        is_add = obj is None
+        if (is_add and self.has_add_permission(request)) or (not is_add and self.has_change_permission(request, obj)):
+            return fieldsets
+        else:
             list_display = self.get_list_display(request)
             valid_f_names = flatten_fieldsets(fieldsets)
             fields = [f for f in list_display if f in valid_f_names]
             return [(None, {'fields': fields})]
-        return fieldsets
 
     def get_readonly_fields(self, request, obj=None, fields=None):
+        is_add = obj is None
+        readonly_fields = list(super().get_readonly_fields(request, obj))
+        if (is_add and not self.has_add_permission(request)) or \
+                (not is_add and not self.has_change_permission(request, obj)):
+            return fields if fields is not None else self.get_list_display(request)
 
-        if obj and self.has_change_permission(request, obj):
-
-            readonly_fields = list(super().get_readonly_fields(request, obj))
-            readonly_fields_set = set(readonly_fields)
+        readonly_fields_set = set(readonly_fields)
+        if not is_add:
             for field in self.change_view_readonly_fields:
                 if field not in readonly_fields_set:
                     readonly_fields_set.add(field)
@@ -430,11 +435,7 @@ class BaseModelAdmin(admin.ModelAdmin):
                     if field not in changeable_fields_set and field not in readonly_fields_set:
                         readonly_fields_set.add(field)
                         readonly_fields.append(field)
-            return readonly_fields
-        elif not self.has_change_permission(request, obj):
-            return fields if fields is not None else self.get_list_display(request)
-        else:
-            return list(super().get_readonly_fields(request, obj))
+        return readonly_fields
 
     def gen_access_rels(self, request):
         if not hasattr(request, '_access_rels'):
