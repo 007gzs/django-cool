@@ -4,7 +4,9 @@ from collections import OrderedDict
 from importlib import import_module
 
 from django.conf import settings
-from django.core.validators import BaseValidator, ProhibitNullCharactersValidator
+from django.core.validators import (
+    BaseValidator, ProhibitNullCharactersValidator,
+)
 from django.db import models
 from django.shortcuts import render
 from django.template.loader import render_to_string
