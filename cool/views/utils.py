@@ -1,16 +1,41 @@
 # encoding: utf-8
+import re
 from collections import OrderedDict
 from importlib import import_module
 
 from django.conf import settings
+from django.core.validators import BaseValidator, ProhibitNullCharactersValidator
+from django.db import models
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
-from rest_framework import fields
+from rest_framework import fields, validators
 from rest_framework.fields import empty
+from rest_framework.serializers import ModelSerializer
+from rest_framework.utils import model_meta
 
 from cool.views.error_code import ErrorCode
 from cool.views.view import CoolBFFAPIView
+
+
+def get_rest_field_from_model_field(model, model_field, **kwargs):
+    if isinstance(model_field, models.Field):
+        model_field = model_field.name
+    s = ModelSerializer()
+    field_class, field_kwargs = s.build_field(model_field, model_meta.get_field_info(model), model, 0)
+    field_kwargs.pop('read_only', None)
+    gen_validators = field_kwargs.pop('validators', None)
+    if gen_validators:
+        gen_validators = list(filter(
+            lambda x: not isinstance(x, (
+                validators.UniqueValidator, validators.BaseUniqueForValidator, ProhibitNullCharactersValidator
+            )),
+            gen_validators
+        ))
+        if gen_validators:
+            field_kwargs['validators'] = gen_validators
+    field_kwargs = s.include_extra_kwargs(field_kwargs, kwargs)
+    return field_class(**field_kwargs)
 
 
 def get_field_info(field):
@@ -27,12 +52,43 @@ def get_field_info(field):
         'help_text': field.help_text,
         'extend_info': OrderedDict()
     }
-    extend_keys = ['max_value', 'min_value', 'max_length', 'min_length', 'max_digits', 'regex', 'child', 'choices']
-    for k in extend_keys:
-        v = getattr(field, k, None)
-        if v is not None:
-            info['extend_info'][k] = ",".join(["%s:%s" % (k, v) for k, v in v.items()]) if isinstance(v, dict) else v
-    info['extend_info_format'] = "; ".join(["%s:%s" % (k, v) for k, v in info['extend_info'].items()])
+    field_validators = [field]
+    field_validators.extend(getattr(field, 'validators', list()))
+    validator_keys = ['max_value', 'min_value', 'max_length', 'min_length', 'max_digits', 'max_decimal_places',
+                      'sep', 'child', 'choices', 'regex', 'allowed_extensions']
+    for validator in field_validators:
+        for k in validator_keys:
+            v = getattr(validator, k, None)
+            if v is not None:
+                if isinstance(v, re.Pattern):
+                    v = v.pattern
+                info['extend_info'].setdefault(k, list()).append(v)
+        if isinstance(validator, BaseValidator):
+            info['extend_info'].setdefault(validator.code, list()).append(validator.limit_value)
+    for k in ['max_value', 'max_length', 'max_digits', 'max_decimal_places']:
+        if k in info['extend_info']:
+            info['extend_info'][k] = min(info['extend_info'][k])
+    for k in ['min_value', 'min_length']:
+        if k in info['extend_info']:
+            info['extend_info'][k] = max(info['extend_info'][k])
+    for k in info['extend_info']:
+        if not isinstance(info['extend_info'][k], list):
+            continue
+        if len(info['extend_info'][k]) == 1:
+            info['extend_info'][k] = info['extend_info'][k].pop()
+    if 'choices' in info['extend_info']:
+        info['extend_info'].pop('max_value', None)
+        info['extend_info'].pop('min_value', None)
+
+    def _format_value(_value):
+        if isinstance(_value, list):
+            return ",".join(map(lambda x: _format_value(x) if isinstance(x, dict) else x, _value))
+        elif isinstance(_value, dict):
+            return ",".join(["%s:%s" % (_k, _v) for _k, _v in _value.items()])
+        else:
+            return _value
+
+    info['extend_info_format'] = "; ".join(["%s:%s" % (k, _format_value(v)) for k, v in info['extend_info'].items()])
     return info
 
 
@@ -68,7 +124,7 @@ def get_view_list(urlpattern=None, head='/', base_view=CoolBFFAPIView):
     if urlpattern is None:
         rooturl = import_module(settings.ROOT_URLCONF)
         for urlpattern in rooturl.urlpatterns:
-            ret += get_view_list(urlpattern, get_url(head, urlpattern))
+            ret += get_view_list(urlpattern, get_url(head, urlpattern), base_view=base_view)
         return ret
     view_class = urlpattern
     for sub in ('callback', 'view_class'):
@@ -79,13 +135,13 @@ def get_view_list(urlpattern=None, head='/', base_view=CoolBFFAPIView):
         retdict = dict()
         retdict['view_class'] = view_class
         retdict['params'] = view_class._meta.param_fields
-        retdict['name'] = getattr(view_class, 'name', view_class.__name__)
+        retdict['name'] = view_class().get_view_name()
         retdict['url'] = head.replace('//', '/').rstrip('/')
         ret.append(retdict)
 
     if hasattr(urlpattern, 'url_patterns'):
         for pattern in urlpattern.url_patterns:
-            ret += get_view_list(pattern, get_url(head, pattern))
+            ret += get_view_list(pattern, get_url(head, pattern), base_view=base_view)
 
     return ret
 
@@ -101,7 +157,7 @@ def get_api_info(base_view=CoolBFFAPIView, exclude_params=(), exclude_base_view_
     error_codes = ErrorCode.get_desc_dict()
 
     apis = list()
-    for v in get_view_list():
+    for v in get_view_list(base_view=base_view):
         if issubclass(v['view_class'], exclude_views):
             continue
         has_file = False
