@@ -62,8 +62,7 @@ def get_field_info(field):
         for k in validator_keys:
             v = getattr(validator, k, None)
             if v is not None:
-                if isinstance(v, re.Pattern):
-                    v = v.pattern
+                v = getattr(v, 'pattern', v)
                 info['extend_info'].setdefault(k, list()).append(v)
         if isinstance(validator, BaseValidator):
             info['extend_info'].setdefault(validator.code, list()).append(validator.limit_value)
