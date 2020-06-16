@@ -404,7 +404,7 @@ class BaseModelAdmin(admin.ModelAdmin):
         if (is_add and self.has_add_permission(request)) or (not is_add and self.has_change_permission(request, obj)):
             return fieldsets
         else:
-            list_display = self.get_list_display(request)
+            list_display = self.get_list_display(request, False)
             valid_f_names = flatten_fieldsets(fieldsets)
             fields = [f for f in list_display if f in valid_f_names]
             return [(None, {'fields': fields})]
@@ -414,7 +414,7 @@ class BaseModelAdmin(admin.ModelAdmin):
         readonly_fields = list(super().get_readonly_fields(request, obj))
         if (is_add and not self.has_add_permission(request)) or \
                 (not is_add and not self.has_change_permission(request, obj)):
-            return fields if fields is not None else self.get_list_display(request)
+            return fields if fields is not None else self.get_list_display(request, False)
 
         readonly_fields_set = set(readonly_fields)
         if not is_add:
@@ -466,7 +466,7 @@ class BaseModelAdmin(admin.ModelAdmin):
             setattr(request, '_access_rels', _access_rels)
         setattr(self, '_access_rels', request._access_rels)
 
-    def get_list_display(self, request):
+    def get_list_display(self, request, in_change_view=True):
         """
         get all fields except PK and Relations if extend_normal_fields is True
         """
@@ -508,7 +508,7 @@ class BaseModelAdmin(admin.ModelAdmin):
         for field in self.get_normal_fields():
             if field.name in heads or field.name in middles or field.name in tails:
                 continue
-            if field.name in self.exclude_list_display:
+            if in_change_view and field.name in self.exclude_list_display:
                 pass
             elif field.name in self.tails:
                 tails.append(_get_field(field.name))

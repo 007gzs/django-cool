@@ -72,12 +72,9 @@ class ViewOptions:
 
     def contribute_to_class(self, cls, name):
         self.view = cls
-        try:
-            func_extend_param_fields = getattr(cls, 'get_extend_param_fields')
-            if callable(func_extend_param_fields):
-                self.param_fields.update(func_extend_param_fields())
-        except Exception:
-            pass
+        func_extend_param_fields = getattr(cls, 'get_extend_param_fields')
+        if callable(func_extend_param_fields):
+            self.param_fields.update(func_extend_param_fields())
         if not self.name:
             self.name = self.view.__name__
         if self.path is None:

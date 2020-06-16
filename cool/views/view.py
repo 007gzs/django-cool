@@ -100,7 +100,7 @@ class PageMixin:
 
     @classmethod
     def get_extend_param_fields(cls):
-        return (
+        return super().get_extend_param_fields() + (
             (
                 'page', fields.IntegerField(
                     label=gettext_lazy('Page number'),
@@ -150,6 +150,10 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
 
     response_info_serializer_class = None
     response_many = False
+
+    @classmethod
+    def get_extend_param_fields(cls):
+        return ()
 
     def initialize_request(self, request, *args, **kwargs):
         _ = request.body
