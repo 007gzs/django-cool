@@ -1,5 +1,4 @@
 # encoding: utf-8
-import re
 from collections import OrderedDict
 from importlib import import_module
 
