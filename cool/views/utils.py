@@ -7,6 +7,7 @@ from django.core.validators import (
     BaseValidator, ProhibitNullCharactersValidator,
 )
 from django.db import models
+from django.db.models import NOT_PROVIDED
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
@@ -23,6 +24,8 @@ def get_rest_field_from_model_field(model, model_field, **kwargs):
     if isinstance(model_field, models.Field):
         model_field = model_field.name
     s = ModelSerializer()
+    info = model_meta.get_field_info(model)
+    field_info = info.fields_and_pk[model_field]
     field_class, field_kwargs = s.build_field(model_field, model_meta.get_field_info(model), model, 0)
     field_kwargs.pop('read_only', None)
     gen_validators = field_kwargs.pop('validators', None)
@@ -36,6 +39,14 @@ def get_rest_field_from_model_field(model, model_field, **kwargs):
         if gen_validators:
             field_kwargs['validators'] = gen_validators
     field_kwargs = s.include_extra_kwargs(field_kwargs, kwargs)
+    if not field_kwargs.get('required') and 'default' not in field_kwargs:
+        field_kwargs['default'] = None if field_info.default is NOT_PROVIDED else field_info.default
+    if not field_kwargs.get('required') and not field_kwargs['default']:
+        if (field_kwargs.get('allow_null', True) and field_kwargs['default'] is None) \
+                or (field_kwargs.get('allow_blank', True) and not field_kwargs['default']):
+            field_kwargs['required'] = True
+            field_kwargs.pop('default')
+
     return field_class(**field_kwargs)
 
 
