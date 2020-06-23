@@ -26,7 +26,7 @@ def get_rest_field_from_model_field(model, model_field, **kwargs):
     s = ModelSerializer()
     info = model_meta.get_field_info(model)
     field_info = info.fields_and_pk[model_field]
-    field_class, field_kwargs = s.build_field(model_field, model_meta.get_field_info(model), model, 0)
+    field_class, field_kwargs = s.build_field(model_field, info, model, 0)
     field_kwargs.pop('read_only', None)
     gen_validators = field_kwargs.pop('validators', None)
     if gen_validators:
@@ -41,9 +41,10 @@ def get_rest_field_from_model_field(model, model_field, **kwargs):
     field_kwargs = s.include_extra_kwargs(field_kwargs, kwargs)
     if not field_kwargs.get('required') and 'default' not in field_kwargs:
         field_kwargs['default'] = None if field_info.default is NOT_PROVIDED else field_info.default
-    if not field_kwargs.get('required') and not field_kwargs['default']:
-        if (field_kwargs.get('allow_null', True) and field_kwargs['default'] is None) \
-                or (field_kwargs.get('allow_blank', True) and not field_kwargs['default']):
+
+    if not ('default' in kwargs or 'required' in kwargs or field_kwargs.get('required') or field_kwargs['default']):
+        if (not field_kwargs.get('allow_null', False) and field_kwargs['default'] is None) \
+                or (not field_kwargs.get('allow_blank', False) and not field_kwargs['default']):
             field_kwargs['required'] = True
             field_kwargs.pop('default')
 
@@ -67,7 +68,7 @@ def get_field_info(field):
     field_validators = [field]
     field_validators.extend(getattr(field, 'validators', list()))
     validator_keys = ['max_value', 'min_value', 'max_length', 'min_length', 'max_digits', 'max_decimal_places',
-                      'sep', 'child', 'choices', 'regex', 'allowed_extensions']
+                      'choices', 'regex', 'allowed_extensions', 'sep', 'child', 'is_list', 'children']
     for validator in field_validators:
         for k in validator_keys:
             v = getattr(validator, k, None)
@@ -95,7 +96,10 @@ def get_field_info(field):
         if isinstance(_value, list):
             return ",".join(map(lambda x: _format_value(x) if isinstance(x, dict) else x, _value))
         elif isinstance(_value, dict):
-            return ",".join(["%s:%s" % (_k, _v) for _k, _v in _value.items()])
+            return ",".join(["%s:%s" % (_k, _format_value(_v)) for _k, _v in _value.items()])
+        elif isinstance(_value, fields.Field):
+            _info = get_field_info(_value)
+            return "%s(%s)" % (_info['label'], _info['extend_info_format'])
         else:
             return _value
 

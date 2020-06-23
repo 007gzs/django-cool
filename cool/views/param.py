@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django import forms
 from django.forms.utils import ErrorDict
+from rest_framework.exceptions import ValidationError
 
 
 class TextErrorDict(ErrorDict):
@@ -25,7 +26,7 @@ class Param:
         if self._opts.param_managed:
             errors = self._bounded_form.errors
             if errors:
-                exc = forms.ValidationError(errors)
+                exc = ValidationError(errors)
                 exc.error_dict_obj = errors
                 raise exc
 
