@@ -99,7 +99,13 @@ def get_field_info(field):
             return ",".join(["%s:%s" % (_k, _format_value(_v)) for _k, _v in _value.items()])
         elif isinstance(_value, fields.Field):
             _info = get_field_info(_value)
-            return "%s(%s)" % (_info['label'], _info['extend_info_format'])
+            return "(%s %s 默认值:%s,是否必填:%s,%s)" % (
+                _info['label'],
+                _info['type'],
+                _info['default_format'],
+                _info['required_format'],
+                _info['extend_info_format']
+            )
         else:
             return _value
 
