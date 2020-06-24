@@ -26,9 +26,7 @@ class Param:
         if self._opts.param_managed:
             errors = self._bounded_form.errors
             if errors:
-                exc = ValidationError(errors)
-                exc.error_dict_obj = errors
-                raise exc
+                raise ValidationError(errors)
 
             self._cleaned_data = self._bounded_form.cleaned_data
 

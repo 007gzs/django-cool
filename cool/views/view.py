@@ -6,6 +6,7 @@ import logging
 from collections import OrderedDict
 
 from django.conf import settings
+from django.core.exceptions import ValidationError as CoreValidationError
 from django.forms import forms
 from django.http import HttpResponse
 from django.template.loader import render_to_string
@@ -14,6 +15,7 @@ from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _, gettext_lazy
 from rest_framework import fields, serializers
+from rest_framework.exceptions import ValidationError as RestValidationError
 from rest_framework.fields import empty
 from rest_framework.views import APIView
 
@@ -229,8 +231,12 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
     def get_param_error_info(cls, exc):
         data = dict()
         if cls.SHOW_PARAM_ERROR_INFO:
-            if hasattr(exc, 'error_dict_obj'):
-                data['errors'] = exc.error_dict_obj
+            if hasattr(exc, 'detail'):
+                data['errors'] = exc.detail
+            elif hasattr(exc, 'message_dict'):
+                data['errors'] = exc.message_dict
+            elif hasattr(exc, 'error_list'):
+                data['errors'] = exc.error_list
             else:
                 data['desc'] = force_text(exc)
         return data
@@ -252,7 +258,7 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
         return get_exception_handler
 
     def handle_exception(self, exc):
-        if isinstance(exc, forms.ValidationError):
+        if isinstance(exc, (RestValidationError, CoreValidationError)):
             exc = CoolAPIException(
                 ErrorCode.ERROR_BAD_PARAMETER,
                 data=self.get_param_error_info(exc),
