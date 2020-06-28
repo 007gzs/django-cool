@@ -99,9 +99,13 @@ class APIViewOptions(ViewOptions):
 
 class PageMixin:
     PAGE_SIZE_MAX = 200
+    DEFAULT_PAGE_SIZE = 100
 
     @classmethod
     def get_extend_param_fields(cls):
+        assert 0 < cls.DEFAULT_PAGE_SIZE <= cls.PAGE_SIZE_MAX, (
+            "DEFAULT_PAGE_SIZE mast between 0 and PAGE_SIZE_MAX in class %s" % cls.__name__
+        )
         return super().get_extend_param_fields() + (
             (
                 'page', fields.IntegerField(
@@ -110,7 +114,14 @@ class PageMixin:
                     help_text=gettext_lazy('Start with %(start)s') % {'start': 1}
                 )
             ),
-            ('page_size', fields.IntegerField(label=gettext_lazy('Page size'), default=100)),
+            (
+                'page_size', fields.IntegerField(
+                    label=gettext_lazy('Page size'),
+                    default=cls.DEFAULT_PAGE_SIZE,
+                    min_value=1,
+                    max_value=cls.PAGE_SIZE_MAX
+                )
+            ),
         )
 
     @classmethod
@@ -125,8 +136,6 @@ class PageMixin:
 
     def get_page_context(self, request, queryset, serializer_cls):
         page_size = request.params.page_size
-        if page_size <= 0 or page_size > self.PAGE_SIZE_MAX:
-            raise CoolAPIException(ErrorCode.ERR_PAGE_SIZE_ERROR)
         total_data = queryset.count()
         total_page = (total_data + page_size - 1) // page_size
         page = request.params.page
