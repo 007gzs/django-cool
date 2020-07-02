@@ -238,16 +238,14 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
 
     @classmethod
     def get_param_error_info(cls, exc):
+        from cool.views.utils import parse_validation_error
         data = dict()
         if cls.SHOW_PARAM_ERROR_INFO:
-            if hasattr(exc, 'detail'):
-                data['errors'] = exc.detail
-            elif hasattr(exc, 'message_dict'):
-                data['errors'] = exc.message_dict
-            elif hasattr(exc, 'error_list'):
-                data['errors'] = exc.error_list
-            else:
+            exc_data = parse_validation_error(exc)
+            if exc_data is exc:
                 data['desc'] = force_text(exc)
+            else:
+                data['errors'] = exc_data
         return data
 
     def get_uncaught_exception_response(self, exc, context):

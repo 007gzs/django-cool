@@ -20,6 +20,23 @@ from cool.views.error_code import ErrorCode
 from cool.views.view import CoolBFFAPIView
 
 
+def parse_validation_error(data):
+    from django.core.exceptions import ValidationError
+    from rest_framework.exceptions import ValidationError as RestValidationError
+    if isinstance(data, ValidationError):
+        if hasattr(data, 'error_dict'):
+            return parse_validation_error(dict(data))
+        return parse_validation_error(list(data))
+    elif isinstance(data, RestValidationError):
+        return parse_validation_error(data.detail)
+    elif isinstance(data, dict):
+        return {key: parse_validation_error(value) for key, value in data.items()}
+    elif isinstance(data, list):
+        return [parse_validation_error(item) for item in data]
+    else:
+        return data
+
+
 def get_rest_field_from_model_field(model, model_field, **kwargs):
     if isinstance(model_field, models.Field):
         model_field = model_field.name
