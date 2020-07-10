@@ -2,9 +2,14 @@
 Django Cool
 ###########
 
+.. image:: https://img.shields.io/pypi/v/django-cool.svg
+       :target: https://pypi.org/project/django-cool
+
 Django 快速使用框架
 
+`【阅读文档】 <http://docs.django.cool>`_。
 
+      
 安装与升级
 ==========
 
@@ -25,6 +30,9 @@ Django 快速使用框架
 
     pip install https://github.com/007gzs/django-cool/archive/master.zip
 
+
+文档
+========
 
 示例项目
 ========
