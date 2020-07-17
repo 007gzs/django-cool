@@ -14,8 +14,10 @@
     }
     @media screen and (min-width: 1000px) {
         body {
-            width: 1000px;
             margin: 10px auto;
+        }
+        body.toc_top{
+           width: 1000px;
         }
     }
     .markdown_views,.markdown_views blockquote {
@@ -449,7 +451,14 @@
         margin: 0 0 24px;
         padding: 0
     }
-
+    .toc_left .markdown_views .toc {
+        position: fixed;
+        left: 0;
+        height: 100%;
+        width: 280px;
+        top: 0;
+        overflow: auto;
+    }
     .markdown_views .toc ul {
         margin: 0 0 8px;
         padding: 0
@@ -461,7 +470,8 @@
 
     .markdown_views .toc ul li {
         list-style-type: none;
-        margin: 8px 0 0 24px
+        margin: 8px 0 0 24px;
+        width: 100%
     }
 
     .markdown_views dl dd {
@@ -479,9 +489,14 @@
         margin: 0 2px;
         white-space: nowrap
     }
+
+    .toc_left .markdown_views{
+      margin-left: 300px;
+    }
+    .toc_left .ma
   </style>
 </head>
-<body>
+<body class="{%if toc_left %}toc_left{%else%}toc_top{%endif%}">
 <div class="markdown_views">
 {{ html|safe }}
 </div>
