@@ -451,14 +451,6 @@
         margin: 0 0 24px;
         padding: 0
     }
-    .toc_left .markdown_views .toc {
-        position: fixed;
-        left: 0;
-        height: 100%;
-        width: 280px;
-        top: 0;
-        overflow: auto;
-    }
     .markdown_views .toc ul {
         margin: 0 0 8px;
         padding: 0
@@ -489,11 +481,20 @@
         margin: 0 2px;
         white-space: nowrap
     }
-
-    .toc_left .markdown_views{
-      margin-left: 300px;
+    @media screen and (min-width: 639px) {
+      .toc_left .markdown_views .toc {
+          position: fixed;
+          left: 0;
+          height: 100%;
+          width: 280px;
+          top: 0;
+          overflow: auto;
+      }
+      .toc_left .markdown_views{
+        margin-left: 300px;
+      }
     }
-    .toc_left .ma
+
   </style>
 </head>
 <body class="{%if toc_left %}toc_left{%else%}toc_top{%endif%}">
