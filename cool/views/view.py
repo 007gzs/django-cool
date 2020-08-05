@@ -7,6 +7,7 @@ from collections import OrderedDict
 
 from django.conf import settings
 from django.core.exceptions import ValidationError as CoreValidationError
+from django.db.models import Model, QuerySet
 from django.forms import forms
 from django.http import HttpResponse
 from django.template.loader import render_to_string
@@ -17,6 +18,7 @@ from django.utils.translation import gettext as _, gettext_lazy
 from rest_framework import fields, serializers
 from rest_framework.exceptions import ValidationError as RestValidationError
 from rest_framework.fields import empty
+from rest_framework.serializers import ModelSerializer
 from rest_framework.views import APIView
 
 from cool.settings import cool_settings
@@ -211,11 +213,12 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
         data.update(kwargs)
         request.params = Param(self, request, data, request.FILES)
 
-    @classmethod
-    def get_response(cls, context):
+    def get_response(self, context):
         if isinstance(context, HttpResponse):
             return context
-        elif not isinstance(context, ResponseData):
+        if isinstance(context, (Model, QuerySet)) and issubclass(self.response_info_serializer_class, ModelSerializer):
+            context = self.response_info_serializer_class(context, many=self.response_many, request=self.request).data
+        if not isinstance(context, ResponseData):
             context = ResponseData(context)
         return context.get_response()
 
