@@ -22,7 +22,9 @@ from cool.views.view import CoolBFFAPIView
 
 def parse_validation_error(data):
     from django.core.exceptions import ValidationError
-    from rest_framework.exceptions import ValidationError as RestValidationError
+    from rest_framework.exceptions import (
+        ValidationError as RestValidationError,
+    )
     if isinstance(data, ValidationError):
         if hasattr(data, 'error_dict'):
             return parse_validation_error(dict(data))

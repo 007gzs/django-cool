@@ -4,8 +4,9 @@ from django.test import TestCase, override_settings
 
 
 def get_error_code():
-    from cool.views import error_code
     import importlib
+
+    from cool.views import error_code
     importlib.reload(error_code)
     return error_code
 
