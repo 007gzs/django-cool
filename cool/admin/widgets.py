@@ -122,8 +122,7 @@ class RangeFilterWidget(forms.MultiWidget):
     template_name = 'cool/admin/range_filter_widget.html'
 
     def __init__(self, attrs=None, sub1_attrs=None, sub2_attrs=None):
-        super().__init__((), attrs)
-        self.widgets = [self.sub_widget(sub1_attrs), self.sub_widget(sub2_attrs)]
+        super().__init__([self.sub_widget(sub1_attrs), self.sub_widget(sub2_attrs)], attrs)
 
     def decompress(self, value):
         raise AssertionError("%s only use for filter" % self.__class__.__name__)
