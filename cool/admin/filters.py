@@ -103,9 +103,6 @@ class WidgetFilterMixin:
     def choices(self, changelist):
         return ()
 
-    def expected_parameters(self):
-        return ()
-
     class Media:
         js = (
             'admin/js/jquery.init.js',
@@ -122,6 +119,9 @@ class RangeFilterMixin(WidgetFilterMixin):
 
     def get_param2_name(self):
         return '%s__lte' % self.field_path
+
+    def expected_parameters(self):
+        return [self.get_param1_name(), self.get_param2_name()]
 
     def get_param_name(self):
         return self.field_path
