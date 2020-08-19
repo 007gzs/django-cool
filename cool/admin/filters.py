@@ -90,6 +90,11 @@ class WidgetFilterMixin:
     def get_param_name(self):
         raise NotImplementedError
 
+    def expected_parameters(self):
+        ret = [self.get_param_name(), ]
+        ret.extend(super().expected_parameters())
+        return ret
+
     def get_widget_attrs(self, param_name, params, attrs=None):
         widget_attrs = attrs.copy() if attrs else {}
         widget_attrs['data-query-string-value'] = 'data-value-%s' % random.randint(100000000, 999999999)

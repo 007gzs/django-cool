@@ -23,7 +23,7 @@ class CoolAutocompleteJsonView(BaseListView):
         """
         Return a JsonResponse with search results of the form:
         {
-            results: [{id: "123" text: "foo"}],
+            results: [{id: "123", text: "foo"}],
             pagination: {more: true}
         }
         """

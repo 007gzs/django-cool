@@ -95,6 +95,11 @@
                 e.preventDefault();
                 // avoid triggering the document click handler to dismiss the calendar
                 e.stopPropagation();
+                for (var i = 0; i < RangeDateShortcuts.calendars.length; i ++) {
+                    if(i !== num) {
+                        RangeDateShortcuts.dismissCalendarFunc[i]();
+                    }
+                }
                 RangeDateShortcuts.openCalendar(num);
             });
 
