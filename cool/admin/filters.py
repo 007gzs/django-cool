@@ -38,7 +38,7 @@ class WidgetFilterMixin:
             del self.params[PAGE_VAR]
         if ERROR_FLAG in self.params:
             del self.params[ERROR_FLAG]
-        self.init_widget(field, request, params, model, model_admin, field_path, *args, **kwargs)
+        self.init_widget(field, request, self.params.copy(), model, model_admin, field_path, *args, **kwargs)
         if self.widget:
             self._add_media(model_admin, self.widget)
 
@@ -57,7 +57,8 @@ class WidgetFilterMixin:
             setattr(model_admin.Media, name, getattr(media, "_" + name))
 
     def init_widget(self, field, request, params, model, model_admin, field_path, *args, **kwargs):
-        self.widget = self.widget(attrs=self.get_widget_attrs(self.get_param_name(), params, self.widget_attrs))
+        if self.widget:
+            self.widget = self.widget(attrs=self.get_widget_attrs(self.get_param_name(), params, self.widget_attrs))
 
     def get_widget_context(self):
         if not self.widget:
