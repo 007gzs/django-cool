@@ -21,4 +21,7 @@ class CoolConfig(AppConfig):
         if cool_settings.RELATED_FIELD_FILTER_USE_AUTOCOMPLETE:
             FieldListFilter.register(lambda f: f.remote_field, filters.AutocompleteFieldFilter, True)
         if cool_settings.DATE_FIELD_FILTER_USE_RANGE:
+            FieldListFilter.register(
+                lambda f: isinstance(f, models.DateTimeField), filters.DateTimeRangeFieldFilter, True
+            )
             FieldListFilter.register(lambda f: isinstance(f, models.DateField), filters.DateRangeFieldFilter, True)

@@ -149,6 +149,9 @@ class RangeFilterMixin(WidgetFilterMixin):
 class DateRangeFieldFilter(RangeFilterMixin, admin.FieldListFilter):
     widget = DateRangeFilterWidget
 
+
+class DateTimeRangeFieldFilter(DateRangeFieldFilter):
+
     def get_param2_name(self):
         return '%s__date__lte' % self.field_path
 
