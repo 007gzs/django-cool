@@ -5,7 +5,9 @@ from rest_framework.fields import empty
 
 
 class BaseSerializer(serializers.ModelSerializer):
-
+    """
+    序列化基类，文件字段会自动生成全路径url，property字段会用doc生成label或help_text
+    """
     def __init__(self, instance=None, data=empty, **kwargs):
         if data is None:
             data = empty

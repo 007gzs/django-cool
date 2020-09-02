@@ -111,6 +111,9 @@ class FieldWidget(forms.MultiWidget):
 
 
 class ImageFieldWidget(FieldWidget):
+    """
+    图片显示组件
+    """
     value_widget = ImageWidget
 
     def format_output(self, rendered_widgets):
@@ -118,6 +121,9 @@ class ImageFieldWidget(FieldWidget):
 
 
 class RangeFilterWidget(forms.MultiWidget):
+    """
+    范围选择组件
+    """
     sub_widget = None
     template_name = 'cool/admin/range_filter_widget.html'
 
@@ -142,10 +148,16 @@ class RangeFilterWidget(forms.MultiWidget):
 
 
 class NumberRangeFilterWidget(RangeFilterWidget):
+    """
+    数字范围选择组件
+    """
     sub_widget = widgets.AdminIntegerFieldWidget
 
 
 class AdminDateInRangeWidget(forms.DateInput):
+    """
+    日期范围选择框
+    """
     class Media:
         js = [
             'admin/js/jquery.init.js',
@@ -163,6 +175,9 @@ class AdminDateInRangeWidget(forms.DateInput):
 
 
 class DateRangeFilterWidget(RangeFilterWidget):
+    """
+    日期范围选择组件
+    """
     sub_widget = AdminDateInRangeWidget
 
 
@@ -220,8 +235,12 @@ class CoolAutocompleteMixin(widgets.AutocompleteMixin):
 
 
 class CoolAutocompleteSelect(CoolAutocompleteMixin, widgets.AutocompleteSelect):
-    pass
+    """
+    自动提示选择框
+    """
 
 
 class CoolAutocompleteSelectMultiple(CoolAutocompleteMixin, widgets.AutocompleteSelectMultiple):
-    pass
+    """
+    自动提示多选框
+    """

@@ -8,6 +8,9 @@ from cool.model import models
 
 
 class ForwardCacheDescriptorMixin:
+    """
+    外键数据使用缓存
+    """
 
     def get_cache_object(self, instance):
         remote_model = self.field.remote_field.model
@@ -36,8 +39,12 @@ class ForwardCacheDescriptorMixin:
 
 
 class ForwardManyToOneCacheDescriptor(ForwardCacheDescriptorMixin, ForwardManyToOneDescriptor):
-    pass
+    """
+    多对一外键使用缓存
+    """
 
 
 class ForwardOneToOneCacheDescriptor(ForwardCacheDescriptorMixin, ForwardOneToOneDescriptor):
-    pass
+    """
+    一对一外键使用缓存
+    """

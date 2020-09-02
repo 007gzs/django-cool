@@ -12,6 +12,9 @@ from .view import ParamSerializer
 
 
 class SplitCharField(CharField):
+    """
+    分割字符串字段，字段会用指定分隔符分割为列表
+    """
     child = CharField(allow_blank=True)
 
     def __init__(self, **kwargs):
@@ -52,6 +55,9 @@ class SplitCharField(CharField):
 
 
 class JSONCheckField(JSONField):
+    """
+    json检查字段，会根据children限制对json数据进行检查
+    """
     default_error_messages = {
         'not_a_list': _('Expected a list of items but got type "{input_type}".'),
         'not_a_dict': _('Expected a dictionary of items but got type "{input_type}".'),

@@ -153,11 +153,16 @@ class SearchModelMixin:
 
     @classmethod
     def get_search_fields(cls):
+        """
+        返回本model可以被搜索的字段集合（基类回自动将带索引的字段生成搜索字段集合）
+        """
         return cls._gen_search_fields()
 
 
 class BaseModel(ModelFieldChangeMixin, ModelCacheMixin, SearchModelMixin, models.Model):
-
+    """
+    Model基类，支持字段变更加没空，主键唯一键缓存，搜索字段自动生成
+    """
     class Meta:
         abstract = True
         ordering = ['-pk', ]
@@ -202,6 +207,9 @@ class BaseModel(ModelFieldChangeMixin, ModelCacheMixin, SearchModelMixin, models
 
 
 class AbstractUserMixin:
+    """
+    自定义User表继承后可支持authenticate
+    """
     is_staff = False
     is_active = True
     is_superuser = False

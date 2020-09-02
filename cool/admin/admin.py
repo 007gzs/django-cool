@@ -214,7 +214,7 @@ class AdminImageWidget(AdminFileWidget):
 
 class BaseModelAdmin(admin.ModelAdmin):
     """
-    default Admin class used by proxy|real models
+    自定义Admin基类，列表页显示默认字段，支持自定义功能
     """
 
     # remove "__str__"
@@ -569,13 +569,13 @@ def check_perms(*perms):
 
     def inner(func):
         @wraps(func)
-        def wrapper(admin, request, *args, **kwargs):
-            opts = admin.opts
+        def wrapper(_admin, request, *args, **kwargs):
+            opts = _admin.opts
             for perm in perms:
                 codename = get_permission_codename(perm, opts)
                 if not request.user.has_perm("%s.%s" % (opts.app_label, codename)):
                     raise PermissionDenied
-            return func(admin, request, *args, **kwargs)
+            return func(_admin, request, *args, **kwargs)
 
         return wrapper
 
@@ -588,3 +588,32 @@ def site_register(model_or_iterable, admin_class=None, site=None, **options):
     if admin_class is None:
         admin_class = BaseModelAdmin
     site.register(model_or_iterable, admin_class, **options)
+
+
+def admin_register(admin_class=None, site=None, **options):
+    """
+    Register the given model(s) classes and wrapped ModelAdmin class with
+    admin site:
+
+    @admin_register()
+    class Author(models.BaseModel):
+        pass
+
+    The `site` kwarg is an admin site to use instead of the default admin site.
+    """
+
+    def _model_admin_wrapper(model_class):
+
+        if site is not None and not isinstance(site, admin.AdminSite):
+            raise ValueError('site must subclass AdminSite')
+
+        if admin_class is not None and not issubclass(admin_class, admin.ModelAdmin):
+            raise ValueError('admin_class must subclass ModelAdmin.')
+
+        if model_class is None or not issubclass(model_class, models.Model):
+            raise ValueError('Wrapped class must subclass Model.')
+
+        site_register(model_class, admin_class=admin_class, site=site, **options)
+        return model_class
+
+    return _model_admin_wrapper

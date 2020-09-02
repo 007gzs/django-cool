@@ -6,6 +6,9 @@ from cool.core import cache
 
 
 class ModelCache(cache.BaseCache):
+    """
+    model缓存
+    """
     key_prefix = 'cool:model_cache'
     default_timeout = 600
 

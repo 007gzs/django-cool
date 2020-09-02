@@ -55,6 +55,7 @@ class ConstantsItem:
 
 class Constants(ConstantsItem, enum.Enum, metaclass=ConstantsMeta):
     """
+        常量管理基类
 
         class TestConstants(Constants):
             TEST0 = (0, _('test0desc'))
@@ -70,10 +71,13 @@ class Constants(ConstantsItem, enum.Enum, metaclass=ConstantsMeta):
     @classmethod
     def get_choices_list(cls):
         """
-        get [(code1, desc1), (code2, desc2)] for choices params
+        返回 [(code1, desc1), (code2, desc2)] 用于 choices 参数
         """
         return [item.get_tuple() for item in cls]
 
     @classmethod
     def get_desc_dict(cls, name_key='tag'):
+        """
+        返回说明dict
+        """
         return [item.get_dict(**{name_key: item.name}) for item in cls]

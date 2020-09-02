@@ -18,6 +18,9 @@ def get_response_dict(code, message, data, success_with_code_msg):
 
 
 class ResponseData:
+    """
+    返回数据包装
+    """
     def __init__(self, data, code=ErrorCode.SUCCESS, message=None, status_code=200,
                  success_with_code_msg=cool_settings.API_CODE_MSG_IN_SUCCESS_RESPONSE):
         self.code = code

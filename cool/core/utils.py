@@ -6,7 +6,7 @@ from django.db.models.constants import LOOKUP_SEP
 
 def split_camel_name(name, fall=False):
     """
-    Split camel formated names:
+    驼峰命名分割为单词
 
     GenerateURLs => [Generate, URLs]
     generateURLsLite => [generate, URLs, Lite]
@@ -38,14 +38,14 @@ def split_camel_name(name, fall=False):
     return name_items
 
 
-# Apply keyword searches.
 def construct_search(queryset, field_name):
+    """
+    生成搜索关键字
+    """
     if field_name.startswith('^'):
         return "%s__istartswith" % field_name[1:]
     elif field_name.startswith('='):
         return "%s__iexact" % field_name[1:]
-    elif field_name.startswith('@'):
-        return "%s__search" % field_name[1:]
     # Use field_name if it includes a lookup.
     opts = queryset.model._meta
     lookup_fields = field_name.split(LOOKUP_SEP)

@@ -6,6 +6,9 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
+    """
+    自动创建app增删改查权限，供Admin使用（大多用于sqlmigrate中不会对新增model创建权限）
+    """
     args = '<app app ...>'
     help = 'create permissions for specified apps, or all apps if none specified'
 

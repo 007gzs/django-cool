@@ -5,7 +5,9 @@ from cool.views.response import ResponseData
 
 
 class CoolAPIException(Exception):
-
+    """
+    api异常基类，返回格式化结果数据
+    """
     def __init__(
         self, code, data=None, *, message=None,
         status_code=cool_settings.API_EXCEPTION_DEFAULT_STATUS_CODE

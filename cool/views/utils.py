@@ -21,6 +21,9 @@ from cool.views.view import CoolBFFAPIView
 
 
 def parse_validation_error(data):
+    """
+    参数检查结果处理
+    """
     from django.core.exceptions import ValidationError
     from rest_framework.exceptions import (
         ValidationError as RestValidationError,
@@ -40,6 +43,9 @@ def parse_validation_error(data):
 
 
 def get_rest_field_from_model_field(model, model_field, **kwargs):
+    """
+    通过model字段自动生成rest framework字段
+    """
     if isinstance(model_field, models.Field):
         model_field = model_field.name
     s = ModelSerializer()
@@ -71,6 +77,9 @@ def get_rest_field_from_model_field(model, model_field, **kwargs):
 
 
 def get_field_info(field):
+    """
+    获取字段信息
+    """
     field_type = field.__class__.__name__
     if field_type.endswith("Field") and field_type != 'Field':
         field_type = field_type[:-5]
@@ -133,6 +142,9 @@ def get_field_info(field):
 
 
 def get_list_info(serializer_obj):
+    """
+    获取列表序列化信息
+    """
     child = serializer_obj.child
     if hasattr(child, 'fields'):
         return get_serializer_info(child, force_many=True)
@@ -140,6 +152,9 @@ def get_list_info(serializer_obj):
 
 
 def get_serializer_info(serializer_obj, force_many=False):
+    """
+    获取序列化信息
+    """
     ret = dict()
     for field_name, field in serializer_obj.fields.items():
         if hasattr(field, 'fields'):
@@ -154,12 +169,18 @@ def get_serializer_info(serializer_obj, force_many=False):
 
 
 def get_url(head, urlpattern):
+    """
+    组合生成url
+    """
     url = getattr(urlpattern, 'pattern', urlpattern).regex.pattern
     ret = head + url.replace('\\', '').rstrip("$?").lstrip('^')
     return ret.replace('//', '/')
 
 
 def get_view_list(urlpattern=None, head='/', base_view=CoolBFFAPIView):
+    """
+    获取所有接口列表
+    """
     ret = []
     if urlpattern is None:
         rooturl = import_module(settings.ROOT_URLCONF)
@@ -187,6 +208,9 @@ def get_view_list(urlpattern=None, head='/', base_view=CoolBFFAPIView):
 
 
 def get_api_info(base_view=CoolBFFAPIView, exclude_params=(), exclude_base_view_params=True, exclude_views=()):
+    """
+    获取api接口信息
+    """
     assert issubclass(base_view, CoolBFFAPIView)
     exclude_params = set(exclude_params)
     if exclude_base_view_params:
@@ -244,12 +268,18 @@ def get_api_doc(
     exclude_base_view_params=True,
     exclude_views=()
 ):
+    """
+    生成api文档
+    """
     api_info = get_api_info(base_view, exclude_params, exclude_base_view_params, exclude_views)
     api_info['server'] = request.build_absolute_uri("/")[:-1] if request is not None else '/'
     return render_to_string(template_name, api_info, request)
 
 
 def get_api_doc_html(request, *args, **kwargs):
+    """
+    生成api文档（markdown转html，依赖markdown）
+    """
     md_template_name = kwargs.get('md_template_name', 'cool/views/api_doc.md')
     base_view = kwargs.get('base_view', CoolBFFAPIView)
     exclude_params = kwargs.get('exclude_params', ())

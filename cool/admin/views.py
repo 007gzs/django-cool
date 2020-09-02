@@ -17,6 +17,9 @@ from cool.settings import cool_settings
 
 
 class CoolAutocompleteJsonView(BaseListView):
+    """
+    外键自动提示view
+    """
     paginate_by = 20
 
     def get(self, request, *args, **kwargs):

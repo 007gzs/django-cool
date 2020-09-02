@@ -16,6 +16,9 @@ from cool.admin.widgets import (
 
 
 class AutocompleteSelect(widgets.AutocompleteSelect):
+    """
+    自动提示选择框（支持自定义ajax url）
+    """
     def __init__(self, rel, admin_site, attrs=None, choices=(), using=None, custom_url=None):
         self.custom_url = custom_url
         super().__init__(rel, admin_site, attrs, choices, using)
@@ -25,6 +28,9 @@ class AutocompleteSelect(widgets.AutocompleteSelect):
 
 
 class WidgetFilterMixin:
+    """
+    组件筛选器
+    """
     template = 'cool/admin/widget_filter.html'
     auto_commit = False
     widget = None
@@ -117,7 +123,9 @@ class WidgetFilterMixin:
 
 
 class RangeFilterMixin(WidgetFilterMixin):
-
+    """
+    范围筛选器
+    """
     widget_attrs = {'style': 'width:100%'}
 
     def get_param1_name(self):
@@ -148,20 +156,31 @@ class RangeFilterMixin(WidgetFilterMixin):
 
 
 class DateRangeFieldFilter(RangeFilterMixin, admin.FieldListFilter):
+    """
+    日期筛选器（date字段）
+    """
     widget = DateRangeFilterWidget
 
 
 class DateTimeRangeFieldFilter(DateRangeFieldFilter):
-
+    """
+    日期筛选器（datetime字段）
+    """
     def get_param2_name(self):
         return '%s__date__lte' % self.field_path
 
 
 class NumberRangeFieldFilter(RangeFilterMixin, admin.FieldListFilter):
+    """
+    数字筛选器
+    """
     widget = NumberRangeFilterWidget
 
 
 class AutocompleteFieldFilter(WidgetFilterMixin, admin.RelatedFieldListFilter):
+    """
+    外键制动提示筛选器
+    """
     # def field_choices(self, field, request, model_admin):
     #     return ()
     widget_attrs = {'style': 'width: 100%'}
@@ -188,6 +207,9 @@ class AutocompleteFieldFilter(WidgetFilterMixin, admin.RelatedFieldListFilter):
 
 
 class SearchFilter(WidgetFilterMixin, admin.FieldListFilter):
+    """
+    精确匹配搜索筛选器
+    """
     widget = widgets.AdminTextInputWidget
     widget_attrs = {'style': 'width: 100%;box-sizing: border-box;'}
 
@@ -196,25 +218,40 @@ class SearchFilter(WidgetFilterMixin, admin.FieldListFilter):
 
 
 class ISearchFilter(SearchFilter):
+    """
+    精确匹配忽略大小写搜索筛选器
+    """
     def get_param_name(self):
         return '%s__iexact' % self.field_path
 
 
 class StartswithFilter(SearchFilter):
+    """
+    前缀筛选器
+    """
     def get_param_name(self):
         return '%s__startswith' % self.field_path
 
 
 class IStartswithFilter(SearchFilter):
+    """
+    忽略大小写前缀筛选器
+    """
     def get_param_name(self):
         return '%s__istartswith' % self.field_path
 
 
 class ContainsFilter(SearchFilter):
+    """
+    模糊匹配筛选器
+    """
     def get_param_name(self):
         return '%s__contains' % self.field_path
 
 
 class IContainsFilter(SearchFilter):
+    """
+    忽略大小写模糊匹配筛选器
+    """
     def get_param_name(self):
         return '%s__icontains' % self.field_path
