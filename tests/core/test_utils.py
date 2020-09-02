@@ -69,9 +69,6 @@ class ConstructSearchTests(TestCase):
     def test_short_iexact(self):
         self.assertEqual(utils.construct_search(models.User.objects, '=username'), "username__iexact")
 
-    def test_short_search(self):
-        self.assertEqual(utils.construct_search(models.User.objects, '@username'), "username__search")
-
     def test_short_icontains(self):
         self.assertEqual(utils.construct_search(models.User.objects, 'username'), "username__icontains")
 
