@@ -4,6 +4,7 @@ from __future__ import absolute_import, unicode_literals
 from django import forms
 from django.forms.utils import ErrorDict
 from rest_framework.exceptions import ValidationError
+from rest_framework.request import is_form_media_type
 
 
 class TextErrorDict(ErrorDict):
@@ -21,7 +22,12 @@ class Param:
         """
         self._opts = view._meta
         self._request = request
-        self._bounded_form = view.param_form(data=request_data, files=files)
+        is_form = True
+        if request.method == 'POST':
+            meta = request.META
+            content_type = meta.get('CONTENT_TYPE', meta.get('HTTP_CONTENT_TYPE', ''))
+            is_form = is_form_media_type(content_type)
+        self._bounded_form = view.param_form(data=request_data, files=files, is_form=is_form)
         self._dependency = self._opts.param_dependency
         if self._opts.param_managed:
             errors = self._bounded_form.errors

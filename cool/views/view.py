@@ -32,7 +32,7 @@ logger = logging.getLogger('cool.views')
 
 
 class ParamSerializer(serializers.Serializer):
-    def __init__(self, instance=None, data=empty, files=None, **kwargs):
+    def __init__(self, instance=None, data=empty, files=None, is_form=True, **kwargs):
         d = MultiValueDict()
         if data is not empty:
             d.update(data)
@@ -47,6 +47,8 @@ class ParamSerializer(serializers.Serializer):
                 d.update(request.FILES)
             if view is not None and hasattr(view, 'kwargs'):
                 d.update(view.kwargs)
+        if not is_form:
+            d = d.dict()
         super().__init__(instance, d, **kwargs)
         self.is_valid()
 
@@ -210,6 +212,8 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
         data = MultiValueDict()
         data.update(request.GET)
         data.update(request.POST)
+        if hasattr(request, 'data'):
+            data.update(request.data)
         data.update(kwargs)
         request.params = Param(self, request, data, request.FILES)
 

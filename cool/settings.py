@@ -30,6 +30,11 @@ DEFAULTS = {
 
     'API_RESPONSE_DICT_FUNCTION': 'cool.views.response.get_response_dict',
 
+    # websocket
+    'WS_API_PATH_NAME': 'path',
+    'WS_API_REQ_ID_NAME': 'reqid',
+    'WS_API_DATA_NAME': 'data',
+
 }
 
 
