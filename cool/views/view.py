@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 import json
 import logging
+import time
 from collections import OrderedDict
 
 from django.conf import settings
@@ -255,12 +256,6 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
                 data['errors'] = exc_data
         return data
 
-    def get_uncaught_exception_response(self, exc, context):
-        if settings.DEBUG:
-            return None
-        logger.error("uncaught_exception", exc_info=exc, extra={'request': self.request})
-        return self.get_response(ResponseData(None, ErrorCode.ERROR_SYSTEM, status_code=self.SYSTEM_ERROR_STATUS_CODE))
-
     def get_exception_handler(self):
         super_exception_handler = super().get_exception_handler()
 
@@ -281,3 +276,63 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
         if isinstance(exc, CoolAPIException):
             return self.get_response(exc.response_data)
         return super().handle_exception(exc)
+
+    def initial(self, request, *args, **kwargs):
+        self.log_request(request, *args, **kwargs)
+        return super().initial(request, *args, **kwargs)
+
+    def finalize_response(self, request, response, *args, **kwargs):
+        response = super().finalize_response(request, response, *args, **kwargs)
+        self.log_response(request, response, *args, **kwargs)
+        return response
+
+    def get_uncaught_exception_response(self, exc, context):
+        self.log_exception(self.request, exc, context)
+        if settings.DEBUG:
+            return None
+        return self.get_response(ResponseData(None, ErrorCode.ERROR_SYSTEM, status_code=self.SYSTEM_ERROR_STATUS_CODE))
+
+    def log_request(self, request, *args, **kwargs):
+        import uuid
+        request.start_time = time.time()
+        request.uid = uuid.uuid4().hex
+        logger.info(
+            "request start %s %s %s %s %s %s",
+            request.method,
+            request.get_raw_uri(),
+            request.uid,
+            request.user,
+            request.data,
+            request.META
+        )
+
+    def log_response(self, request, response, *args, **kwargs):
+        data = response.content
+        if response.status_code == 200 and len(data) > 1024:
+            data = data[:1000]
+        logger.info(
+            "request finish %ss %s %s %s %s %s %s %s %s",
+            time.time() - getattr(request, 'start_time', 0),
+            request.method,
+            request.get_raw_uri(),
+            getattr(request, 'uid', ''),
+            response.status_code,
+            data,
+            request.user,
+            request.data,
+            request.META
+        )
+
+    def log_exception(self, request, exc, context):
+        logger.info(
+            "request exception %ss %s %s %s %s %s %s",
+            time.time() - getattr(request, 'start_time', 0),
+            request.method,
+            request.get_raw_uri(),
+            getattr(request, 'uid', ''),
+            request.user,
+            request.data,
+            request.META,
+            exc_info=exc,
+            extra={'request': request}
+        )

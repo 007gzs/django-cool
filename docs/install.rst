@@ -1,8 +1,8 @@
 安装与升级
 ==========
 
-目前 Django Cool 支持的 Python 环境有 3.6, 3.7, 3.8 和 pypy
-支持 Django 版本 2.2, 3.0
+目前 Django Cool 支持的 Python 环境有 3.6, 3.7, 3.8
+支持 Django 版本 2.2, 3.0, 3.1
 
 为了简化安装过程，推荐使用 pip 进行安装
 

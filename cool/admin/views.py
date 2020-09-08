@@ -88,7 +88,7 @@ class CoolAutocompleteJsonView(BaseListView):
 
     @classmethod
     def has_perm(cls, request, app_label, model_name):
-        if cool_settings.AUTOCOMPLETE_CHECK_PERM:
+        if cool_settings.ADMIN_AUTOCOMPLETE_CHECK_PERM:
             return (
                     request.user.has_perm('%s.%s_%s' % (app_label, 'view', model_name)) or
                     request.user.has_perm('%s.%s_%s' % (app_label, 'change', model_name))

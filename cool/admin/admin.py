@@ -263,7 +263,7 @@ class BaseModelAdmin(admin.ModelAdmin):
         return self.__getattribute__(attr)
 
     def formfield_for_dbfield(self, db_field, **kwargs):
-        if isinstance(db_field, models.ImageField):
+        if cool_settings.ADMIN_SHOW_IMAGE_IN_FORM_PAGE and isinstance(db_field, models.ImageField):
             kwargs.pop("request", None)
             kwargs['widget'] = AdminImageWidget
             return db_field.formfield(**kwargs)
@@ -294,7 +294,7 @@ class BaseModelAdmin(admin.ModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         db = kwargs.get('using')
         if ('widget' not in kwargs
-                and cool_settings.FOREIGNKEY_FIELD_USE_AUTOCOMPLETE
+                and cool_settings.ADMIN_FOREIGNKEY_FIELD_USE_AUTOCOMPLETE
                 and hasattr(db_field.remote_field.model, 'get_search_fields')
                 and db_field.name not in [*self.raw_id_fields, *self.radio_fields]):
             kwargs['widget'] = widgets.CoolAutocompleteSelect(db_field.remote_field, self.admin_site, using=db)
@@ -303,7 +303,7 @@ class BaseModelAdmin(admin.ModelAdmin):
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         db = kwargs.get('using')
         if ('widget' not in kwargs
-                and cool_settings.MANYTOMANY_FIELD_USE_AUTOCOMPLETE
+                and cool_settings.ADMIN_MANYTOMANY_FIELD_USE_AUTOCOMPLETE
                 and hasattr(db_field.remote_field.model, 'get_search_fields')
                 and db_field.name not in [*self.raw_id_fields, *self.filter_vertical, *self.filter_horizontal]):
             kwargs['widget'] = widgets.CoolAutocompleteSelectMultiple(db_field.remote_field, self.admin_site, using=db)
@@ -485,7 +485,7 @@ class BaseModelAdmin(admin.ModelAdmin):
         tails = []
 
         def _get_field(field_name):
-            if not field_name or not isinstance(field_name, str):
+            if not field_name or not isinstance(field_name, str) or not cool_settings.ADMIN_SHOW_IMAGE_IN_CHANGE_LIST:
                 return field_name
             try:
                 field = self.model._meta.get_field(field_name)

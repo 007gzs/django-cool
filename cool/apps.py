@@ -16,11 +16,11 @@ class CoolConfig(AppConfig):
 
     def ready(self):
         register_checks()
-        if cool_settings.FILTER_USE_SELECT:
+        if cool_settings.ADMIN_FILTER_USE_SELECT:
             ListFilter.template = 'cool/admin/select_filter.html'
-        if cool_settings.RELATED_FIELD_FILTER_USE_AUTOCOMPLETE:
+        if cool_settings.ADMIN_RELATED_FIELD_FILTER_USE_AUTOCOMPLETE:
             FieldListFilter.register(lambda f: f.remote_field, filters.AutocompleteFieldFilter, True)
-        if cool_settings.DATE_FIELD_FILTER_USE_RANGE:
+        if cool_settings.ADMIN_DATE_FIELD_FILTER_USE_RANGE:
             FieldListFilter.register(
                 lambda f: isinstance(f, models.DateTimeField), filters.DateTimeRangeFieldFilter, True
             )
