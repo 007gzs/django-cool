@@ -8,34 +8,29 @@ from io import BytesIO
 from channels.generic.websocket import JsonWebsocketConsumer
 from channels.http import AsgiRequest
 from django.urls import Resolver404, get_resolver
+from django.utils.functional import cached_property
 
 from cool.settings import cool_settings
-
-logger = logging.getLogger('cool.views')
 
 
 class CoolBFFAPIConsumer(JsonWebsocketConsumer):
     """
     api接口支持websocket调用
     """
-    def get_uri(self):
-        uri = ''
-        try:
-            uri = self.scope['path']
-            query_string = self.scope.get("query_string", "")
-            if query_string:
-                uri += '?' + query_string
-        except Exception:
-            pass
-        return uri
+
+    logger = logging.getLogger('cool.views')
+
+    @cached_property
+    def raw_uri(self):
+        return AsgiRequest(self.scope, BytesIO(b'')).get_raw_uri()
 
     def receive(self, *args, **kwargs):
-        logger.info("ws %s receive: %s %s", self.get_uri(), args, kwargs)
+        self.logger.info("websocket receive %s %s %s", self.raw_uri, args, kwargs)
         super().receive(*args, **kwargs)
 
     def send(self, *args, **kwargs):
         super().receive(*args, **kwargs)
-        logger.info("ws %s send: %s %s", self.get_uri(), args, kwargs)
+        self.logger.info("websocket send %s %s %s", self.raw_uri, args, kwargs)
 
     @classmethod
     def check_resolver_match(cls, callback, callback_args, callback_kwargs):
@@ -80,7 +75,7 @@ class CoolBFFAPIConsumer(JsonWebsocketConsumer):
         except Resolver404:
             res[cool_settings.API_WS_RES_STATUS_CODE_NAME] = cool_settings.API_WS_RES_STATUS_CODE_NOT_FOUND
         except Exception as exc:
-            logger.error("uncaught_exception", exc_info=exc, extra={'request': request})
+            self.logger.error("websocket exception %s", self.raw_uri, exc_info=exc, extra={'request': request})
             res[cool_settings.API_WS_RES_STATUS_CODE_NAME] = cool_settings.API_WS_RES_STATUS_CODE_SERVER_ERROR
 
         res[cool_settings.API_WS_RES_SERVER_TIME_NAME] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")

@@ -590,7 +590,7 @@ def site_register(model_or_iterable, admin_class=None, site=None, **options):
     site.register(model_or_iterable, admin_class, **options)
 
 
-def admin_register(admin_class=None, site=None, **options):
+def admin_register(func=None, *, admin_class=None, site=None, **options):
     """
     Register the given model(s) classes and wrapped ModelAdmin class with
     admin site:
@@ -616,4 +616,7 @@ def admin_register(admin_class=None, site=None, **options):
         site_register(model_class, admin_class=admin_class, site=site, **options)
         return model_class
 
-    return _model_admin_wrapper
+    if func is None:
+        return _model_admin_wrapper
+    else:
+        return _model_admin_wrapper(func)

@@ -29,8 +29,6 @@ from cool.views.options import ViewMetaclass, ViewOptions
 from cool.views.param import Param
 from cool.views.response import ResponseData
 
-logger = logging.getLogger('cool.views')
-
 
 class ParamSerializer(serializers.Serializer):
     def __init__(self, instance=None, data=empty, files=None, is_form=True, **kwargs):
@@ -156,6 +154,8 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
     """
     Backend For Frontend APIView
     """
+
+    logger = logging.getLogger('cool.views')
 
     option_class = APIViewOptions
     SYSTEM_ERROR_STATUS_CODE = cool_settings.API_SYSTEM_ERROR_STATUS_CODE
@@ -296,7 +296,7 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
         import uuid
         request.start_time = time.time()
         request.uid = uuid.uuid4().hex
-        logger.info(
+        self.logger.info(
             "request start %s %s %s %s %s %s",
             request.method,
             request.get_raw_uri(),
@@ -310,7 +310,7 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
         data = response.content
         if response.status_code == 200 and len(data) > 1024:
             data = data[:1000]
-        logger.info(
+        self.logger.info(
             "request finish %ss %s %s %s %s %s %s %s %s",
             time.time() - getattr(request, 'start_time', 0),
             request.method,
@@ -324,7 +324,7 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
         )
 
     def log_exception(self, request, exc, context):
-        logger.info(
+        self.logger.info(
             "request exception %ss %s %s %s %s %s %s",
             time.time() - getattr(request, 'start_time', 0),
             request.method,
