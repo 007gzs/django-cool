@@ -11,7 +11,6 @@ from django.urls import Resolver404, get_resolver
 
 from cool.settings import cool_settings
 
-
 logger = logging.getLogger('cool.views')
 
 
