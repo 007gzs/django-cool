@@ -13,11 +13,12 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import sys
-from os.path import abspath, dirname
+from os.path import abspath, dirname, join
+
 import sphinx_rtd_theme
 
-import cool
-
+sys.path.insert(1, dirname(dirname(abspath(__file__))))
+sys.path.append(abspath(join(dirname(__file__), "_ext")))
 
 # -- Project information -----------------------------------------------------
 
@@ -26,10 +27,14 @@ copyright = '2020, 007gzs'
 author = '007gzs'
 
 # The full version, including alpha/beta/rc tags
+version = '1.0'
 
-
-version = cool.__version__
-release = cool.__version__
+try:
+    import cool
+except ImportError:
+    release = version
+else:
+    release = cool.__version__
 
 
 # -- General configuration ---------------------------------------------------
@@ -37,7 +42,9 @@ release = cool.__version__
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+
 extensions = [
+    'djangocooldocs',
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
@@ -47,8 +54,10 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
+    'sphinx.ext.extlinks',
+    "sphinx.ext.autosectionlabel",
 ]
-
+modindex_common_prefix = ["cool."]
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 # The suffix(es) of source filenames.
@@ -67,6 +76,9 @@ master_doc = 'index'
 # Usually you set "language" from the command line for these cases.
 language = 'zh_CN'
 
+# Location for .po/.mo translation files used when language is set
+locale_dirs = ['locale/']
+
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
@@ -79,10 +91,11 @@ pygments_style = 'sphinx'
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+
+html_theme = "sphinx_rtd_theme"
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+# html_static_path = ['_static']

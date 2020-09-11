@@ -10,11 +10,14 @@
 
     pip install django-cool
 
-升级 Django Cool 到新版本::
+升级 Django Cool 到新版本
+
+.. code-block:: bash
 
     pip install -U django-cool
 
-如果需要安装 GitHub 上的最新代码::
+如果需要安装 GitHub 上的最新代码
+
+.. code-block:: bash
 
     pip install https://github.com/007gzs/django-cool/archive/master.zip
-
