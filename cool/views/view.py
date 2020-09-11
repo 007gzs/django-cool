@@ -160,7 +160,7 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
     option_class = APIViewOptions
     SYSTEM_ERROR_STATUS_CODE = cool_settings.API_SYSTEM_ERROR_STATUS_CODE
     PARAM_ERROR_STATUS_CODE = cool_settings.API_PARAM_ERROR_STATUS_CODE
-    SUCCESS_WITH_CODE = cool_settings.API_SUCCESS_WITH_CODE
+    SUCCESS_WITH_CODE_MSG = cool_settings.API_SUCCESS_WITH_CODE_MSG
     SHOW_PARAM_ERROR_INFO = cool_settings.API_SHOW_PARAM_ERROR_INFO
     description_template_name = 'cool/views/api_description.html'
 
@@ -184,7 +184,9 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
     @classmethod
     def get_view_info(cls):
         request_info = cls.request_info_data()
-        response_info = ResponseData(cls.response_info_data()).get_response_data()
+        response_info = ResponseData(
+            cls.response_info_data(), success_with_code_msg=cls.SUCCESS_WITH_CODE_MSG
+        ).get_response_data()
         return {
             'request_info': request_info,
             'response_info': response_info,
@@ -224,7 +226,7 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
         if isinstance(context, (Model, QuerySet)) and issubclass(self.response_info_serializer_class, ModelSerializer):
             context = self.response_info_serializer_class(context, many=self.response_many, request=self.request).data
         if not isinstance(context, ResponseData):
-            context = ResponseData(context)
+            context = ResponseData(context, success_with_code_msg=self.SUCCESS_WITH_CODE_MSG)
         return context.get_response()
 
     def check_api_permissions(self, request, *args, **kwargs):

@@ -22,7 +22,7 @@ class ResponseData:
     返回数据包装
     """
     def __init__(self, data, code=ErrorCode.SUCCESS, message=None, status_code=200,
-                 success_with_code_msg=cool_settings.API_CODE_MSG_IN_SUCCESS_RESPONSE):
+                 success_with_code_msg=cool_settings.API_SUCCESS_WITH_CODE_MSG):
         self.code = code
         self.message = message
         self.data = data
