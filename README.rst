@@ -7,7 +7,7 @@ Django Cool
 
 Django 快速使用框架
 
-`【阅读文档】 <http://docs.django.cool>`_。
+`【阅读文档】 <https://docs.django.cool>`_。
 
 
 安装与升级
