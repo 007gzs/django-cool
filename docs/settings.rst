@@ -195,14 +195,15 @@ API返回内容中数据键名称
 
 .. code-block:: python
 
-    if not success_with_code_msg and code == ErrorCode.SUCCESS:
-        return data
-    else:
-        return {
-            cool_settings.API_DEFAULT_CODE_KEY: code,
-            cool_settings.API_DEFAULT_MESSAGE_KEY: message,
-            cool_settings.API_DEFAULT_DATA_KEY: data,
-        }
+    def get_response_dict(code, message, data, success_with_code_msg):
+        if not success_with_code_msg and code == ErrorCode.SUCCESS:
+            return data
+        else:
+            return {
+                cool_settings.API_DEFAULT_CODE_KEY: code,
+                cool_settings.API_DEFAULT_MESSAGE_KEY: message,
+                cool_settings.API_DEFAULT_DATA_KEY: data,
+            }
 
 .. setting:: API_WS_REQ_ID_NAME
 

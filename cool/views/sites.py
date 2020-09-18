@@ -7,7 +7,7 @@ from django.contrib.admin.sites import AlreadyRegistered
 
 class ViewSite:
     """
-        Site management for view classes
+        APIView class 管理类
     """
     def __init__(self, name=None, app_name=None):
         self._registry = OrderedDict()

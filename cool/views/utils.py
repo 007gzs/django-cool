@@ -210,6 +210,11 @@ def get_view_list(urlpattern=None, head='/', base_view=CoolBFFAPIView):
 def get_api_info(base_view=CoolBFFAPIView, exclude_params=(), exclude_base_view_params=True, exclude_views=()):
     """
     获取api接口信息
+
+    :param base_view: 接口视图基类
+    :param exclude_params: 排除参数
+    :param exclude_base_view_params: 是否排除基类中参数
+    :param exclude_views:  排除接口视图
     """
     assert issubclass(base_view, CoolBFFAPIView)
     exclude_params = set(exclude_params)
@@ -270,23 +275,43 @@ def get_api_doc(
 ):
     """
     生成api文档
+
+    :param request: 请求request
+    :param template_name: 接口模板
+    :param base_view: 接口视图基类
+    :param exclude_params: 排除参数
+    :param exclude_base_view_params: 是否排除基类中参数
+    :param exclude_views:  排除接口视图
     """
     api_info = get_api_info(base_view, exclude_params, exclude_base_view_params, exclude_views)
     api_info['server'] = request.build_absolute_uri("/")[:-1] if request is not None else '/'
     return render_to_string(template_name, api_info, request)
 
 
-def get_api_doc_html(request, *args, **kwargs):
+def get_api_doc_html(
+    request,
+    *args,
+    md_template_name='cool/views/api_doc.md',
+    base_view=CoolBFFAPIView,
+    exclude_params=(),
+    exclude_base_view_params=True,
+    exclude_views=(),
+    title=_('Api Document'),
+    toc_left=True,
+    **kwargs
+):
     """
     生成api文档（markdown转html，依赖markdown）
+
+    :param request: 请求request
+    :param md_template_name: 接口模板
+    :param base_view: 接口视图基类
+    :param exclude_params: 排除参数
+    :param exclude_base_view_params: 是否排除基类中参数
+    :param exclude_views:  排除接口视图
+    :param title: 文档标题
+    :param toc_left: 宽浏览器中目录显示在左侧
     """
-    md_template_name = kwargs.get('md_template_name', 'cool/views/api_doc.md')
-    base_view = kwargs.get('base_view', CoolBFFAPIView)
-    exclude_params = kwargs.get('exclude_params', ())
-    exclude_base_view_params = kwargs.get('exclude_base_view_params', True)
-    exclude_views = kwargs.get('exclude_views', ())
-    title = kwargs.get('title', _('Api Document'))
-    toc_left = kwargs.get('toc_left', True)
     md = get_api_doc(
         request=request,
         template_name=md_template_name,

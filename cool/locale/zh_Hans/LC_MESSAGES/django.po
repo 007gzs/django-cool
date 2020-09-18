@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-cool\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-08 17:24+0800\n"
+"POT-Creation-Date: 2020-09-17 08:44+0800\n"
 "PO-Revision-Date: 2020-04-03 10:34+0800\n"
 "Last-Translator: 007gzs <007gzs@gmail.com>\n"
 "Language-Team: 007gzs <007gzs@gmail.com>\n"
@@ -15,20 +15,24 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: .\admin\admin.py:191
+msgid "Page data has been updated, please modify and save again"
+msgstr "页面数据已经更新，请修改后重新保存"
+
 #: .\admin\admin.py:225
 msgid "[None]"
 msgstr "[空]"
 
-#: .\admin\admin.py:561
+#: .\admin\admin.py:562
 msgid "Related items"
 msgstr "相关项"
 
-#: .\admin\filters.py:177
+#: .\admin\filters.py:205
 #, python-format
 msgid "Please select %(title)s"
 msgstr "请选择%(title)s"
 
-#: .\apps.py:17
+#: .\apps.py:15
 msgid "Django Cool"
 msgstr ""
 
@@ -77,7 +81,7 @@ msgstr "扩展信息"
 msgid "Response Info :"
 msgstr "返回格式："
 
-#: .\templates\cool\views\api_doc.md:3 .\views\utils.py:162
+#: .\templates\cool\views\api_doc.md:3 .\views\utils.py:288
 msgid "Api Document"
 msgstr "接口文档"
 
@@ -133,31 +137,45 @@ msgstr "格式错误"
 msgid "Permission Error"
 msgstr "权限错误"
 
-#: .\views\utils.py:26
+#: .\views\fields.py:62
+#, python-brace-format
+msgid "Expected a list of items but got type \"{input_type}\"."
+msgstr "期望为一个的列表，得到的类型是“{input_type}”。"
+
+#: .\views\fields.py:63
+#, python-brace-format
+msgid "Expected a dictionary of items but got type \"{input_type}\"."
+msgstr "期望为一个的字典，得到的类型是“{input_type}”。"
+
+#: .\views\fields.py:64
+msgid "This list may not be empty."
+msgstr "该列表不能为空。"
+
+#: .\views\utils.py:92
 msgid "Yes"
 msgstr "是"
 
-#: .\views\utils.py:26
+#: .\views\utils.py:92
 msgid "No"
 msgstr "否"
 
-#: .\views\view.py:106 .\views\view.py:119
+#: .\views\view.py:115 .\views\view.py:135
 msgid "Page number"
 msgstr "页码"
 
-#: .\views\view.py:108
+#: .\views\view.py:117
 #, python-format
 msgid "Start with %(start)s"
 msgstr "从 %(start)s 开始"
 
-#: .\views\view.py:111 .\views\view.py:117
+#: .\views\view.py:122 .\views\view.py:133
 msgid "Page size"
 msgstr "每页条数"
 
-#: .\views\view.py:120
+#: .\views\view.py:136
 msgid "Total page"
 msgstr "总页数"
 
-#: .\views\view.py:121
+#: .\views\view.py:137
 msgid "Total data"
 msgstr "数据总条数"

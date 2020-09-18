@@ -140,7 +140,7 @@ def get_related_model_fields(model, rel, is_foreign_key):
 
 class FormSetMixin:
     """
-    Add validation to ensure POST data is up to date
+    添加验证以确保数据是最新的
     """
     def _existing_object(self, pk):
         if not hasattr(self, '_object_dict'):
@@ -188,7 +188,7 @@ class FormSetMixin:
                 queryset=self.queryset,
             )
             self.forms = new_formset.forms
-            raise ValidationError('页面数据已经更新，请修改后重新保存')
+            raise ValidationError(_('Page data has been updated, please modify and save again'))
 
 
 class StrictModelFormSet(FormSetMixin, BaseModelFormSet):
@@ -468,7 +468,7 @@ class BaseModelAdmin(admin.ModelAdmin):
 
     def get_list_display(self, request, in_change_view=True):
         """
-        get all fields except PK and Relations if extend_normal_fields is True
+        get all fields except Relations if extend_normal_fields is True
         """
 
         list_display = list(super().get_list_display(request))
@@ -583,6 +583,9 @@ def check_perms(*perms):
 
 
 def site_register(model_or_iterable, admin_class=None, site=None, **options):
+    """
+    将model通过admin_class注册到后台管理中，admin_class不传默认使用BaseModelAdmin
+    """
     if site is None:
         site = admin.site
     if admin_class is None:
@@ -592,14 +595,7 @@ def site_register(model_or_iterable, admin_class=None, site=None, **options):
 
 def admin_register(func=None, *, admin_class=None, site=None, **options):
     """
-    Register the given model(s) classes and wrapped ModelAdmin class with
-    admin site:
-
-    @admin_register()
-    class Author(models.BaseModel):
-        pass
-
-    The `site` kwarg is an admin site to use instead of the default admin site.
+    model装饰器，使用后将model通过admin_class注册到后台管理中
     """
 
     def _model_admin_wrapper(model_class):

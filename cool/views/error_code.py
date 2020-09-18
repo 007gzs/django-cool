@@ -16,4 +16,5 @@ DEFAULT_ERROR_CODES = (
     ('ERROR_PERMISSION', (-13, _('Permission Error'))),
 )
 
+
 ErrorCode = Constants('ErrorCode', DEFAULT_ERROR_CODES + tuple(cool_settings.API_ERROR_CODES))

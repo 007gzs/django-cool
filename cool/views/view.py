@@ -101,6 +101,9 @@ class APIViewOptions(ViewOptions):
 
 
 class PageMixin:
+    """
+    分页返回数据Mixin
+    """
     PAGE_SIZE_MAX = 200
     DEFAULT_PAGE_SIZE = 100
 

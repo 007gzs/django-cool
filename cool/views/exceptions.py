@@ -17,5 +17,8 @@ class CoolAPIException(Exception):
 
 
 class CoolPermissionAPIException(CoolAPIException):
+    """
+    权限错误
+    """
     def __init__(self, *, code=ErrorCode.ERROR_PERMISSION, status_code=403, **kwargs):
         super().__init__(code=code, status_code=status_code, **kwargs)
