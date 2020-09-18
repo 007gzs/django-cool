@@ -219,6 +219,7 @@ class BaseModelAdmin(admin.ModelAdmin):
 
     # remove "__str__"
     list_display = []
+    list_display_links = ['id', ]
 
     # Extend options to manage site
     # extend field exclude RelatedField and PrimaryKey fields into list_display
@@ -522,6 +523,12 @@ class BaseModelAdmin(admin.ModelAdmin):
         if hasattr(request, '_access_rels'):
             field_names.append('get_all_relations')
         return field_names
+
+    def get_list_display_links(self, request, list_display):
+        list_display_links = super().get_list_display_links(request, list_display)
+        if list_display and not set(list_display_links) & set(list_display):
+            return list(list_display)[:1]
+        return list_display_links
 
     def get_normal_fields(self):
         fields = []
