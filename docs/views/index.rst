@@ -16,6 +16,14 @@ view 相关接口
 
 .. autofunction:: get_api_doc
 
+.. autofunction:: get_api_doc_html
+
+.. code-block:: python
+
+    urlpatterns = [
+        path('api_doc.html', get_api_doc_html)
+    ]
+
 .. autofunction:: get_api_info
 
 返回格式：

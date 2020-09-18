@@ -98,6 +98,9 @@ class ModelCacheMixin:
 
     @classmethod
     def get_obj_by_pk_from_cache(cls, pk):
+        """
+        通过有主键获取对象（优先走缓存）
+        """
         if cls._MODEL_WITH_CACHE:
             return model_cache.get(cls, pk, ttl=cls._MODEL_CACHE_TTL)
         else:
@@ -105,11 +108,17 @@ class ModelCacheMixin:
 
     @classmethod
     def flush_cache_by_pk(cls, pk):
+        """
+        清空主键缓存
+        """
         if cls._MODEL_WITH_CACHE and pk is not None:
             model_cache.delete(cls, pk)
 
     @classmethod
     def get_obj_by_unique_key_from_cache(cls, **kwargs):
+        """
+        通过有唯一索引的字段获取对象（优先走缓存）
+        """
         assert len(kwargs) == 1
         key, value = list(kwargs.items())[0]
         if cls._MODEL_WITH_CACHE:
@@ -119,12 +128,18 @@ class ModelCacheMixin:
 
     @classmethod
     def flush_cache_by_unique_key(cls, **kwargs):
+        """
+        清空唯一索引缓存
+        """
         assert len(kwargs) == 1
         key, value = list(kwargs.items())[0]
         if cls._MODEL_WITH_CACHE and value is not None:
             model_cache.delete(cls, value, key)
 
     def flush_cache(self):
+        """
+        清空对象所有缓存缓存
+        """
         self.flush_cache_by_pk(self.pk)
         for field in self._meta.fields:
             if field.unique:
