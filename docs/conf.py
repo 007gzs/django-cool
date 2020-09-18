@@ -23,7 +23,7 @@ import sphinx_rtd_theme
 sys.path.insert(1, dirname(dirname(abspath(__file__))))
 sys.path.append(abspath(join(dirname(__file__), "_ext")))
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'docs.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
 django.setup()
 # -- Project information -----------------------------------------------------
 
