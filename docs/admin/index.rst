@@ -1,4 +1,4 @@
-admin 相关接口
+后台管理扩展接口
 =======================================
 
 .. module:: cool.admin
@@ -43,7 +43,7 @@ admin 相关接口
 
     .. attribute:: deletable = True
 
-    允许阐述
+    允许删除
 
     .. attribute:: change_view_readonly_fields
 

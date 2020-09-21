@@ -9,17 +9,17 @@ const ERROR_CODE = {
 {% for api in apis %}
 
 // {{api.name}}
-const {{ api.ul_name }} = function({% if api.info and api.info.request_info %}{
-  {% for field_name, field in api.info.request_info.items %}{{ field_name }}{% if not forloop.last %},{% endif %} // {{ field.label }}{% if not forloop.last %}
-  {% endif %}{% endfor %}
+const {{ api.ul_name }} = function({% if api.self_params %}{
+  {% for field_name, field in api.info.request_info.items %}{% if field_name not in base_params %}{{ field_name }}{% if not forloop.last %},{% endif %} // {{ field.label }}{% if not forloop.last %}
+  {% endif %}{% endif %}{% endfor %}
 } = {}{% endif %}) {
   return request({
     server: server,
     path: '{{ api.url }}',
     method: '{{ api.suggest_method }}',
-    data: {{% if api.info and api.info.request_info %}
-      {% for field_name, field in api.info.request_info.items %}{{ field_name }}: {{ field_name}}{% if not forloop.last %},
-      {% endif %}{% endfor %}
+    data: {{% if api.self_params %}
+      {% for field_name, field in api.info.request_info.items %}{% if field_name not in base_params %}{{ field_name }}: {{ field_name}}{% if not forloop.last %},
+      {% endif %}{% endif %}{% endfor %}
     {% endif %}},
     header: { 'Content-Type': '{{api.content_type}}' }
   })

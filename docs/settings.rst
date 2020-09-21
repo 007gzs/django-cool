@@ -7,7 +7,7 @@
     :depth: 1
 
 
-Django Cool 在 Django 中的配置都在`DJANG_COOL`中。如：在`settings.py`中设置：
+Django Cool 在 Django 中的配置都在 `DJANG_COOL` 中。如：在 `settings.py` 中设置：
 
 .. code-block:: python
 
@@ -22,6 +22,7 @@ Django Cool 在 Django 中的配置都在`DJANG_COOL`中。如：在`settings.py
 
 Admin
 ====================
+
 :mod:`cool.admin` 配置
 
 .. setting:: ADMIN_AUTOCOMPLETE_CHECK_PERM

@@ -1,8 +1,10 @@
-view 相关接口
+api接口扩展接口
 =======================================
 .. module:: cool.views
 
-.. autoclass:: ErrorCode()
+.. class:: ErrorCode()
+
+    错误码管理，通过 :setting:`API_ERROR_CODES` 中配置
 
 .. autoclass:: CoolAPIException()
 
@@ -74,6 +76,23 @@ view 相关接口
     .. attribute:: response_many
 
     返回结果是否为列表
+
+    .. automethod:: get_context
+
+    参数验证通过后会请求该接口，`request.params` 为解析后参数内容
+
+.. class:: cool.views.options.ViewOptions()
+
+    :class:`~cool.views.CoolBFFAPIView` 的 `Meta` 接口
+
+    .. attribute:: path
+
+    URL 地址，不填会以类名自动生成
+
+    .. attribute:: param_fields
+
+    + 接口参数列表，自动继承付类参数列表，接口文档会自动通过该参数生成
+    + 请求之前会先判断所有参数约束，不符合规范的会直接报错，所有验证通过后会调用 :func:`~cool.views.CoolBFFAPIView.get_context()` 接口。
 
 .. autoclass:: PageMixin()
 

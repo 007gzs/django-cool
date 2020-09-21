@@ -207,21 +207,23 @@ def get_view_list(urlpattern=None, head='/', base_view=CoolBFFAPIView):
     return ret
 
 
-def get_api_info(base_view=CoolBFFAPIView, exclude_params=(), exclude_base_view_params=True, exclude_views=()):
+def get_api_info(base_view=CoolBFFAPIView, base_params=(), add_base_view_params=True, exclude_views=()):
     """
     获取api接口信息
 
     :param base_view: 接口视图基类
-    :param exclude_params: 排除参数
-    :param exclude_base_view_params: 是否排除基类中参数
+    :param base_params: 公共参数
+    :param add_base_view_params: 基类中参数增加到公共参数
     :param exclude_views:  排除接口视图
     """
     assert issubclass(base_view, CoolBFFAPIView)
-    exclude_params = set(exclude_params)
-    if exclude_base_view_params:
+    base_params = list(base_params)
+    if add_base_view_params:
         opt = getattr(base_view, '_meta', None)
         param_fields = getattr(opt, 'param_fields', dict())
-        exclude_params.update(param_fields.keys())
+        for param_field in param_fields.keys():
+            if param_field not in base_params:
+                base_params.append(param_field)
 
     error_codes = ErrorCode.get_desc_dict()
 
@@ -237,8 +239,6 @@ def get_api_info(base_view=CoolBFFAPIView, exclude_params=(), exclude_base_view_
             if isinstance(field, fields.FileField):
                 has_file = True
                 post = True
-            if param in exclude_params:
-                continue
             if param in ('pass', 'password'):
                 post = True
             if isinstance(field, fields.CharField):
@@ -249,17 +249,24 @@ def get_api_info(base_view=CoolBFFAPIView, exclude_params=(), exclude_base_view_
 
         if no_len_count > 3 or length > 200:
             post = True
-
+        info = v['view_class'].get_view_info()
+        base_params_num = 0
+        for base_param in base_params:
+            if base_param in info['request_info']:
+                info['request_info'].move_to_end(base_param, False)
+                base_params_num += 1
+        params = list(info['request_info'].keys())[base_params_num:]
         apis.append({
             'name': v['name'],
             'url': v['url'],
             'ul_name': v['url'].replace('/', '_').strip('_'),
-            'info': v['view_class'].get_view_info(),
+            'info': info,
+            'self_params': params,
             'suggest_method': 'POST' if post else 'GET',
             'content_type': 'multipart/form-data' if has_file else 'application/x-www-form-urlencoded',
         })
     return {
-        'exclude_params': list(exclude_params),
+        'base_params': base_params,
         'error_codes': error_codes,
         'apis': apis
     }

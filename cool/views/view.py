@@ -312,7 +312,13 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
         )
 
     def log_response(self, request, response, *args, **kwargs):
-        data = response.content
+        from rest_framework.response import Response
+        if isinstance(response, Response):
+            data = json.dumps(response.data, ensure_ascii=False)
+        elif isinstance(response, HttpResponse):
+            data = response.content
+        else:
+            data = ''
         if response.status_code == 200 and len(data) > 1024:
             data = data[:1000]
         self.logger.info(
