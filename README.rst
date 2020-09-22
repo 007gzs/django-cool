@@ -5,7 +5,7 @@ Django Cool
 .. image:: https://img.shields.io/pypi/v/django-cool.svg
        :target: https://pypi.org/project/django-cool
 
-Django 快速使用框架
+Django 框架快速使用扩展库
 
 `【阅读文档】 <https://docs.django.cool>`_。
 
