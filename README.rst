@@ -9,6 +9,10 @@ Django 框架快速使用扩展库
 
 `【阅读文档】 <https://docs.django.cool>`_。
 
+本项目在以下代码托管网站同步更新:
+
++ 码云：https://gitee.com/007gzs/django-cool
++ GitHub：https://github.com/007gzs/django-cool
 
 安装与升级
 ==========
