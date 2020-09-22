@@ -22,7 +22,9 @@ class CoolBFFAPIConsumer(JsonWebsocketConsumer):
 
     @cached_property
     def raw_uri(self):
-        return AsgiRequest(self.scope, BytesIO(b'')).get_raw_uri()
+        scope = copy.deepcopy(self.scope)
+        scope["method"] = "GET"
+        return AsgiRequest(scope, BytesIO(b'')).get_raw_uri()
 
     def receive(self, *args, **kwargs):
         self.logger.info("websocket receive %s %s %s", self.raw_uri, args, kwargs)
