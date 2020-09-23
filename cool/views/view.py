@@ -313,8 +313,12 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
 
     def log_response(self, request, response, *args, **kwargs):
         from rest_framework.response import Response
+        from rest_framework.utils import encoders
         if isinstance(response, Response):
-            data = json.dumps(response.data, ensure_ascii=False)
+            try:
+                data = json.dumps(response.data, ensure_ascii=False, cls=encoders.JSONEncoder)
+            except Exception:
+                data = str(response.data)
         elif isinstance(response, HttpResponse):
             data = response.content
         else:
