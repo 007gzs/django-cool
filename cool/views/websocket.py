@@ -13,6 +13,17 @@ from django.utils.functional import cached_property
 from cool.settings import cool_settings
 
 
+class CoolWsRequest(AsgiRequest):
+
+    _dont_enforce_csrf_checks = True
+
+    def __getattr__(self, item):
+        if item in self.scope:
+            return self.scope[item]
+        else:
+            return self.__getattribute__(item)
+
+
 class CoolBFFAPIConsumer(JsonWebsocketConsumer):
     """
     api接口支持websocket调用
@@ -22,9 +33,9 @@ class CoolBFFAPIConsumer(JsonWebsocketConsumer):
 
     @cached_property
     def raw_uri(self):
-        scope = copy.deepcopy(self.scope)
+        scope = copy.copy(self.scope)
         scope["method"] = "GET"
-        return AsgiRequest(scope, BytesIO(b'')).get_raw_uri()
+        return CoolWsRequest(scope, BytesIO(b'')).get_raw_uri()
 
     def receive(self, *args, **kwargs):
         self.logger.info("websocket receive %s %s %s", self.raw_uri, args, kwargs)
@@ -56,12 +67,17 @@ class CoolBFFAPIConsumer(JsonWebsocketConsumer):
             data = json.dumps(data).encode('utf-8')
         except Exception:
             data = b''
+        scope = copy.copy(scope)
         scope["method"] = "POST"
         scope["path"] = path
         if data:
+            if 'headers' in scope:
+                scope['headers'] = copy.deepcopy(scope['headers'])
+            else:
+                scope['headers'] = []
             scope['headers'].append((b'content-type', b"application/json"))
             scope['headers'].append((b'content-length', b"%d" % len(data)))
-        return AsgiRequest(scope, BytesIO(data))
+        return CoolWsRequest(scope, BytesIO(data))
 
     def receive_json(self, content, **kwargs):
         req_id = content.get(cool_settings.API_WS_REQ_ID_NAME, None)
@@ -70,7 +86,7 @@ class CoolBFFAPIConsumer(JsonWebsocketConsumer):
         res = dict()
         request = None
         try:
-            request = self.create_request(copy.deepcopy(self.scope), req_path, req_data)
+            request = self.create_request(self.scope, req_path, req_data)
             response = self.get_response(request)
             res[cool_settings.API_WS_RES_DATA_NAME] = response.data
             res[cool_settings.API_WS_RES_STATUS_CODE_NAME] = response.status_code
@@ -83,3 +99,8 @@ class CoolBFFAPIConsumer(JsonWebsocketConsumer):
         res[cool_settings.API_WS_RES_SERVER_TIME_NAME] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         res[cool_settings.API_WS_REQ_ID_NAME] = req_id
         self.send_json(res)
+
+    @classmethod
+    def encode_json(cls, content):
+        from rest_framework.utils import encoders
+        return json.dumps(content, cls=encoders.JSONEncoder)
