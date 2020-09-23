@@ -165,6 +165,10 @@ def get_serializer_info(serializer_obj, force_many=False):
             ret[field_name] = [str(field.child_relation.label)]
         else:
             ret[field_name] = str(field.label)
+            if isinstance(field, fields.ChoiceField):
+                choices = ",".join(["%s:%s" % (k, v) for k, v in field.choices.items()])
+                if choices:
+                    ret[field_name] += " (%s)" % choices
     return [ret] if force_many else ret
 
 
