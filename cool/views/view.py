@@ -218,7 +218,7 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
         data = MultiValueDict()
         data.update(request.GET)
         data.update(request.POST)
-        if hasattr(request, 'data'):
+        if hasattr(request, 'data') and isinstance(request.data, dict):
             data.update(request.data)
         data.update(kwargs)
         request.params = Param(self, request, data, request.FILES)
