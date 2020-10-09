@@ -67,14 +67,15 @@ def get_rest_field_from_model_field(model, model_field, **kwargs):
     if not field_kwargs.get('required') and 'default' not in field_kwargs:
         field_kwargs['default'] = None if field_info.default is NOT_PROVIDED else field_info.default
 
+    if field_class is fields.BooleanField and field_kwargs['default'] is None:
+        field_class = fields.NullBooleanField
+        field_kwargs.pop('allow_null', None)
+
     if not ('default' in kwargs or 'required' in kwargs or field_kwargs.get('required') or field_kwargs['default']):
         if (not field_kwargs.get('allow_null', False) and field_kwargs['default'] is None) \
                 or (not field_kwargs.get('allow_blank', False) and not field_kwargs['default']):
             field_kwargs['required'] = True
             field_kwargs.pop('default')
-    if field_class is fields.BooleanField and field_kwargs.get('default') is None:
-        field_class = fields.NullBooleanField
-        field_kwargs.pop('allow_null')
     return field_class(**field_kwargs)
 
 
