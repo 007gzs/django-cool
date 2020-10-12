@@ -266,4 +266,7 @@ class AbstractUserMixin:
         return True
 
     def get_username(self):
-        return ''
+        try:
+            return super().get_username()
+        except Exception:
+            return ''

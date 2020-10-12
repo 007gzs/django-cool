@@ -112,7 +112,13 @@ class WidgetFilterMixin:
         widget_attrs['data-query-string-all'] = "?" + urlencode(params)
         return widget_attrs
 
-    def choices(self, changelist):
+    def has_output(self, *args, **kwargs):
+        return True
+
+    def field_choices(self, *args, **kwargs):
+        return ()
+
+    def choices(self, *args, **kwargs):
         return ()
 
     class Media:
