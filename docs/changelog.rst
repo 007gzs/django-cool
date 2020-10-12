@@ -1,7 +1,7 @@
 Changelog
 ================
 
-Version 1.0.4
+Version 1.0.5
 ------------------
 
 + 增加序列化请求字段 `SerializerField`

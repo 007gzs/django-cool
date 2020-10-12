@@ -11,7 +11,7 @@ from django.db.models import NOT_PROVIDED
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
-from rest_framework import fields, validators
+from rest_framework import fields, validators, serializers
 from rest_framework.fields import empty
 from rest_framework.serializers import ModelSerializer
 from rest_framework.utils import model_meta
@@ -87,6 +87,7 @@ def get_field_info(field):
     if field_type.endswith("Field") and field_type != 'Field':
         field_type = field_type[:-5]
     info = {
+        '__field__': field,
         'label': str(field.label),
         'type': field_type,
         'default': field.default,
@@ -99,7 +100,7 @@ def get_field_info(field):
     field_validators = [field]
     field_validators.extend(getattr(field, 'validators', list()))
     validator_keys = ['max_value', 'min_value', 'max_length', 'min_length', 'max_digits', 'max_decimal_places',
-                      'choices', 'regex', 'allowed_extensions', 'sep', 'child', 'is_list', 'children']
+                      'choices', 'regex', 'allowed_extensions', 'sep', 'child', 'is_list', 'children', 'serializer']
     for validator in field_validators:
         for k in validator_keys:
             v = getattr(validator, k, None)
@@ -123,13 +124,12 @@ def get_field_info(field):
         info['extend_info'].pop('max_value', None)
         info['extend_info'].pop('min_value', None)
 
-    def _format_value(_value):
-        if isinstance(_value, list):
-            return ",".join(map(lambda x: _format_value(x) if isinstance(x, dict) else x, _value))
-        elif isinstance(_value, dict):
-            return ",".join(["%s:%s" % (_k, _format_value(_v)) for _k, _v in _value.items()])
-        elif isinstance(_value, fields.Field):
-            _info = get_field_info(_value)
+    def _format_info(_info):
+        if isinstance(_info, list):
+            return "[%s]" % _format_info(_info[0])
+        if not isinstance(_info, dict):
+            return ""
+        if '__field__' in _info:
             return "(%s %s 默认值:%s,是否必填:%s,%s)" % (
                 _info['label'],
                 _info['type'],
@@ -138,10 +138,39 @@ def get_field_info(field):
                 _info['extend_info_format']
             )
         else:
+            ret = "; ".join(["%s:%s" % (_k, _format_info(_v)) for _k, _v in _info.items()])
+            return "{ %s }" % ret
+
+    def _format_value(_value):
+        if isinstance(_value, list):
+            return ",".join(map(lambda x: _format_value(x) if isinstance(x, dict) else x, _value))
+        elif isinstance(_value, dict):
+            return ",".join(["%s:%s" % (_k, _format_value(_v)) for _k, _v in _value.items()])
+        elif isinstance(_value, type) and issubclass(_value, serializers.Serializer):
+            _info = get_serializer_field_info(_value())
+            return _format_info(_info)
+        elif isinstance(_value, fields.Field):
+            _info = get_field_info(_value)
+            return _format_info(_info)
+        else:
             return _value
 
     info['extend_info_format'] = "; ".join(["%s:%s" % (k, _format_value(v)) for k, v in info['extend_info'].items()])
     return info
+
+
+def get_serializer_field_info(serializer_obj, force_many=False):
+    ret = dict()
+    for field_name, field in serializer_obj.fields.items():
+        if hasattr(field, 'fields'):
+            ret[field_name] = get_serializer_field_info(field)
+        elif hasattr(field, 'child'):
+            ret[field_name] = get_serializer_field_info(field.child, force_many=True)
+        elif hasattr(field, 'child_relation'):
+            ret[field_name] = get_serializer_field_info(field.child_relation, force_many=True)
+        else:
+            ret[field_name] = get_field_info(field)
+    return [ret] if force_many else ret
 
 
 def get_list_info(serializer_obj):
