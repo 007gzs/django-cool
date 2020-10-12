@@ -7,3 +7,5 @@
 
 .. autoclass:: JSONCheckField()
 
+.. autoclass:: SerializerField()
+

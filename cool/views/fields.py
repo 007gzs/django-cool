@@ -7,7 +7,9 @@ from collections import OrderedDict
 from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import CharField, Field, JSONField
+from rest_framework.serializers import BaseSerializer
 
+from . import utils
 from .view import ParamSerializer
 
 
@@ -101,6 +103,71 @@ class JSONCheckField(JSONField):
 
         form_attrs['Meta'] = Meta
         return type(ParamSerializer)(cls.__name__ + 'ParamSerializer',  (ParamSerializer, ), form_attrs)
+
+    def run_children_validation(self, data):
+        if data is None:
+            return data
+        if self.is_list and not isinstance(data, list):
+            self.fail('not_a_list', input_type=type(data).__name__)
+        if not self.is_list and not isinstance(data, dict):
+            self.fail('not_a_dict', input_type=type(data).__name__)
+        result = []
+        errors = OrderedDict()
+        if self.is_list:
+            for idx, item in enumerate(data):
+                try:
+                    result.append(self.clean_dict_data(item))
+                except ValidationError as e:
+                    errors[idx] = e.detail
+        else:
+            try:
+                result = self.clean_dict_data(data)
+            except ValidationError as e:
+                errors = e.detail
+
+        if not errors:
+            return result
+        raise ValidationError([errors])
+
+
+class SerializerField(JSONField):
+    """
+    序列化类型字段，通过json字段解析
+    """
+    default_error_messages = {
+        'not_a_list': _('Expected a list of items but got type "{input_type}".'),
+        'not_a_dict': _('Expected a dictionary of items but got type "{input_type}".'),
+        'empty': _('This list may not be empty.'),
+    }
+
+    def __init__(self, serializer, *args, **kwargs):
+        self.is_list = kwargs.pop('is_list', False)
+        assert issubclass(serializer, BaseSerializer)
+        self.serializer = serializer
+        if 'help_text' not in kwargs:
+            kwargs['help_text'] = json.dumps(self.format_json(), ensure_ascii=False)
+        super().__init__(*args, **kwargs)
+
+    def format_json(self):
+        return utils.get_serializer_info(self.serializer(), self.is_list)
+
+    def to_internal_value(self, data):
+        data = super().to_internal_value(data)
+        return self.run_children_validation(data)
+
+    def clean_dict_data(self, data):
+        bounded_form = self.serializer(data=data)
+        bounded_form.is_valid()
+        errors = bounded_form.errors
+        if errors:
+            exc = ValidationError(errors)
+            raise exc
+        data.update(bounded_form.validated_data)
+        return data
+
+    @classmethod
+    def gen_param_form(cls, serializer):
+        return serializer
 
     def run_children_validation(self, data):
         if data is None:
