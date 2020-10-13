@@ -11,7 +11,7 @@ from django.db.models import NOT_PROVIDED
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
-from rest_framework import fields, validators, serializers
+from rest_framework import fields, serializers, validators
 from rest_framework.fields import empty
 from rest_framework.serializers import ModelSerializer
 from rest_framework.utils import model_meta
