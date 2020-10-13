@@ -169,4 +169,3 @@ class SerializerField(JSONCheckFieldBase):
     @classmethod
     def gen_param_form(cls, obj):
         return obj.serializer
-

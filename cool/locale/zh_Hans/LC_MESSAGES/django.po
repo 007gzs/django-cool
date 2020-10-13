@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-cool\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-17 08:44+0800\n"
+"POT-Creation-Date: 2020-10-13 08:26+0800\n"
 "PO-Revision-Date: 2020-04-03 10:34+0800\n"
 "Last-Translator: 007gzs <007gzs@gmail.com>\n"
 "Language-Team: 007gzs <007gzs@gmail.com>\n"
@@ -19,15 +19,15 @@ msgstr ""
 msgid "Page data has been updated, please modify and save again"
 msgstr "页面数据已经更新，请修改后重新保存"
 
-#: .\admin\admin.py:225
+#: .\admin\admin.py:226
 msgid "[None]"
 msgstr "[空]"
 
-#: .\admin\admin.py:562
+#: .\admin\admin.py:569
 msgid "Related items"
 msgstr "相关项"
 
-#: .\admin\filters.py:205
+#: .\admin\filters.py:211
 #, python-format
 msgid "Please select %(title)s"
 msgstr "请选择%(title)s"
@@ -81,7 +81,7 @@ msgstr "扩展信息"
 msgid "Response Info :"
 msgstr "返回格式："
 
-#: .\templates\cool\views\api_doc.md:3 .\views\utils.py:288
+#: .\templates\cool\views\api_doc.md:3 .\views\utils.py:342
 msgid "Api Document"
 msgstr "接口文档"
 
@@ -137,45 +137,50 @@ msgstr "格式错误"
 msgid "Permission Error"
 msgstr "权限错误"
 
-#: .\views\fields.py:62
+#: .\views\fields.py:61
 #, python-brace-format
 msgid "Expected a list of items but got type \"{input_type}\"."
 msgstr "期望为一个的列表，得到的类型是“{input_type}”。"
 
-#: .\views\fields.py:63
+#: .\views\fields.py:62
 #, python-brace-format
 msgid "Expected a dictionary of items but got type \"{input_type}\"."
 msgstr "期望为一个的字典，得到的类型是“{input_type}”。"
 
-#: .\views\fields.py:64
+#: .\views\fields.py:63
 msgid "This list may not be empty."
 msgstr "该列表不能为空。"
 
-#: .\views\utils.py:92
+#: .\views\utils.py:96
 msgid "Yes"
 msgstr "是"
 
-#: .\views\utils.py:92
+#: .\views\utils.py:96
 msgid "No"
 msgstr "否"
 
-#: .\views\view.py:115 .\views\view.py:135
+#: .\views\utils.py:133
+#, python-format
+msgid "(%s %s default:%s,required:%s,%s)"
+msgstr "(%s %s 默认值:%s,是否必填:%s,%s)"
+
+#: .\views\view.py:118 .\views\view.py:138
 msgid "Page number"
 msgstr "页码"
 
-#: .\views\view.py:117
+#: .\views\view.py:120
 #, python-format
 msgid "Start with %(start)s"
 msgstr "从 %(start)s 开始"
 
-#: .\views\view.py:122 .\views\view.py:133
+#: .\views\view.py:125 .\views\view.py:136
 msgid "Page size"
 msgstr "每页条数"
 
-#: .\views\view.py:136
+#: .\views\view.py:139
 msgid "Total page"
 msgstr "总页数"
 
-#: .\views\view.py:137
+#: .\views\view.py:140
 msgid "Total data"
 msgstr "数据总条数"

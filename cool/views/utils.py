@@ -130,7 +130,7 @@ def get_field_info(field):
         if not isinstance(_info, dict):
             return ""
         if '__field__' in _info:
-            return "(%s %s 默认值:%s,是否必填:%s,%s)" % (
+            return _("(%s %s default:%s,required:%s,%s)") % (
                 _info['label'],
                 _info['type'],
                 _info['default_format'],

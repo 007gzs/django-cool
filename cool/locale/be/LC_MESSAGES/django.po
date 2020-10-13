@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-cool\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-17 08:44+0800\n"
+"POT-Creation-Date: 2020-10-13 08:26+0800\n"
 "PO-Revision-Date: 2020-04-03 10:34+0800\n"
 "Last-Translator: 007gzs <007gzs@gmail.com>\n"
 "Language-Team: 007gzs <007gzs@gmail.com>\n"
@@ -21,15 +21,15 @@ msgstr ""
 msgid "Page data has been updated, please modify and save again"
 msgstr ""
 
-#: .\admin\admin.py:225
+#: .\admin\admin.py:226
 msgid "[None]"
 msgstr ""
 
-#: .\admin\admin.py:562
+#: .\admin\admin.py:569
 msgid "Related items"
 msgstr ""
 
-#: .\admin\filters.py:205
+#: .\admin\filters.py:211
 #, python-format
 msgid "Please select %(title)s"
 msgstr ""
@@ -83,7 +83,7 @@ msgstr ""
 msgid "Response Info :"
 msgstr ""
 
-#: .\templates\cool\views\api_doc.md:3 .\views\utils.py:288
+#: .\templates\cool\views\api_doc.md:3 .\views\utils.py:342
 msgid "Api Document"
 msgstr ""
 
@@ -139,45 +139,50 @@ msgstr ""
 msgid "Permission Error"
 msgstr ""
 
-#: .\views\fields.py:62
+#: .\views\fields.py:61
 #, python-brace-format
 msgid "Expected a list of items but got type \"{input_type}\"."
 msgstr ""
 
-#: .\views\fields.py:63
+#: .\views\fields.py:62
 #, python-brace-format
 msgid "Expected a dictionary of items but got type \"{input_type}\"."
 msgstr ""
 
-#: .\views\fields.py:64
+#: .\views\fields.py:63
 msgid "This list may not be empty."
 msgstr ""
 
-#: .\views\utils.py:92
+#: .\views\utils.py:96
 msgid "Yes"
 msgstr ""
 
-#: .\views\utils.py:92
+#: .\views\utils.py:96
 msgid "No"
 msgstr ""
 
-#: .\views\view.py:115 .\views\view.py:135
+#: .\views\utils.py:133
+#, python-format
+msgid "(%s %s default:%s,required:%s,%s)"
+msgstr ""
+
+#: .\views\view.py:118 .\views\view.py:138
 msgid "Page number"
 msgstr ""
 
-#: .\views\view.py:117
+#: .\views\view.py:120
 #, python-format
 msgid "Start with %(start)s"
 msgstr ""
 
-#: .\views\view.py:122 .\views\view.py:133
+#: .\views\view.py:125 .\views\view.py:136
 msgid "Page size"
 msgstr ""
 
-#: .\views\view.py:136
+#: .\views\view.py:139
 msgid "Total page"
 msgstr ""
 
-#: .\views\view.py:137
+#: .\views\view.py:140
 msgid "Total data"
 msgstr ""
