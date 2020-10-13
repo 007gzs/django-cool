@@ -20,6 +20,9 @@ class BaseSerializer(serializers.ModelSerializer):
         root = self.root
         if root is not None:
             root._context = self._context
+        for field in self._readable_fields:
+            if isinstance(field, BaseSerializer) and not hasattr(field, '_context'):
+                field._context = self._context
 
     def __new__(cls, *args, **kwargs):
         # We override this method in order to auto magically create
