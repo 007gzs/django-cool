@@ -14,6 +14,20 @@ api接口扩展接口
 
 .. autoclass:: BaseSerializer()
 
+.. autoclass:: RecursiveField()
+
+.. code-block:: python
+
+    class TreeSerializer1(self):
+        children = ListField(child=RecursiveField())
+
+    class TreeSerializer2(self):
+        children = RecursiveField(many=True, allow_empty=True)
+
+    class TestSerializer2(self):
+        parent = RecursiveField(allow_null=True)
+
+
 .. autoclass:: ViewSite()
 
 .. autofunction:: get_api_doc

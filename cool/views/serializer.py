@@ -1,4 +1,6 @@
 # encoding: utf-8
+import importlib
+import inspect
 
 from rest_framework import serializers
 from rest_framework.fields import empty
@@ -18,9 +20,6 @@ class BaseSerializer(serializers.ModelSerializer):
         root = self.root
         if root is not None:
             root._context = self._context
-        for field in self._readable_fields:
-            if isinstance(field, BaseSerializer) and not hasattr(field, '_context'):
-                field._context = self._context
 
     def __new__(cls, *args, **kwargs):
         # We override this method in order to auto magically create
@@ -42,3 +41,101 @@ class BaseSerializer(serializers.ModelSerializer):
     @property
     def request(self):
         return self.context.get("request", None)
+
+
+class RecursiveField(serializers.BaseSerializer):
+    """
+    树型结构序列化
+    """
+
+    # This list of attributes determined by the attributes that
+    # `rest_framework.serializers` calls to on a field object
+    PROXIED_ATTRS = (
+        # methods
+        'get_value',
+        'get_initial',
+        'run_validation',
+        'get_attribute',
+        'to_representation',
+
+        # attributes
+        'field_name',
+        'source',
+        'read_only',
+        'default',
+        'source_attrs',
+        'write_only',
+    )
+
+    def __init__(self, to=None, **kwargs):
+        """
+        arguments:
+        to - `None`, the name of another serializer defined in the same module
+             as this serializer, or the fully qualified import path to another
+             serializer. e.g. `ExampleSerializer` or
+             `path.to.module.ExampleSerializer`
+        """
+        self.to = to
+        self.init_kwargs = kwargs
+        self._proxy = None
+
+        # need to call super-constructor to support ModelSerializer
+        super_kwargs = dict(
+            (key, kwargs[key])
+            for key in kwargs
+            if key in inspect.signature(serializers.Field.__init__).parameters.keys()
+        )
+        super().__init__(**super_kwargs)
+
+    def bind(self, field_name, parent):
+        # Extra-lazy binding, because when we are nested in a ListField, the
+        # RecursiveField will be bound before the ListField is bound
+        setattr(self, 'bind_args', (field_name, parent))
+
+    @property
+    def proxy(self):
+        if self._proxy is None:
+            self._proxy = self.gen_proxy()
+        return self._proxy
+
+    def gen_proxy(self):
+        if not self.bind_args:
+            return None
+        field_name, parent = self.bind_args
+
+        if hasattr(parent, 'child') and parent.child is self:
+            # RecursiveField nested inside of a ListField
+            parent_class = parent.parent.__class__
+        else:
+            # RecursiveField directly inside a Serializer
+            parent_class = parent.__class__
+
+        assert issubclass(parent_class, serializers.BaseSerializer)
+
+        if self.to is None:
+            proxy_class = parent_class
+        else:
+            try:
+                module_name, class_name = self.to.rsplit('.', 1)
+            except ValueError:
+                module_name, class_name = parent_class.__module__, self.to
+
+            try:
+                proxy_class = getattr(importlib.import_module(module_name), class_name)
+            except Exception as e:
+                raise ImportError('could not locate serializer %s' % self.to, e)
+
+        # Create a new serializer instance and proxy it
+        proxy = proxy_class(**self.init_kwargs)
+        proxy.bind(field_name, parent)
+        return proxy
+
+    def __getattribute__(self, name):
+        if name in RecursiveField.PROXIED_ATTRS:
+            try:
+                proxy = object.__getattribute__(self, 'proxy')
+                return getattr(proxy, name)
+            except AttributeError:
+                pass
+
+        return object.__getattribute__(self, name)

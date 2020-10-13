@@ -1,7 +1,13 @@
 Changelog
 ================
 
+
 Version 1.0.5
+------------------
+
++ 增加 `RecursiveField` 支持树树型结构序列化
+
+Version 1.0.4
 ------------------
 
 + 增加序列化请求字段 `SerializerField`
