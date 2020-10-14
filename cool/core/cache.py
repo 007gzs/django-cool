@@ -15,9 +15,10 @@ class CacheItem:
     """
     缓存项目类
     """
-    def __init__(self, cache=None, name=None):
+    def __init__(self, cache=None, name=None, default_timeout=DEFAULT_TIMEOUT):
         self.cache = cache
         self.name = name
+        self.default_timeout = default_timeout
 
     def add(self, key, value, timeout=DEFAULT_TIMEOUT):
         return self.cache.inner_call(self, 'add', key=key, value=value, timeout=timeout)
@@ -64,7 +65,7 @@ class BaseCache:
             key_prefix = 'my_cache'
             default_timeout = 600
             item1 = CacheItem()
-            item2 = CacheItem()
+            item2 = CacheItem(default_timeout=60)
         cache = MyCache()
         cache.item1.set("test", 1)
         cache.item1.get("test")
@@ -86,9 +87,12 @@ class BaseCache:
         self.cache = caches[self.cache_alias]
         assert self.key_prefix is not None
 
-    def get_timeout(self, timeout=DEFAULT_TIMEOUT):
+    def get_timeout(self, item=None, timeout=DEFAULT_TIMEOUT):
         if timeout == DEFAULT_TIMEOUT:
-            timeout = self.default_timeout
+            if _is_cache_item(item) and item.default_timeout != DEFAULT_TIMEOUT:
+                timeout = item.default_timeout
+            else:
+                timeout = self.default_timeout
         elif timeout == 0:
             timeout = -1
         return timeout
@@ -119,5 +123,5 @@ class BaseCache:
                 kwargs[key_dict] = {self.make_key(item, key): value for key, value in kwargs[key_dict]}
         for timeout in timeout_fields:
             if timeout in kwargs:
-                kwargs[timeout] = self.get_timeout(kwargs[timeout])
+                kwargs[timeout] = self.get_timeout(item, kwargs[timeout])
         return getattr(self.cache, func_name)(**kwargs)
