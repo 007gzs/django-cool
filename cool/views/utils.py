@@ -162,6 +162,10 @@ def get_field_info(field):
 def get_serializer_field_info(serializer_obj, force_many=False):
     from . import serializer
     ret = dict()
+
+    if isinstance(serializer_obj, serializer.RecursiveField):
+        serializer_obj = serializer_obj.get_parent_proxy(2)
+
     if not isinstance(serializer_obj, serializer.RecursiveField):
         for field_name, field in serializer_obj.fields.items():
             if hasattr(field, 'fields'):
@@ -172,6 +176,7 @@ def get_serializer_field_info(serializer_obj, force_many=False):
                 ret[field_name] = get_serializer_field_info(field.child_relation, force_many=True)
             else:
                 ret[field_name] = get_field_info(field)
+
     return [ret] if force_many else ret
 
 
@@ -179,7 +184,12 @@ def get_list_info(serializer_obj):
     """
     获取列表序列化信息
     """
+    from . import serializer
     child = serializer_obj.child
+
+    if isinstance(child, serializer.RecursiveField):
+        child = child.get_parent_proxy(2)
+
     if hasattr(child, 'fields'):
         return get_serializer_info(child, force_many=True)
     return [str(serializer_obj.label)]
@@ -191,20 +201,23 @@ def get_serializer_info(serializer_obj, force_many=False):
     """
     from . import serializer
     ret = dict()
-    if not isinstance(serializer_obj, serializer.RecursiveField):
-        for field_name, field in serializer_obj.fields.items():
-            if hasattr(field, 'fields'):
-                ret[field_name] = get_serializer_info(field)
-            elif hasattr(field, 'child'):
-                ret[field_name] = get_list_info(field)
-            elif hasattr(field, 'child_relation'):
-                ret[field_name] = [str(field.child_relation.label)]
-            else:
-                ret[field_name] = str(field.label)
-                if isinstance(field, fields.ChoiceField):
-                    choices = ",".join(["%s:%s" % (k, v) for k, v in field.choices.items()])
-                    if choices:
-                        ret[field_name] += " (%s)" % choices
+
+    for field_name, field in serializer_obj.fields.items():
+        if isinstance(field, serializer.RecursiveField):
+            field = field.get_parent_proxy(2)
+
+        if hasattr(field, 'fields'):
+            ret[field_name] = get_serializer_info(field)
+        elif hasattr(field, 'child'):
+            ret[field_name] = get_list_info(field)
+        elif hasattr(field, 'child_relation'):
+            ret[field_name] = [str(field.child_relation.label)]
+        else:
+            ret[field_name] = str(field.label)
+            if isinstance(field, fields.ChoiceField):
+                choices = ",".join(["%s:%s" % (k, v) for k, v in field.choices.items()])
+                if choices:
+                    ret[field_name] += " (%s)" % choices
     return [ret] if force_many else ret
 
 

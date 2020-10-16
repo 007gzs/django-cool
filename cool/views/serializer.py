@@ -95,6 +95,24 @@ class RecursiveField(serializers.BaseSerializer):
         # RecursiveField will be bound before the ListField is bound
         setattr(self, 'bind_args', (field_name, parent))
 
+    def find_parent_deep_number(self, field_class, check_subclass=False):
+        obj = self
+        deep_number = 0
+        while obj is not None:
+            if isinstance(obj, RecursiveField):
+                obj = obj.proxy
+            obj_class = type(obj)
+            if obj_class == field_class or (check_subclass and issubclass(obj_class, field_class)):
+                deep_number += 1
+            obj = obj.parent
+        return deep_number
+
+    def get_parent_proxy(self, max_deep=2):
+        ret = self
+        if self.find_parent_deep_number(type(self.proxy)) <= max_deep:
+            ret = ret.proxy
+        return ret
+
     @property
     def proxy(self):
         if self._proxy is None:
