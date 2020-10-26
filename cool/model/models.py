@@ -99,12 +99,22 @@ class ModelCacheMixin:
     @classmethod
     def get_obj_by_pk_from_cache(cls, pk):
         """
-        通过有主键获取对象（优先走缓存）
+        通过主键获取对象（优先走缓存）
         """
         if cls._MODEL_WITH_CACHE:
             return model_cache.get(cls, pk, ttl=cls._MODEL_CACHE_TTL)
         else:
             return cls.get_queryset().filter(pk=pk).first()
+
+    @classmethod
+    def get_objs_by_pks_from_cache(cls, pks):
+        """
+        通过主键批量获取对象（优先走缓存）
+        """
+        if cls._MODEL_WITH_CACHE:
+            return model_cache.get_many(cls, pks, ttl=cls._MODEL_CACHE_TTL)
+        else:
+            return {obj.pk: obj for obj in cls.get_queryset().filter(pk__in=pks)}
 
     @classmethod
     def flush_cache_by_pk(cls, pk):
@@ -113,6 +123,14 @@ class ModelCacheMixin:
         """
         if cls._MODEL_WITH_CACHE and pk is not None:
             model_cache.delete(cls, pk)
+
+    @classmethod
+    def flush_cache_by_pks(cls, pks):
+        """
+        批量清空主键缓存
+        """
+        if cls._MODEL_WITH_CACHE and pks is not None:
+            model_cache.delete(cls, pks)
 
     @classmethod
     def get_obj_by_unique_key_from_cache(cls, **kwargs):
@@ -127,6 +145,18 @@ class ModelCacheMixin:
             return cls.get_queryset().filter(**{key: value}).first()
 
     @classmethod
+    def get_objs_by_unique_keys_from_cache(cls, **kwargs):
+        """
+        通过有唯一索引的字段批量获取对象（优先走缓存）
+        """
+        assert len(kwargs) == 1
+        key, value = list(kwargs.items())[0]
+        if cls._MODEL_WITH_CACHE:
+            return model_cache.get_many(cls, value, key, ttl=cls._MODEL_CACHE_TTL)
+        else:
+            return {obj.pk: obj for obj in cls.get_queryset().filter(**{"%s__in" % key: value})}
+
+    @classmethod
     def flush_cache_by_unique_key(cls, **kwargs):
         """
         清空唯一索引缓存
@@ -135,6 +165,16 @@ class ModelCacheMixin:
         key, value = list(kwargs.items())[0]
         if cls._MODEL_WITH_CACHE and value is not None:
             model_cache.delete(cls, value, key)
+
+    @classmethod
+    def flush_cache_by_unique_keys(cls, **kwargs):
+        """
+        批量清空唯一索引缓存
+        """
+        assert len(kwargs) == 1
+        key, value = list(kwargs.items())[0]
+        if cls._MODEL_WITH_CACHE and value is not None:
+            model_cache.delete_many(cls, value, key)
 
     def flush_cache(self):
         """

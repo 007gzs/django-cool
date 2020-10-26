@@ -1,6 +1,11 @@
 Changelog
 ================
 
+Version 1.0.7
+------------------
+
++ `ModelFieldChangeMixin` 增加批量操作
+
 Version 1.0.6
 ------------------
 
