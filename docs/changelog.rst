@@ -1,14 +1,10 @@
 Changelog
 ================
 
-Version 1.0.7
-------------------
-
-+ `ModelFieldChangeMixin` 增加批量操作
-
 Version 1.0.6
 ------------------
 
++ `ModelFieldChangeMixin` 增加批量操作
 + `RecursiveField` 字段说明父级出现过两次以上就不显示字段说明内容
 
 Version 1.0.5
