@@ -1,6 +1,10 @@
 Changelog
 ================
 
+Version 1.0.7
+------------------
++ cache key 为 `None` 时， 生成完成key为 prefix
+
 Version 1.0.6
 ------------------
 

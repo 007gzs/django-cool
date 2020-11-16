@@ -101,11 +101,9 @@ class BaseCache:
         return '%s:%s' % (self.key_prefix, item.name)
 
     def make_key(self, item, key):
+        k = self.item_prefix(item)
         if isinstance(key, (tuple, list)):
             key = ':'.join(map(force_str, key))
-        else:
-            key = force_str(key)
-        k = self.item_prefix(item)
         if key is not None:
             k = '%s:%s' % (k, key)
         return k
