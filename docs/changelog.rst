@@ -1,6 +1,11 @@
 Changelog
 ================
 
+Version 1.0.8
+------------------
++ log_exception 修改为 error 级别
++ log_response 中返回数据顺序修改移后
+
 Version 1.0.7
 ------------------
 + cache key 为 `None` 时， 生成完成key为 prefix

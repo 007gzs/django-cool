@@ -332,14 +332,14 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
             request.get_raw_uri(),
             getattr(request, 'uid', ''),
             response.status_code,
-            data,
             request.user,
             request.data,
+            data,
             request.META
         )
 
     def log_exception(self, request, exc, context):
-        self.logger.info(
+        self.logger.error(
             "request exception %ss %s %s %s %s %s %s",
             time.time() - getattr(request, 'start_time', 0),
             request.method,
