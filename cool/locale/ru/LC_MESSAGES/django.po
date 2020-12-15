@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-cool\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-13 08:26+0800\n"
+"POT-Creation-Date: 2020-12-15 17:57+0800\n"
 "PO-Revision-Date: 2020-04-03 10:34+0800\n"
 "Last-Translator: 007gzs <007gzs@gmail.com>\n"
 "Language-Team: 007gzs <007gzs@gmail.com>\n"
@@ -83,7 +83,7 @@ msgstr ""
 msgid "Response Info :"
 msgstr ""
 
-#: .\templates\cool\views\api_doc.md:3 .\views\utils.py:342
+#: .\templates\cool\views\api_doc.md:3 .\views\utils.py:369
 msgid "Api Document"
 msgstr ""
 
@@ -153,17 +153,17 @@ msgstr ""
 msgid "This list may not be empty."
 msgstr ""
 
-#: .\views\utils.py:96
+#: .\views\utils.py:105
 msgid "Yes"
 msgstr ""
 
-#: .\views\utils.py:96
+#: .\views\utils.py:105
 msgid "No"
 msgstr ""
 
-#: .\views\utils.py:133
+#: .\views\utils.py:142
 #, python-format
-msgid "(%s %s default:%s,required:%s,%s)"
+msgid "(%s %s default:%s,required:%s,%s %s)"
 msgstr ""
 
 #: .\views\view.py:118 .\views\view.py:138

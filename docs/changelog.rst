@@ -1,6 +1,11 @@
 Changelog
 ================
 
+Version 1.0.9
+------------------
++ `get_rest_field_from_model_field` 支持外键字段
++ 子项 extend_info_format 增加 help_text
+
 Version 1.0.8
 ------------------
 + log_exception 修改为 error 级别

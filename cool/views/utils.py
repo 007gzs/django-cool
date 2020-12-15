@@ -1,4 +1,5 @@
 # encoding: utf-8
+import copy
 from collections import OrderedDict
 from importlib import import_module
 
@@ -50,6 +51,29 @@ def get_rest_field_from_model_field(model, model_field, **kwargs):
         model_field = model_field.name
     s = ModelSerializer()
     info = model_meta.get_field_info(model)
+    for field_name, relation_info in info.forward_relations.items():
+        if relation_info.to_many:
+            continue
+        field = relation_info.model_field
+        target_field = field
+        verbose_name = [target_field.verbose_name]
+        help_text = [target_field.help_text]
+        while target_field.remote_field:
+            target_field = target_field.remote_field.target_field
+            verbose_name.append(target_field.verbose_name)
+            help_text.append(target_field.help_text)
+
+        target_field = copy.deepcopy(target_field)
+        target_field.verbose_name = " - ".join(filter(lambda x: x, verbose_name))
+        target_field.help_text = " - ".join(filter(lambda x: x, help_text))
+        for attr in ('primary_key', 'blank', 'null', 'default', 'editable', 'serialize'):
+            if hasattr(field, attr):
+                setattr(target_field, attr, getattr(field, attr))
+        info.fields_and_pk[field.name] = target_field
+        try:
+            info.fields_and_pk[field.attname] = target_field
+        except AttributeError:
+            pass
     field_info = info.fields_and_pk[model_field]
     field_class, field_kwargs = s.build_field(model_field, info, model, 0)
     field_kwargs.pop('read_only', None)
@@ -130,12 +154,13 @@ def get_field_info(field):
         if not isinstance(_info, dict):
             return ""
         if '__field__' in _info:
-            return _("(%s %s default:%s,required:%s,%s)") % (
+            return _("(%s %s default:%s,required:%s,%s %s)") % (
                 _info['label'],
                 _info['type'],
                 _info['default_format'],
                 _info['required_format'],
-                _info['extend_info_format']
+                _info['extend_info_format'],
+                _info['help_text']
             )
         else:
             ret = "; ".join(["%s:%s" % (_k, _format_info(_v)) for _k, _v in _info.items()])
