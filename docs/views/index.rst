@@ -118,6 +118,21 @@ api接口扩展接口
 
     每页条数参数（`page_size`）默认值 默认`100`
 
+'AddMixin', 'DeleteMixin', 'EditMixin', 'ExtManyToOneMixin', 'SearchListMixin',
+.. autoclass:: SearchListMixin()
+.. autoclass:: AddMixin()
+.. autoclass:: DeleteMixin()
+.. autoclass:: EditMixin()
+.. autoclass:: ExtManyToOneMixin()
+
+    .. attribute:: PAGE_SIZE_MAX
+
+    每页条数参数（`page_size`）最大限制 默认`200`
+
+    .. attribute:: DEFAULT_PAGE_SIZE
+
+    每页条数参数（`page_size`）默认值 默认`100`
+
 .. toctree::
    :maxdepth: 1
 

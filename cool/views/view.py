@@ -15,8 +15,7 @@ from django.template.loader import render_to_string
 from django.utils.datastructures import MultiValueDict
 from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext as _, gettext_lazy
-from rest_framework import fields, serializers
+from rest_framework import serializers
 from rest_framework.exceptions import ValidationError as RestValidationError
 from rest_framework.fields import empty
 from rest_framework.serializers import ModelSerializer
@@ -98,59 +97,6 @@ class APIViewOptions(ViewOptions):
         form_attrs['Meta'] = Meta
         cls.param_form = type(self.form)(cls.__name__ + 'ParamSerializer',  (self.form, ), form_attrs)
         cls.serializer_class = cls.param_form
-
-
-class PageMixin:
-    """
-    分页返回数据Mixin
-    """
-    PAGE_SIZE_MAX = 200
-    DEFAULT_PAGE_SIZE = 100
-
-    @classmethod
-    def get_extend_param_fields(cls):
-        assert 0 < cls.DEFAULT_PAGE_SIZE <= cls.PAGE_SIZE_MAX, (
-            "DEFAULT_PAGE_SIZE mast between 0 and PAGE_SIZE_MAX in class %s" % cls.__name__
-        )
-        return super().get_extend_param_fields() + (
-            (
-                'page', fields.IntegerField(
-                    label=gettext_lazy('Page number'),
-                    default=1,
-                    help_text=gettext_lazy('Start with %(start)s') % {'start': 1}
-                )
-            ),
-            (
-                'page_size', fields.IntegerField(
-                    label=gettext_lazy('Page size'),
-                    default=cls.DEFAULT_PAGE_SIZE,
-                    min_value=1,
-                    max_value=cls.PAGE_SIZE_MAX
-                )
-            ),
-        )
-
-    @classmethod
-    def response_info_data(cls):
-        return {
-            'page_size': _('Page size'),
-            'list': [super().response_info_data()],
-            'page': _('Page number'),
-            'total_page': _('Total page'),
-            'total_data': _('Total data')
-        }
-
-    def get_page_context(self, request, queryset, serializer_cls):
-        page_size = request.params.page_size
-        total_data = queryset.count()
-        total_page = (total_data + page_size - 1) // page_size
-        page = request.params.page
-        data = []
-        if total_data > 0 and 1 <= page <= total_page:
-            start = (page - 1) * page_size
-            data = serializer_cls(queryset[start:start + page_size], request=request, many=True).data
-
-        return {'page_size': page_size, 'list': data, 'page': page, 'total_page': total_page, 'total_data': total_data}
 
 
 class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):

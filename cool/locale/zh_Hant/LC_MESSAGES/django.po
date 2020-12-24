@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-cool\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-15 17:57+0800\n"
+"POT-Creation-Date: 2020-12-24 16:00+0800\n"
 "PO-Revision-Date: 2020-04-03 10:34+0800\n"
 "Last-Translator: 007gzs <007gzs@gmail.com>\n"
 "Language-Team: 007gzs <007gzs@gmail.com>\n"
@@ -81,7 +81,7 @@ msgstr "擴展信息"
 msgid "Response Info :"
 msgstr "返回格式："
 
-#: .\templates\cool\views\api_doc.md:3 .\views\utils.py:369
+#: .\templates\cool\views\api_doc.md:3 .\views\utils.py:384
 msgid "Api Document"
 msgstr "接口文檔"
 
@@ -151,36 +151,99 @@ msgstr "期望為壹個的字典，得到的類型是“{input_type}”。"
 msgid "This list may not be empty."
 msgstr "該列表不能為空。"
 
-#: .\views\utils.py:105
-msgid "Yes"
-msgstr "是"
-
-#: .\views\utils.py:105
-msgid "No"
-msgstr "否"
-
-#: .\views\utils.py:142
-#, python-format
-msgid "(%s %s default:%s,required:%s,%s %s)"
-msgstr "(%s %s 默認值:%s,是否必填:%s,%s %s)"
-
-#: .\views\view.py:118 .\views\view.py:138
+#: .\views\mixins.py:32 .\views\mixins.py:52
 msgid "Page number"
 msgstr "頁碼"
 
-#: .\views\view.py:120
+#: .\views\mixins.py:34
 #, python-format
 msgid "Start with %(start)s"
 msgstr "從 %(start)s 開始"
 
-#: .\views\view.py:125 .\views\view.py:136
+#: .\views\mixins.py:39 .\views\mixins.py:50
 msgid "Page size"
 msgstr "每頁條數"
 
-#: .\views\view.py:139
+#: .\views\mixins.py:53
 msgid "Total page"
 msgstr "總頁數"
 
-#: .\views\view.py:140
+#: .\views\mixins.py:54
 msgid "Total data"
 msgstr "數據總條數"
+
+#: .\views\mixins.py:95
+msgid "Search key"
+msgstr "蒐索關鍵字"
+
+#: .\views\mixins.py:100
+#, python-brace-format
+msgid "{model_name} List"
+msgstr "{model_name}清單"
+
+#: .\views\mixins.py:127
+#, python-brace-format
+msgid "{model_name} Info"
+msgstr "{model_name}資訊"
+
+#: .\views\mixins.py:166
+#, python-brace-format
+msgid "{fields} cannot be empty at the same time"
+msgstr "{fields} 不能同時為空"
+
+#: .\views\mixins.py:180
+#, python-brace-format
+msgid "Add {model_name}"
+msgstr "{model_name}添加"
+
+#: .\views\mixins.py:223
+#, python-brace-format
+msgid "Edit {model_name}"
+msgstr "{model_name}編輯"
+
+#: .\views\mixins.py:268
+#, python-brace-format
+msgid "Delete {model_name}"
+msgstr "{model_name}删除"
+
+#: .\views\mixins.py:277
+msgid "Primary keys"
+msgstr "主鍵清單"
+
+#: .\views\mixins.py:373
+msgid ""
+"If the parameter has a value, it is modified; if it has no value, it is added"
+msgstr "傳該值為修改，不傳該值為新增"
+
+#: .\views\mixins.py:389
+msgid "not required when add"
+msgstr "新增非必填"
+
+#: .\views\mixins.py:389
+msgid "required when add"
+msgstr "新增必填"
+
+#: .\views\mixins.py:391
+msgid "not required when edit"
+msgstr "修改非必填"
+
+#: .\views\mixins.py:415
+msgid "Primary key duplicate"
+msgstr "主键重复"
+
+#: .\views\mixins.py:420 .\views\mixins.py:424
+msgid "Modification item not found"
+msgstr "主鍵重複"
+
+#: .\views\utils.py:120
+msgid "Yes"
+msgstr "是"
+
+#: .\views\utils.py:120
+msgid "No"
+msgstr "否"
+
+#: .\views\utils.py:157
+#, python-format
+msgid "(%s %s default:%s,required:%s,%s %s)"
+msgstr "(%s %s 默認值:%s,是否必填:%s,%s %s)"

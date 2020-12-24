@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-cool\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-15 17:57+0800\n"
+"POT-Creation-Date: 2020-12-24 16:00+0800\n"
 "PO-Revision-Date: 2020-04-03 10:34+0800\n"
 "Last-Translator: 007gzs <007gzs@gmail.com>\n"
 "Language-Team: 007gzs <007gzs@gmail.com>\n"
@@ -83,7 +83,7 @@ msgstr ""
 msgid "Response Info :"
 msgstr ""
 
-#: .\templates\cool\views\api_doc.md:3 .\views\utils.py:369
+#: .\templates\cool\views\api_doc.md:3 .\views\utils.py:384
 msgid "Api Document"
 msgstr ""
 
@@ -153,36 +153,99 @@ msgstr ""
 msgid "This list may not be empty."
 msgstr ""
 
-#: .\views\utils.py:105
-msgid "Yes"
-msgstr ""
-
-#: .\views\utils.py:105
-msgid "No"
-msgstr ""
-
-#: .\views\utils.py:142
-#, python-format
-msgid "(%s %s default:%s,required:%s,%s %s)"
-msgstr ""
-
-#: .\views\view.py:118 .\views\view.py:138
+#: .\views\mixins.py:32 .\views\mixins.py:52
 msgid "Page number"
 msgstr ""
 
-#: .\views\view.py:120
+#: .\views\mixins.py:34
 #, python-format
 msgid "Start with %(start)s"
 msgstr ""
 
-#: .\views\view.py:125 .\views\view.py:136
+#: .\views\mixins.py:39 .\views\mixins.py:50
 msgid "Page size"
 msgstr ""
 
-#: .\views\view.py:139
+#: .\views\mixins.py:53
 msgid "Total page"
 msgstr ""
 
-#: .\views\view.py:140
+#: .\views\mixins.py:54
 msgid "Total data"
+msgstr ""
+
+#: .\views\mixins.py:95
+msgid "Search key"
+msgstr ""
+
+#: .\views\mixins.py:100
+#, python-brace-format
+msgid "{model_name} List"
+msgstr ""
+
+#: .\views\mixins.py:127
+#, python-brace-format
+msgid "{model_name} Info"
+msgstr ""
+
+#: .\views\mixins.py:166
+#, python-brace-format
+msgid "{fields} cannot be empty at the same time"
+msgstr ""
+
+#: .\views\mixins.py:180
+#, python-brace-format
+msgid "Add {model_name}"
+msgstr ""
+
+#: .\views\mixins.py:223
+#, python-brace-format
+msgid "Edit {model_name}"
+msgstr ""
+
+#: .\views\mixins.py:268
+#, python-brace-format
+msgid "Delete {model_name}"
+msgstr ""
+
+#: .\views\mixins.py:277
+msgid "Primary keys"
+msgstr ""
+
+#: .\views\mixins.py:373
+msgid ""
+"If the parameter has a value, it is modified; if it has no value, it is added"
+msgstr ""
+
+#: .\views\mixins.py:389
+msgid "not required when add"
+msgstr ""
+
+#: .\views\mixins.py:389
+msgid "required when add"
+msgstr ""
+
+#: .\views\mixins.py:391
+msgid "not required when edit"
+msgstr ""
+
+#: .\views\mixins.py:415
+msgid "Primary key duplicate"
+msgstr ""
+
+#: .\views\mixins.py:420 .\views\mixins.py:424
+msgid "Modification item not found"
+msgstr ""
+
+#: .\views\utils.py:120
+msgid "Yes"
+msgstr ""
+
+#: .\views\utils.py:120
+msgid "No"
+msgstr ""
+
+#: .\views\utils.py:157
+#, python-format
+msgid "(%s %s default:%s,required:%s,%s %s)"
 msgstr ""
