@@ -2,7 +2,6 @@
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.utils.functional import classproperty
 from django.utils.translation import gettext as _, gettext_lazy
 from rest_framework import fields
 from rest_framework.exceptions import ValidationError as RestValidationError
@@ -78,8 +77,7 @@ class CRIDMixin:
     model = None
 
     @classmethod
-    @classproperty
-    def model_field_info(cls):
+    def get_model_field_info(cls):
         if not hasattr(cls, '_model_field_info'):
             setattr(cls, '_model_field_info', model_meta.get_field_info(cls.model))
         return getattr(cls, '_model_field_info')
@@ -134,7 +132,7 @@ class InfoMixin(CRIDMixin):
         ret.extend(super().get_extend_param_fields())
         if cls.model is not None:
             num = len(cls.ex_unique_ids)
-            info = cls.model_field_info
+            info = cls.get_model_field_info()
             if cls.pk_id:
                 num += 1
                 ret.append((info.pk.name, get_rest_field_from_model_field(
@@ -155,7 +153,7 @@ class InfoMixin(CRIDMixin):
         if queryset is None:
             queryset = self.model.objects.all()
         blank = True
-        param_fields = [self.model_field_info.pk.name]
+        param_fields = [self.get_model_field_info().pk.name]
         param_fields.extend(self.ex_unique_ids)
         for field_name in param_fields:
             field = getattr(request.params, field_name)
@@ -226,7 +224,7 @@ class EditMixin(CRIDMixin):
     def get_extend_param_fields(cls):
         ret = list()
         ret.extend(super().get_extend_param_fields())
-        field = cls.model_field_info.fields_and_pk[cls.unique_key]
+        field = cls.get_model_field_info().fields_and_pk[cls.unique_key]
         assert field.unique, "Field %s is not unique" % cls.unique_key
         ret.append((field.name, get_rest_field_from_model_field(cls.model, field, required=True)))
         if cls.model is not None:
@@ -270,7 +268,7 @@ class DeleteMixin(CRIDMixin):
     def get_extend_param_fields(cls):
         ret = list()
         ret.extend(super().get_extend_param_fields())
-        field = cls.model_field_info.fields_and_pk[cls.unique_key]
+        field = cls.get_model_field_info().fields_and_pk[cls.unique_key]
         assert field.unique, "Field %s is not unique" % cls.unique_key
         ret.append((field.name + 's', SplitCharField(
             label=_('Primary keys'),
