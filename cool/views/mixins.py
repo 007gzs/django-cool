@@ -90,6 +90,9 @@ class SearchListMixin(PageMixin, CRIDMixin):
 
     @classmethod
     def get_extend_param_fields(cls):
+        """
+        添加搜索字段
+        """
         ret = list()
         ret.extend(super().get_extend_param_fields())
         ret.append(('search_term', fields.CharField(label=_('Search key'), default='')))
@@ -97,15 +100,22 @@ class SearchListMixin(PageMixin, CRIDMixin):
 
     @property
     def name(self):
+        """
+        API文档中view的名字
+        """
         return _("{model_name} List").format(model_name=self.model._meta.verbose_name)
 
     def get_search_fields(self):
+        """
+        返回本model可以被搜索的字段集合（基类回自动将带索引的字段生成搜索字段集合）
+        """
         return self.model.get_search_fields()
 
     def get_queryset(self, request, queryset=None):
         if queryset is None:
             queryset = self.model.objects.order_by(*self.order_field)
         if request.params.search_term:
+            # 筛选搜索关键词
             queryset, use_distinct = get_search_results(
                 queryset, request.params.search_term, self.get_search_fields(), self.model
             )
