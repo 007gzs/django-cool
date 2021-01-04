@@ -113,13 +113,17 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
     SHOW_PARAM_ERROR_INFO = cool_settings.API_SHOW_PARAM_ERROR_INFO
     description_template_name = 'cool/views/api_description.html'
 
+    # 序列化类
     response_info_serializer_class = None
+
+    # 是否返回list
     response_many = False
 
     @classmethod
     def get_extend_param_fields(cls):
         return ()
 
+    # 验证请求
     def initialize_request(self, request, *args, **kwargs):
         _ = request.body
         return super().initialize_request(request, *args, **kwargs)
@@ -144,6 +148,9 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
 
     @classmethod
     def response_info_data(cls):
+        """
+        返回数据样例
+        """
         if cls.response_info_serializer_class is not None:
             from cool.views.utils import get_serializer_info
             return get_serializer_info(cls.response_info_serializer_class(), cls.response_many)
@@ -151,6 +158,9 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
 
     @classmethod
     def request_info_data(cls):
+        """
+        请求数据样例
+        """
         from cool.views.utils import get_field_info
         ret = OrderedDict()
         serializer_class = getattr(cls, 'serializer_class', None)
@@ -160,7 +170,11 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
                 ret[key] = get_field_info(field)
         return ret
 
+    #
     def init_params(self, request, *args, **kwargs):
+        """
+        兼容post和get请求
+        """
         data = MultiValueDict()
         data.update(request.GET)
         data.update(request.POST)
@@ -170,6 +184,9 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
         request.params = Param(self, request, data, request.FILES)
 
     def get_response(self, context):
+        """
+        返回数据的校验和序列化
+        """
         if isinstance(context, HttpResponse):
             return context
         if isinstance(context, (Model, QuerySet)) and issubclass(self.response_info_serializer_class, ModelSerializer):
@@ -179,6 +196,9 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
         return context.get_response()
 
     def check_api_permissions(self, request, *args, **kwargs):
+        """
+        权限校验
+        """
         pass
 
     def view(self, request, *args, **kwargs):
@@ -193,10 +213,16 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
     post = get
 
     def get_context(self, request, *args, **kwargs):
+        """
+        编写业务逻辑
+        """
         raise NotImplementedError
 
     @classmethod
     def get_param_error_info(cls, exc):
+        """
+        错误代码样例
+        """
         from cool.views.utils import parse_validation_error
         data = dict()
         if cls.SHOW_PARAM_ERROR_INFO:
