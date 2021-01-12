@@ -501,7 +501,7 @@ class ExtManyToOneMixin:
         ex_objs = list()
         for model_fields in self.get_ext_model_fields():
             param = getattr(request.params, model_fields.field_name)
-            if not param:
+            if param is None:
                 continue
 
             def _get_ext_obj(*args, **kwargs):
