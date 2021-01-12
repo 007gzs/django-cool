@@ -427,7 +427,7 @@ class ExtModelFieldKey:
                     param_errors[idx] = ValidationError(_('Modification item not found'))
                     continue
                 for ext_key, ext_value in params.items():
-                    if getattr(obj, ext_key) == ext_value:
+                    if getattr(obj, ext_key) != ext_value:
                         param_errors[idx] = ValidationError(_('Modification item not found'))
                         break
                 else:
@@ -454,7 +454,7 @@ class ExtModelFieldKey:
         if self.delete_not_found:
             queryset = self.ext_model.objects.filter(**params)
             if edit_ids:
-                queryset = queryset.exclude({"%s__in" % self.pk_field: edit_ids})
+                queryset = queryset.exclude(**{"%s__in" % self.pk_field: edit_ids})
             del_objs = list(queryset)
         if param_errors:
             raise RestValidationError(parse_validation_error(param_errors))
@@ -505,7 +505,7 @@ class ExtManyToOneMixin:
                 continue
 
             def _get_ext_obj(*args, **kwargs):
-                self.get_ext_obj(*args, **kwargs)
+                return self.get_ext_obj(*args, **kwargs)
 
             try:
                 add_objs, edit_objs, del_objs = model_fields.gen_objs(param, obj, _get_ext_obj)
