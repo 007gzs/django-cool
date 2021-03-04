@@ -31,6 +31,16 @@ class ErrorCodeTests(TestCase):
         self.assertEqual(error_code.ErrorCode.ERROR_BAD_FORMAT.code, -12)
         self.assertEqual(error_code.ErrorCode.ERROR_PERMISSION.code, -13)
 
+    @override_settings(DJANGO_COOL={'API_SUCCESS_CODE': 1})
+    def test_error_code_custom_success(self):
+        error_code = get_error_code()
+        self.assertEqual(error_code.ErrorCode.SUCCESS, 1)
+
+    @override_settings(DJANGO_COOL={'API_SUCCESS_CODE': 1})
+    def test_error_code_code_custom_success(self):
+        error_code = get_error_code()
+        self.assertEqual(error_code.ErrorCode.SUCCESS.code, 1)
+
     @override_settings(USE_L10N=True, LANGUAGE_CODE='en')
     def test_error_code_desc_en(self):
         error_code = get_error_code()
