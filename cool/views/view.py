@@ -13,7 +13,7 @@ from django.forms import forms
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.utils.datastructures import MultiValueDict
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.safestring import mark_safe
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError as RestValidationError
@@ -228,7 +228,7 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
         if cls.SHOW_PARAM_ERROR_INFO:
             exc_data = parse_validation_error(exc)
             if exc_data is exc:
-                data['desc'] = force_text(exc)
+                data['desc'] = force_str(exc)
             else:
                 data['errors'] = exc_data
         return data
