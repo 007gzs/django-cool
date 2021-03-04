@@ -6,11 +6,12 @@ from django.test import TestCase, override_settings
 from cool.views import ErrorCode, response
 
 
-def get_response_dict(code, message, data, success_with_code_msg):
+def get_response_dict(code, message, data, success_with_code_msg, status_code, **kwargs):
     return {
         'code': code,
         'message': message,
         'data': data,
+        'status_code': status_code,
         'server_time': datetime.datetime.now()
     }
 
@@ -19,36 +20,44 @@ class ResponseTests(TestCase):
 
     def test_response_dict_success_with_code_msg(self):
         self.assertDictEqual(
-            response.get_response_dict(0, 'msg', [1, 2, 3], True), {'code': 0, 'message': 'msg', 'data': [1, 2, 3]}
+            response.get_response_dict(code=0, message='msg', data=[1, 2, 3], success_with_code_msg=True),
+            {'code': 0, 'message': 'msg', 'data': [1, 2, 3]}
         )
 
     def test_response_dict_success_without_code_msg(self):
-        self.assertListEqual(response.get_response_dict(0, 'msg', [1, 2, 3], False), [1, 2, 3])
+        self.assertListEqual(
+            response.get_response_dict(code=0, message='msg', data=[1, 2, 3], success_with_code_msg=False), [1, 2, 3]
+        )
 
     def test_response_dict_not_success(self):
         self.assertDictEqual(
-            response.get_response_dict(1, 'msg', "test", True), {'code': 1, 'message': 'msg', 'data': "test"}
+            response.get_response_dict(code=1, message='msg', data="test", success_with_code_msg=True),
+            {'code': 1, 'message': 'msg', 'data': "test"}
         )
         self.assertDictEqual(
-            response.get_response_dict(1, 'msg', "test", False), {'code': 1, 'message': 'msg', 'data': "test"}
+            response.get_response_dict(code=1, message='msg', data="test", success_with_code_msg=False),
+            {'code': 1, 'message': 'msg', 'data': "test"}
         )
 
     @override_settings(DJANGO_COOL={'API_DEFAULT_CODE_KEY': 'err_code'})
     def test_response_dict_custom_code_key(self):
         self.assertDictEqual(
-            response.get_response_dict(1, 'msg', "test", True), {'err_code': 1, 'message': 'msg', 'data': "test"}
+            response.get_response_dict(code=1, message='msg', data="test", success_with_code_msg=True),
+            {'err_code': 1, 'message': 'msg', 'data': "test"}
         )
 
     @override_settings(DJANGO_COOL={'API_DEFAULT_MESSAGE_KEY': 'err_msg'})
     def test_response_dict_custom_message_key(self):
         self.assertDictEqual(
-            response.get_response_dict(1, 'msg', "test", True), {'code': 1, 'err_msg': 'msg', 'data': "test"}
+            response.get_response_dict(code=1, message='msg', data="test", success_with_code_msg=True),
+            {'code': 1, 'err_msg': 'msg', 'data': "test"}
         )
 
     @override_settings(DJANGO_COOL={'API_DEFAULT_DATA_KEY': 'content'})
     def test_response_dict_custom_data_key(self):
         self.assertDictEqual(
-            response.get_response_dict(1, 'msg', "test", True), {'code': 1, 'message': 'msg', 'content': "test"}
+            response.get_response_dict(code=1, message='msg', data="test", success_with_code_msg=True),
+            {'code': 1, 'message': 'msg', 'content': "test"}
         )
 
     @override_settings(DJANGO_COOL={
@@ -58,7 +67,8 @@ class ResponseTests(TestCase):
     })
     def test_response_dict_custom_keys(self):
         self.assertDictEqual(
-            response.get_response_dict(1, 'msg', "test", True), {'err_code': 1, 'err_msg': 'msg', 'content': "test"}
+            response.get_response_dict(code=1, message='msg', data="test", success_with_code_msg=True),
+            {'err_code': 1, 'err_msg': 'msg', 'content': "test"}
         )
 
     def test_response_data(self):
@@ -92,3 +102,5 @@ class ResponseTests(TestCase):
         rep_data = rep.get_response().data
         self.assertIn('server_time', rep_data)
         self.assertLessEqual(abs((now - rep_data['server_time']).total_seconds()), 0.1)
+        self.assertIn('status_code', rep_data)
+        self.assertEqual(rep_data['status_code'], 500)
