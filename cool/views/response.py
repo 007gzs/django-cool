@@ -6,7 +6,7 @@ from cool.settings import cool_settings
 from cool.views.error_code import ErrorCode
 
 
-def get_response_dict(code, message, data, success_with_code_msg):
+def get_response_dict(*, code, message, data, success_with_code_msg, **kwargs):
     if not success_with_code_msg and code == ErrorCode.SUCCESS:
         return data
     else:
@@ -36,7 +36,12 @@ class ResponseData:
     def get_response_data(self):
         func = cool_settings.API_RESPONSE_DICT_FUNCTION
         return func(
-            code=self.code, message=self.message, data=self.data, success_with_code_msg=self.success_with_code_msg
+            code=self.code,
+            message=self.message,
+            data=self.data,
+            success_with_code_msg=self.success_with_code_msg,
+            status_code=self.status_code,
+            response_data=self
         )
 
     def get_response(self):

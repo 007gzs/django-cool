@@ -133,6 +133,14 @@ APIView
 
 参数验证错误时是否返回错误描述
 
+.. setting:: API_SHOW_PARAM_ERROR_INFO
+
+``API_SUCCESS_CODES``
+---------------------------------------------------------------
+默认值： ``True``
+
+API返回成功时的返回码值，对应 ``ErrorCode.SUCCESS``
+
 .. setting:: API_ERROR_CODES
 
 ``API_ERROR_CODES``
@@ -196,7 +204,7 @@ API返回内容中数据键名称
 
 .. code-block:: python
 
-    def get_response_dict(code, message, data, success_with_code_msg):
+    def get_response_dict(code, message, data, success_with_code_msg, status_code, response_data, **kwargs):
         if not success_with_code_msg and code == ErrorCode.SUCCESS:
             return data
         else:

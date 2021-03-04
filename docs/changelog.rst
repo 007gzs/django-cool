@@ -1,6 +1,15 @@
 Changelog
 ================
 
+Version 1.0.13
+------------------
++ 增加 `API_SUCCESS_CODE` 配置，定制成功返回时的code
++ `API_RESPONSE_DICT_FUNCTION` 函数增加参数
+
+Version 1.0.12
+------------------
++ Fixed mixins 编辑BUG
+
 Version 1.0.11
 ------------------
 + Fixed 修改扩展字段传空数组时，未做删除处理

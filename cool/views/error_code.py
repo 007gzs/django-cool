@@ -6,7 +6,7 @@ from cool.core.constants import Constants
 from cool.settings import cool_settings
 
 DEFAULT_ERROR_CODES = (
-    ('SUCCESS', (0, _('Success'))),
+    ('SUCCESS', (cool_settings.API_SUCCESS_CODE, _('Success'))),
 
     ('ERROR_UNKNOWN', (-1, _('Unknown Error'))),
     ('ERROR_SYSTEM', (-2, _('System Error'))),

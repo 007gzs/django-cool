@@ -23,6 +23,7 @@ DEFAULTS = {
     'API_SUCCESS_WITH_CODE_MSG': True,
     'API_SHOW_PARAM_ERROR_INFO': True,
 
+    'API_SUCCESS_CODE': 0,
     'API_ERROR_CODES': (),
 
     'API_DEFAULT_CODE_KEY': 'code',
