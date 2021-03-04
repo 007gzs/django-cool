@@ -12,7 +12,12 @@ jobs:
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8, 3.9]
-        django-version: [django-2.2, django-3.0, django-3.1, django-master]
+        django-version: [django-2.2, django-3.0, django-3.1]
+        inclue:
+            -   python-version: 3.8
+                django-version: django-master
+            -   python-version: 3.9
+                django-version: django-master
 
     steps:
     - name: Check Out
