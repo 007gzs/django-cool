@@ -15,9 +15,9 @@ jobs:
         django-version: [django-2.2, django-3.0, django-3.1]
         include:
           - python-version: 3.8
-            django-version: django-master
+            django-version: django-main
           - python-version: 3.9
-            django-version: django-master
+            django-version: django-main
 
     steps:
     - name: Check Out
@@ -43,10 +43,10 @@ jobs:
       run: |
         pip install 'Django>=3.1,<3.2'
       if: matrix.django-version == 'django-3.1'
-    - name: Install Django master
+    - name: Install Django main
       run: |
-        pip install 'https://github.com/django/django/archive/master.tar.gz'
-      if: matrix.django-version == 'django-master'
+        pip install 'https://github.com/django/django/archive/main.tar.gz'
+      if: matrix.django-version == 'django-main'
     - name: Install djangorestframework
       run: |
         pip install djangorestframework
