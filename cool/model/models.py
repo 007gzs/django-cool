@@ -145,6 +145,16 @@ class ModelCacheMixin:
             return cls.get_queryset().filter(**{key: value}).first()
 
     @classmethod
+    def get_obj_by_unique_together_key_from_cache(cls, **kwargs):
+        """
+        通过有联合唯一索引的字段获取对象（优先走缓存）
+        """
+        if cls._MODEL_WITH_CACHE:
+            return model_cache.get_together(cls, kwargs, ttl=cls._MODEL_CACHE_TTL)
+        else:
+            return cls.get_queryset().filter(**kwargs).first()
+
+    @classmethod
     def get_objs_by_unique_keys_from_cache(cls, **kwargs):
         """
         通过有唯一索引的字段批量获取对象（优先走缓存）
@@ -154,7 +164,7 @@ class ModelCacheMixin:
         if cls._MODEL_WITH_CACHE:
             return model_cache.get_many(cls, value, key, ttl=cls._MODEL_CACHE_TTL)
         else:
-            return {obj.pk: obj for obj in cls.get_queryset().filter(**{"%s__in" % key: value})}
+            return {getattr(obj, key): obj for obj in cls.get_queryset().filter(**{"%s__in" % key: value})}
 
     @classmethod
     def flush_cache_by_unique_key(cls, **kwargs):
@@ -165,6 +175,18 @@ class ModelCacheMixin:
         key, value = list(kwargs.items())[0]
         if cls._MODEL_WITH_CACHE and value is not None:
             model_cache.delete(cls, value, key)
+
+    @classmethod
+    def flush_cache_by_unique_together_keys(cls, fields=None, **kwargs):
+        """
+        批量清空联合唯一索引缓存
+        """
+        if fields is None:
+            fields = list()
+        if kwargs:
+            fields.append(kwargs)
+        if cls._MODEL_WITH_CACHE and fields:
+            model_cache.delete_together(cls, fields)
 
     @classmethod
     def flush_cache_by_unique_keys(cls, **kwargs):
@@ -184,6 +206,15 @@ class ModelCacheMixin:
         for field in self._meta.fields:
             if field.unique:
                 self.flush_cache_by_unique_key(**field.get_filter_kwargs_for_object(self))
+        fields = list()
+        for field_together in self._meta.unique_together:
+            field_dict = dict()
+            for field_name in field_together:
+                field_dict.update(self._meta.get_field(field_name).get_filter_kwargs_for_object(self))
+            if field_dict:
+                fields.append(field_dict)
+        if fields:
+            self.flush_cache_by_unique_together_keys(fields)
 
 
 class SearchModelMixin:

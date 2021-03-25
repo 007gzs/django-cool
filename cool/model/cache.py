@@ -14,19 +14,66 @@ class ModelCache(cache.BaseCache):
 
     pk = cache.CacheItem()
     unique = cache.CacheItem()
+    unique_together = cache.CacheItem()
 
     def _get_key(self, model_cls, field_key, field_name):
         assert field_key is not None
         assert issubclass(model_cls, models.Model)
         if field_name is None:
             return "%s:%s" % (model_cls._meta.db_table, field_key), self.pk
-        filed = model_cls._meta.get_field(field_name)
-        assert filed.unique
-        return "%s:%s:%s" % (model_cls._meta.db_table, filed.name, field_key), self.unique
+        if isinstance(field_name, str):
+            filed = model_cls._meta.get_field(field_name)
+            assert filed.unique
+            return "%s:%s:%s" % (model_cls._meta.db_table, filed.name, field_key), self.unique
+        else:
+            assert isinstance(field_name, tuple) and isinstance(field_key, tuple) and len(field_key) == len(field_name)
+            temp = sorted([(model_cls._meta.get_field(name).name, key) for name, key in zip(field_name, field_key)])
+            field_name, field_key = zip(*temp)
+
+            for unique_together in model_cls._meta.unique_together:
+                if len(unique_together) == len(field_name) and \
+                        tuple(sorted([model_cls._meta.get_field(field).name for field in unique_together])):
+                    return "%s:%s:%s" % (
+                        model_cls._meta.db_table, "|".join(field_name), field_key
+                    ), self.unique_together
+            raise AssertionError()
+
+    def _get_together_key(self, model_cls, field_keys, field_names):
+        assert (
+            field_keys and field_names
+            and isinstance(field_keys, tuple)
+            and isinstance(field_names, tuple)
+            and len(field_keys) == len(field_names)
+        )
+        assert issubclass(model_cls, models.Model)
+        temp = sorted([(model_cls._meta.get_field(name).name, key) for name, key in zip(field_names, field_keys)])
+        field_name, field_key = zip(*temp)
+
+        for unique_together in model_cls._meta.unique_together:
+            if len(unique_together) == len(field_name) and \
+                    tuple(sorted([model_cls._meta.get_field(field).name for field in unique_together])):
+                return "%s:%s:%s" % (
+                    model_cls._meta.db_table, "|".join(field_name), "|".join(field_key)
+                ), self.unique_together
+        raise AssertionError()
 
     def get(self, model_cls, field_key, field_name=None, *, ttl=None):
         ret = self.get_many(model_cls, field_keys=[field_key], field_name=field_name, ttl=ttl)
         return ret.get(field_key, None)
+
+    def get_together(self, model_cls, fields, *, ttl=None):
+        field_names, field_keys = list(zip(*fields.items()))
+        key, item = self._get_together_key(model_cls, field_keys, field_names)
+        ret = item.get(key)
+        if not ret:
+            if hasattr(model_cls, 'get_queryset') and callable(model_cls.get_queryset):
+                queryset = model_cls.get_queryset()
+            else:
+                queryset = model_cls.objects
+            ret = queryset.filter(**fields).first()
+            if ret:
+                item.set(key, ret, ttl)
+        return ret
 
     def get_many(self, model_cls, field_keys, field_name=None, *, ttl=None):
         field_keys = list(field_keys)
@@ -65,6 +112,17 @@ class ModelCache(cache.BaseCache):
     def delete(self, model_cls, field_key, field_name=None):
         key, item = self._get_key(model_cls, field_key, field_name)
         return item.delete(key)
+
+    def delete_together(self, model_cls, fields):
+        keys = list()
+        item = None
+        for field in fields:
+            field_names, field_keys = list(zip(*field.items()))
+            key, item = self._get_together_key(model_cls, field_keys, field_names)
+            keys.append(key)
+        if item is None:
+            return None
+        return item.delete_many(keys)
 
     def delete_many(self, model_cls, field_keys, field_name=None):
         keys = list()

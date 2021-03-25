@@ -12,6 +12,9 @@ class CacheTests(TestCase):
         models.User.objects.all().delete()
         models.User.objects.create_user(id=1, username='username1')
         models.User.objects.create_user(id=2, username='username2')
+        models.ContentType.objects.all().delete()
+        models.ContentType.objects.create(id=1, app_label='app_label1', model='model1')
+        models.ContentType.objects.create(id=2, app_label='app_label2', model='model2')
 
     def test_pk(self):
         user = cache.model_cache.get(models.User, 1)
@@ -36,3 +39,21 @@ class CacheTests(TestCase):
     def test_not_model_class(self):
         with self.assertRaises(AssertionError):
             cache.model_cache.get(models.AnonymousUser, 1)
+
+    def test_unique_together_key(self):
+        content_type = cache.model_cache.get_together(
+            models.ContentType, {'app_label': 'app_label1', 'model': 'model1'}
+        )
+        self.assertIsInstance(content_type, models.ContentType)
+        self.assertEqual(content_type.pk, 1)
+        self.assertEqual(content_type.app_label, 'app_label1')
+
+    def test_not_found_unique_together_key(self):
+        content_type = cache.model_cache.get_together(
+            models.ContentType, {'app_label': 'app_label1', 'model': 'model'}
+        )
+        self.assertIsNone(content_type)
+
+    def test_not_unique_together_key(self):
+        with self.assertRaises(AssertionError):
+            cache.model_cache.get_together(models.ContentType, {'app_label': 'app_label1', 'model': 'model1', 'id': 1})

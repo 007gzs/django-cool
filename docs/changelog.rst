@@ -1,6 +1,10 @@
 Changelog
 ================
 
+Version 1.0.14
+------------------
++ `ModelCacheMixin` 增加 `flush_cache_by_unique_together_keys` 支持联合唯一索引数据缓存获取
+
 Version 1.0.13
 ------------------
 + 增加 `API_SUCCESS_CODE` 配置，定制成功返回时的code
