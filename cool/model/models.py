@@ -151,10 +151,20 @@ class ModelCacheMixin:
         return data.get(_dict_keys_list[0], None)
 
     @classmethod
-    def get_objs_by_unique_together_key_from_cache(cls, field_names, field_values, _dict_keys_list=None):
+    def get_objs_by_unique_together_key_from_cache(cls, _dict_keys_list=None, **kwargs):
         """
         通过有联合唯一索引的字段批量获取对象（优先走缓存）
         """
+        value_size = None
+        for key, value in kwargs.items():
+            assert isinstance(value, (list, tuple))
+            if value_size is None:
+                value_size = len(value)
+            else:
+                assert len(value) == value_size
+        assert value_size is not None
+        field_names, field_values = zip(*kwargs.items())
+        field_values = list(zip(*field_values))
         data = cls.get_objs_from_cache(
             field_names=field_names, field_values=field_values, _dict_keys_list=_dict_keys_list
         )

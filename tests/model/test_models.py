@@ -151,6 +151,48 @@ class ModelTests(TestCase):
             self.assertEqual(_objs[_dict_keys_list[1]].pk, 2)
             self.assertEqual(_objs[_dict_keys_list[1]].unique_field, 'obj2_unique_field')
         objs = models.TestModel.get_objs_by_unique_together_key_from_cache(
+            unique_together1_field1=('obj1_unique_together1_field1', 'obj2_unique_together1_field1'),
+            unique_together1_field2=('obj1_unique_together1_field2', 'obj2_unique_together1_field2'),
+            _dict_keys_list=dict_keys_list
+        )
+        _check(objs, dict_keys_list)
+        objs = models.TestModel.get_objs_by_unique_together_key_from_cache(
+            unique_together2_field1=('obj1_unique_together2_field1', 'obj2_unique_together2_field1'),
+            unique_together2_field2=('obj1_unique_together2_field2', 'obj2_unique_together2_field2'),
+            unique_together2_field3=('obj1_unique_together2_field3', 'obj2_unique_together2_field3'),
+            _dict_keys_list=dict_keys_list
+        )
+        _check(objs, dict_keys_list)
+        objs = models.TestModel.get_objs_by_unique_together_key_from_cache(
+            unique_together3_field1=('obj1_unique_together3_field1', 'obj2_unique_together3_field1'),
+            unique_together3_field2=(132, 232),
+            _dict_keys_list=dict_keys_list
+        )
+        _check(objs, dict_keys_list)
+        objs = models.TestModel.get_objs_by_unique_together_key_from_cache(
+            unique_together4_field1=(models.SubModel.objects.get(pk=2), models.SubModel.objects.get(pk=1)),
+            unique_together4_field2=(models.SubModel.objects.get(pk=3), models.SubModel.objects.get(pk=2)),
+            _dict_keys_list=dict_keys_list
+        )
+        _check(objs, dict_keys_list)
+        objs = models.TestModel.get_objs_by_unique_together_key_from_cache(
+            unique_together4_field1_id=(2, models.SubModel.objects.get(pk=1)),
+            unique_together4_field2_id=('sub3_unique_field', models.SubModel.objects.get(pk=2)),
+            _dict_keys_list=dict_keys_list
+        )
+        _check(objs, dict_keys_list)
+
+    def test_get_objs_from_cache(self):
+        dict_keys_list = list()
+
+        def _check(_objs, _dict_keys_list):
+            self.assertIsInstance(_objs, dict)
+            self.assertEqual(len(_dict_keys_list), 2)
+            self.assertEqual(_objs[_dict_keys_list[0]].pk, 1)
+            self.assertEqual(_objs[_dict_keys_list[0]].unique_field, 'obj1_unique_field')
+            self.assertEqual(_objs[_dict_keys_list[1]].pk, 2)
+            self.assertEqual(_objs[_dict_keys_list[1]].unique_field, 'obj2_unique_field')
+        objs = models.TestModel.get_objs_from_cache(
             field_names=('unique_together1_field1', 'unique_together1_field2'),
             field_values=[
                 ('obj1_unique_together1_field1', 'obj1_unique_together1_field2'),
@@ -159,7 +201,7 @@ class ModelTests(TestCase):
             _dict_keys_list=dict_keys_list
         )
         _check(objs, dict_keys_list)
-        objs = models.TestModel.get_objs_by_unique_together_key_from_cache(
+        objs = models.TestModel.get_objs_from_cache(
             field_names=('unique_together2_field1', 'unique_together2_field2', 'unique_together2_field3'),
             field_values=[
                 ('obj1_unique_together2_field1', 'obj1_unique_together2_field2', 'obj1_unique_together2_field3'),
@@ -168,7 +210,7 @@ class ModelTests(TestCase):
             _dict_keys_list=dict_keys_list
         )
         _check(objs, dict_keys_list)
-        objs = models.TestModel.get_objs_by_unique_together_key_from_cache(
+        objs = models.TestModel.get_objs_from_cache(
             field_names=('unique_together3_field1', 'unique_together3_field2'),
             field_values=[
                 ('obj1_unique_together3_field1', 132),
@@ -177,7 +219,7 @@ class ModelTests(TestCase):
             _dict_keys_list=dict_keys_list
         )
         _check(objs, dict_keys_list)
-        objs = models.TestModel.get_objs_by_unique_together_key_from_cache(
+        objs = models.TestModel.get_objs_from_cache(
             field_names=('unique_together4_field1', 'unique_together4_field2'),
             field_values=[
                 (models.SubModel.objects.get(pk=2), models.SubModel.objects.get(pk=3)),
@@ -186,7 +228,7 @@ class ModelTests(TestCase):
             _dict_keys_list=dict_keys_list
         )
         _check(objs, dict_keys_list)
-        objs = models.TestModel.get_objs_by_unique_together_key_from_cache(
+        objs = models.TestModel.get_objs_from_cache(
             field_names=('unique_together4_field1_id', 'unique_together4_field2_id'),
             field_values=[
                 (2, 'sub3_unique_field'),
