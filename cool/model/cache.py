@@ -1,6 +1,10 @@
 # encoding: utf-8
+import operator
+from functools import reduce
 
-from django.db import models
+from django.db import connections, models
+from django.db.models import Exists, Func, OuterRef, Q, Value
+from django.utils.crypto import get_random_string
 
 from cool.core import cache
 
@@ -12,127 +16,139 @@ class ModelCache(cache.BaseCache):
     key_prefix = 'cool:model_cache'
     default_timeout = 600
 
-    pk = cache.CacheItem()
-    unique = cache.CacheItem()
-    unique_together = cache.CacheItem()
+    item = cache.CacheItem()
 
-    def _get_key(self, model_cls, field_key, field_name):
-        assert field_key is not None
-        assert issubclass(model_cls, models.Model)
-        if field_name is None:
-            return "%s:%s" % (model_cls._meta.db_table, field_key), self.pk
-        if isinstance(field_name, str):
-            filed = model_cls._meta.get_field(field_name)
-            assert filed.unique
-            return "%s:%s:%s" % (model_cls._meta.db_table, filed.name, field_key), self.unique
+    @classmethod
+    def _get_field(cls, model_cls, field_name):
+        if field_name == 'pk':
+            return model_cls._meta.pk
         else:
-            assert isinstance(field_name, tuple) and isinstance(field_key, tuple) and len(field_key) == len(field_name)
-            temp = sorted([(model_cls._meta.get_field(name).name, key) for name, key in zip(field_name, field_key)])
-            field_name, field_key = zip(*temp)
+            return model_cls._meta.get_field(field_name)
 
-            for unique_together in model_cls._meta.unique_together:
-                if len(unique_together) == len(field_name) and \
-                        tuple(sorted([model_cls._meta.get_field(field).name for field in unique_together])):
-                    return "%s:%s:%s" % (
-                        model_cls._meta.db_table, "|".join(field_name), field_key
-                    ), self.unique_together
-            raise AssertionError()
-
-    def _get_together_key(self, model_cls, field_keys, field_names):
+    @classmethod
+    def _get_key(cls, model_cls, field_names, field_values):
         assert (
-            field_keys and field_names
-            and isinstance(field_keys, tuple)
-            and isinstance(field_names, tuple)
-            and len(field_keys) == len(field_names)
+            field_values and field_names
+            and isinstance(field_values, (list, tuple))
+            and isinstance(field_names, (list, tuple))
+            and len(field_values) == len(field_names)
         )
         assert issubclass(model_cls, models.Model)
-        temp = sorted([(model_cls._meta.get_field(name).name, key) for name, key in zip(field_names, field_keys)])
-        field_name, field_key = zip(*temp)
+        temp = []
+        for name, value in zip(field_names, field_values):
+            field = cls._get_field(model_cls, name)
+            if isinstance(field, models.ForeignObject) and isinstance(value, field.related_model):
+                value = getattr(value, field.target_field.attname)
+            assert isinstance(value, (str, int))
+            value = str(value)
+            temp.append((field.name, value, field))
+        field_names, field_values, fields = zip(*sorted(temp))
+        if len(field_names) == 1:
+            assert fields[0].unique
+        else:
+            unique_togethers = [
+                tuple(sorted([cls._get_field(model_cls, field).name for field in unique_together]))
+                for unique_together in model_cls._meta.unique_together
+            ]
+            assert field_names in unique_togethers
 
-        for unique_together in model_cls._meta.unique_together:
-            if len(unique_together) == len(field_name) and \
-                    tuple(sorted([model_cls._meta.get_field(field).name for field in unique_together])):
-                return "%s:%s:%s" % (
-                    model_cls._meta.db_table, "|".join(field_name), "|".join(field_key)
-                ), self.unique_together
-        raise AssertionError()
+        def _list_to_key(_input):
+            return "|".join(map(str, _input))
+        return "%s:%s:%s" % (
+            model_cls._meta.db_table, _list_to_key(field_names), _list_to_key(field_values)
+        ), field_names, field_values
 
-    def get(self, model_cls, field_key, field_name=None, *, ttl=None):
-        ret = self.get_many(model_cls, field_keys=[field_key], field_name=field_name, ttl=ttl)
-        return ret.get(field_key, None)
+    @classmethod
+    def get_many_from_db(cls, model_cls, field_values, field_names):
 
-    def get_together(self, model_cls, fields, *, ttl=None):
-        field_names, field_keys = list(zip(*fields.items()))
-        key, item = self._get_together_key(model_cls, field_keys, field_names)
-        ret = item.get(key)
-        if not ret:
-            if hasattr(model_cls, 'get_queryset') and callable(model_cls.get_queryset):
-                queryset = model_cls.get_queryset()
+        ret = dict()
+        if hasattr(model_cls, 'get_queryset') and callable(model_cls.get_queryset):
+            queryset = model_cls.get_queryset()
+        else:
+            queryset = model_cls.objects
+
+        temp_name = "django_cool_temp_field_name_" + get_random_string(8)
+        if connections[queryset.db].vendor == "mysql":
+            queryset = queryset.filter(Exists(
+                queryset.annotate(**{
+                    temp_name: Func(*field_names, function="ROW")
+                }).filter(**{
+                    "pk": OuterRef('pk'),
+                    "%s__in" % temp_name: [Value(pair) for pair in field_values],
+                }).values('pk')
+            ))
+        elif connections[queryset.db].vendor == "postgresql":
+            queryset = queryset.annotate(**{
+                temp_name: Func(*field_names, function="ROW")
+            }).filter(**{
+                "%s__in" % temp_name: [Value(pair) for pair in field_values]
+            })
+        # elif connections[queryset.db].vendor == "oracle":
+        #     pass
+        else:
+            queryset = queryset.filter(
+                reduce(operator.or_, [Q(**dict(zip(field_names, field_value))) for field_value in field_values])
+            )
+
+        new_field_names = list()
+        fields = list()
+        for field_name in field_names:
+            field = cls._get_field(model_cls, field_name)
+            if isinstance(field, models.ForeignObject):
+                field_name = field.attname
             else:
-                queryset = model_cls.objects
-            ret = queryset.filter(**fields).first()
-            if ret:
-                item.set(key, ret, ttl)
-        return ret
+                field_name = field.name
+            fields.append(field)
+            new_field_names.append(field_name)
 
-    def get_many(self, model_cls, field_keys, field_name=None, *, ttl=None):
-        field_keys = list(field_keys)
-        keys_cache_to_model = dict()
-        keys_model_to_cache = dict()
-        item = None
+        dict_keys_list = list()
+        for field_value in field_values:
+            new_field_value = list()
+            for field, value in zip(fields, field_value):
+                if isinstance(field, models.ForeignObject) and isinstance(value, field.related_model):
+                    value = getattr(value, field.target_field.attname)
+                assert isinstance(value, (str, int))
+                value = str(value)
+                new_field_value.append(value)
+            dict_keys_list.append(tuple(new_field_value))
+
+        for obj in queryset:
+            ret[tuple([str(getattr(obj, field_name)) for field_name in new_field_names])] = obj
+        return ret, dict_keys_list
+
+    def get_many(self, model_cls, field_names, field_values, *, ttl=None):
+        cache_key_to_value = dict()
+        value_to_cache_key = dict()
+        dict_keys_list = list()
         if ttl is None:
             ttl = self.default_timeout
-        for field_key in field_keys:
-            key, item = self._get_key(model_cls, field_key, field_name)
-            keys_cache_to_model[key] = field_key
-            keys_model_to_cache[field_key] = key
-        ret = item.get_many(keys_cache_to_model.keys())
+        for field_value in field_values:
+            assert len(field_value) == len(field_names)
+            key, name, value = self._get_key(model_cls, field_names, field_value)
+            dict_keys_list.append(value)
+            cache_key_to_value[key] = value
+            value_to_cache_key[value] = key
+        ret = self.item.get_many(cache_key_to_value.keys())
         if ret:
-            ret = {keys_cache_to_model[k]: v for k, v in ret.items()}
+            ret = {cache_key_to_value[k]: v for k, v in ret.items()}
         else:
             ret = dict()
 
-        not_found = keys_model_to_cache.keys() - ret.keys()
-        if field_name is None:
-            field_name = 'pk'
-        if not_found:
-            not_found_info = dict()
-            if hasattr(model_cls, 'get_queryset') and callable(model_cls.get_queryset):
-                queryset = model_cls.get_queryset()
-            else:
-                queryset = model_cls.objects
-            queryset = queryset.filter(**{"%s__in" % field_name: not_found})
-            for obj in queryset:
-                not_found_info[getattr(obj, field_name)] = obj
-            item.set_many({keys_model_to_cache[k]: v for k, v in not_found_info.items()}, ttl)
+        not_found_values = value_to_cache_key.keys() - ret.keys()
+        if not_found_values:
+            not_found_info, _ = self.get_many_from_db(model_cls, not_found_values, field_names)
+            self.item.set_many({value_to_cache_key[k]: v for k, v in not_found_info.items()}, ttl)
             ret.update(not_found_info)
-        # 按照参数传递顺序返回数据
-        return {field_key: ret[field_key] for field_key in field_keys if field_key in ret}
+        return ret, dict_keys_list
 
-    def delete(self, model_cls, field_key, field_name=None):
-        key, item = self._get_key(model_cls, field_key, field_name)
-        return item.delete(key)
-
-    def delete_together(self, model_cls, fields):
+    def delete_many(self, model_cls, field_names, field_values):
         keys = list()
-        item = None
-        for field in fields:
-            field_names, field_keys = list(zip(*field.items()))
-            key, item = self._get_together_key(model_cls, field_keys, field_names)
+        for field_value in field_values:
+            assert len(field_value) == len(field_names)
+            key, name, value = self._get_key(model_cls, field_names, field_value)
             keys.append(key)
-        if item is None:
-            return None
-        return item.delete_many(keys)
-
-    def delete_many(self, model_cls, field_keys, field_name=None):
-        keys = list()
-        item = None
-        for field_key in field_keys:
-            key, item = self._get_key(model_cls, field_key, field_name)
-            keys.append(key)
-        if item is None:
-            return None
-        return item.delete_many(keys)
+        if keys:
+            return self.item.delete_many(keys)
 
 
 model_cache = ModelCache()

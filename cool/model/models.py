@@ -101,36 +101,19 @@ class ModelCacheMixin:
         """
         通过主键获取对象（优先走缓存）
         """
-        if cls._MODEL_WITH_CACHE:
-            return model_cache.get(cls, pk, ttl=cls._MODEL_CACHE_TTL)
-        else:
-            return cls.get_queryset().filter(pk=pk).first()
+        _dict_keys_list = list()
+        data = cls.get_objs_from_cache(field_names=['pk'], field_values=[(pk, )], _dict_keys_list=_dict_keys_list)
+        return data.get(_dict_keys_list[0], None)
 
     @classmethod
-    def get_objs_by_pks_from_cache(cls, pks):
+    def get_objs_by_pks_from_cache(cls, pks, _dict_keys_list=None):
         """
         通过主键批量获取对象（优先走缓存）
         """
-        if cls._MODEL_WITH_CACHE:
-            return model_cache.get_many(cls, pks, ttl=cls._MODEL_CACHE_TTL)
-        else:
-            return {obj.pk: obj for obj in cls.get_queryset().filter(pk__in=pks)}
-
-    @classmethod
-    def flush_cache_by_pk(cls, pk):
-        """
-        清空主键缓存
-        """
-        if cls._MODEL_WITH_CACHE and pk is not None:
-            model_cache.delete(cls, pk)
-
-    @classmethod
-    def flush_cache_by_pks(cls, pks):
-        """
-        批量清空主键缓存
-        """
-        if cls._MODEL_WITH_CACHE and pks is not None:
-            model_cache.delete(cls, pks)
+        data = cls.get_objs_from_cache(
+            field_names=['pk'], field_values=[(pk, ) for pk in pks], _dict_keys_list=_dict_keys_list
+        )
+        return data
 
     @classmethod
     def get_obj_by_unique_key_from_cache(cls, **kwargs):
@@ -138,83 +121,102 @@ class ModelCacheMixin:
         通过有唯一索引的字段获取对象（优先走缓存）
         """
         assert len(kwargs) == 1
-        key, value = list(kwargs.items())[0]
-        if cls._MODEL_WITH_CACHE:
-            return model_cache.get(cls, value, key, ttl=cls._MODEL_CACHE_TTL)
-        else:
-            return cls.get_queryset().filter(**{key: value}).first()
+        name, value = list(kwargs.items())[0]
+        _dict_keys_list = list()
+        data = cls.get_objs_from_cache(field_names=[name], field_values=[(value, )], _dict_keys_list=_dict_keys_list)
+        return data.get(_dict_keys_list[0], None)
+
+    @classmethod
+    def get_objs_by_unique_keys_from_cache(cls, *, _dict_keys_list=None, **kwargs):
+        """
+        通过有唯一索引的字段批量获取对象（优先走缓存）
+        """
+        assert len(kwargs) == 1, kwargs
+        name, values = list(kwargs.items())[0]
+        data = cls.get_objs_from_cache(
+            field_names=[name], field_values=[(value, ) for value in values], _dict_keys_list=_dict_keys_list
+        )
+        return data
 
     @classmethod
     def get_obj_by_unique_together_key_from_cache(cls, **kwargs):
         """
         通过有联合唯一索引的字段获取对象（优先走缓存）
         """
-        if cls._MODEL_WITH_CACHE:
-            return model_cache.get_together(cls, kwargs, ttl=cls._MODEL_CACHE_TTL)
-        else:
-            return cls.get_queryset().filter(**kwargs).first()
+        field_names, field_values = zip(*kwargs.items())
+        _dict_keys_list = list()
+        data = cls.get_objs_from_cache(
+            field_names=field_names, field_values=[field_values], _dict_keys_list=_dict_keys_list
+        )
+        return data.get(_dict_keys_list[0], None)
 
     @classmethod
-    def get_objs_by_unique_keys_from_cache(cls, **kwargs):
+    def get_objs_by_unique_together_key_from_cache(cls, field_names, field_values, _dict_keys_list=None):
         """
-        通过有唯一索引的字段批量获取对象（优先走缓存）
+        通过有联合唯一索引的字段批量获取对象（优先走缓存）
         """
-        assert len(kwargs) == 1
-        key, value = list(kwargs.items())[0]
-        if cls._MODEL_WITH_CACHE:
-            return model_cache.get_many(cls, value, key, ttl=cls._MODEL_CACHE_TTL)
-        else:
-            return {getattr(obj, key): obj for obj in cls.get_queryset().filter(**{"%s__in" % key: value})}
-
-    @classmethod
-    def flush_cache_by_unique_key(cls, **kwargs):
-        """
-        清空唯一索引缓存
-        """
-        assert len(kwargs) == 1
-        key, value = list(kwargs.items())[0]
-        if cls._MODEL_WITH_CACHE and value is not None:
-            model_cache.delete(cls, value, key)
-
-    @classmethod
-    def flush_cache_by_unique_together_keys(cls, fields=None, **kwargs):
-        """
-        批量清空联合唯一索引缓存
-        """
-        if fields is None:
-            fields = list()
-        if kwargs:
-            fields.append(kwargs)
-        if cls._MODEL_WITH_CACHE and fields:
-            model_cache.delete_together(cls, fields)
-
-    @classmethod
-    def flush_cache_by_unique_keys(cls, **kwargs):
-        """
-        批量清空唯一索引缓存
-        """
-        assert len(kwargs) == 1
-        key, value = list(kwargs.items())[0]
-        if cls._MODEL_WITH_CACHE and value is not None:
-            model_cache.delete_many(cls, value, key)
+        data = cls.get_objs_from_cache(
+            field_names=field_names, field_values=field_values, _dict_keys_list=_dict_keys_list
+        )
+        return data
 
     def flush_cache(self):
         """
         清空对象所有缓存缓存
         """
-        self.flush_cache_by_pk(self.pk)
+        self.flush_field_cache(field_names=['pk'], field_values=[(self.pk, )])
         for field in self._meta.fields:
             if field.unique:
-                self.flush_cache_by_unique_key(**field.get_filter_kwargs_for_object(self))
-        fields = list()
+                self.flush_field_cache(field_names=[field.name], field_values=[(getattr(self, field.name), )])
         for field_together in self._meta.unique_together:
-            field_dict = dict()
-            for field_name in field_together:
-                field_dict.update(self._meta.get_field(field_name).get_filter_kwargs_for_object(self))
-            if field_dict:
-                fields.append(field_dict)
-        if fields:
-            self.flush_cache_by_unique_together_keys(fields)
+            self.flush_field_cache(
+                field_names=field_together,
+                field_values=[[getattr(self, field_name) for field_name in field_together]]
+            )
+
+    @classmethod
+    def _check_field_key(cls, *, field_names, field_values):
+        assert isinstance(field_names, (list, tuple))
+        for field_name in field_names:
+            assert isinstance(field_name, str)
+        assert isinstance(field_values, (list, tuple))
+        for field_value in field_values:
+            assert isinstance(field_value, (list, tuple)), field_value
+            assert len(field_value) == len(field_names)
+
+    @classmethod
+    def flush_field_cache(cls, *, field_names, field_values):
+        """
+        清空缓存
+        """
+        if cls._MODEL_WITH_CACHE:
+            cls._check_field_key(field_names=field_names, field_values=field_values)
+            model_cache.delete_many(model_cls=cls, field_names=field_names, field_values=field_values)
+
+    @classmethod
+    def get_objs_from_cache(cls, *, field_names, field_values, _dict_keys_list=None):
+        """
+        获取数据（优先从缓存获取）
+        """
+        cls._check_field_key(field_names=field_names, field_values=field_values)
+
+        if cls._MODEL_WITH_CACHE:
+            ret, dict_keys_list = model_cache.get_many(
+                model_cls=cls,
+                field_names=field_names,
+                field_values=field_values,
+                ttl=cls._MODEL_CACHE_TTL
+            )
+        else:
+            ret, dict_keys_list = model_cache.get_many_from_db(
+                model_cls=cls,
+                field_names=field_names,
+                field_values=field_values
+            )
+        if isinstance(_dict_keys_list, list):
+            _dict_keys_list.clear()
+            _dict_keys_list.extend(dict_keys_list)
+        return ret
 
 
 class SearchModelMixin:
