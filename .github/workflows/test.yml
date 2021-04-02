@@ -79,12 +79,12 @@ jobs:
     - name: Test with pytest sqlite
       run: |
         pytest --db sqlite
-    - name: Test with pytest mysql
-      run: |
-          pytest --db mysql
     - name: Test with pytest postgresql
       run: |
           pytest --db postgresql
+    - name: Test with pytest mysql
+      run: |
+          pytest --db mysql
 #    - name: Test with pytest oracle
 #      run: |
 #          pytest --db oracle

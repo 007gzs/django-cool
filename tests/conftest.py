@@ -19,8 +19,8 @@ def pytest_configure(config):
         database = {
             'ENGINE': 'django.db.backends.mysql',
             'NAME': 'django_cool_test',
-            'USER': 'root',
-            'PASSWORD': 'root',
+            'USER': 'django_cool',
+            'PASSWORD': 'django_cool',
             'HOST': 'localhost',
             'PORT': '3306',
         }
