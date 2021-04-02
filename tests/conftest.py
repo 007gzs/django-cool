@@ -2,16 +2,52 @@
 import django
 
 
+def pytest_addoption(parser):
+    parser.addoption("--db", action="store", default="sqlite", choices=['sqlite', 'mysql', 'postgresql', 'oracle'])
+
+
 def pytest_configure(config):
     from django.conf import settings
+    db = config.getoption('--db')
 
+    if db == 'sqlite':
+        database = {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:'
+        }
+    elif db == 'mysql':
+        database = {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'django_cool_test',
+            'USER': 'root',
+            'PASSWORD': 'root',
+            'HOST': 'localhost',
+            'PORT': '3306',
+        }
+    elif db == 'postgresql':
+        database = {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'django_cool_test',
+            'USER': 'django_cool',
+            'PASSWORD': 'django_cool',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
+    elif db == 'oracle':
+        database = {
+            'ENGINE': 'django.db.backends.oracle',
+            'NAME': 'django_cool_test',
+            'USER': 'django_cool',
+            'PASSWORD': 'django_cool',
+            'HOST': 'localhost',
+            'PORT': '1521',
+        }
+    else:
+        raise ValueError()
     settings.configure(
         DEBUG_PROPAGATE_EXCEPTIONS=True,
         DATABASES={
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': ':memory:'
-            }
+            'default': database
         },
         SITE_ID=1,
         SECRET_KEY='not very secret in tests',
