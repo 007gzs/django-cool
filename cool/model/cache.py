@@ -67,7 +67,7 @@ class ModelCache(cache.BaseCache):
         else:
             queryset = model_cls.objects
         many_queryset = None
-        if len(field_names) > 1:
+        if len(field_names) > 1 and len(field_values) > 1:
             temp_name = "django_cool_temp_field_name_" + get_random_string(8)
             if connections[queryset.db].vendor == "mysql":
                 many_queryset = queryset.filter(Exists(
