@@ -66,27 +66,28 @@ class ModelCache(cache.BaseCache):
             queryset = model_cls.get_queryset()
         else:
             queryset = model_cls.objects
-
-        temp_name = "django_cool_temp_field_name_" + get_random_string(8)
-        if connections[queryset.db].vendor == "mysql":
-            queryset = queryset.filter(Exists(
-                queryset.annotate(**{
-                    temp_name: Func(*field_names, function="ROW")
+        many_queryset = None
+        if len(field_names) > 1:
+            temp_name = "django_cool_temp_field_name_" + get_random_string(8)
+            if connections[queryset.db].vendor == "mysql":
+                many_queryset = queryset.filter(Exists(
+                    queryset.annotate(**{
+                        temp_name: Func(*field_names, function="ROW", output_field=models.CharField())
+                    }).filter(**{
+                        "pk": OuterRef('pk'),
+                        "%s__in" % temp_name: [Value(pair) for pair in field_values],
+                    }).values('pk')
+                ))
+            elif connections[queryset.db].vendor == "postgresql":
+                many_queryset = queryset.annotate(**{
+                    temp_name: Func(*field_names, function="ROW", output_field=models.CharField())
                 }).filter(**{
-                    "pk": OuterRef('pk'),
-                    "%s__in" % temp_name: [Value(pair) for pair in field_values],
-                }).values('pk')
-            ))
-        elif connections[queryset.db].vendor == "postgresql":
-            queryset = queryset.annotate(**{
-                temp_name: Func(*field_names, function="ROW")
-            }).filter(**{
-                "%s__in" % temp_name: [Value(pair) for pair in field_values]
-            })
-        # elif connections[queryset.db].vendor == "oracle":
-        #     pass
-        else:
-            queryset = queryset.filter(
+                    "%s__in" % temp_name: [Value(pair) for pair in field_values]
+                })
+            # elif connections[queryset.db].vendor == "oracle":
+            #     pass
+        if many_queryset is None:
+            many_queryset = queryset.filter(
                 reduce(operator.or_, [Q(**dict(zip(field_names, field_value))) for field_value in field_values])
             )
 
@@ -112,7 +113,7 @@ class ModelCache(cache.BaseCache):
                 new_field_value.append(value)
             dict_keys_list.append(tuple(new_field_value))
 
-        for obj in queryset:
+        for obj in many_queryset:
             ret[tuple([str(getattr(obj, field_name)) for field_name in new_field_names])] = obj
         return ret, dict_keys_list
 

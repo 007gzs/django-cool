@@ -246,6 +246,11 @@ class ModelTests(TestCase):
         sub_obj = models.SubModel.objects.get(pk=2)
 
         def _get_from_cache():
+
+            import secrets
+            from random import Random
+            random = Random(0)
+            secrets.choice = random.choice
             models.TestModel.get_obj_by_pk_from_cache(1)
             models.TestModel.get_obj_by_unique_key_from_cache(unique_field='obj1_unique_field')
             models.TestModel.get_obj_by_unique_key_from_cache(unique_field2_id=1)
