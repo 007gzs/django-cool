@@ -123,10 +123,13 @@ def get_field_info(field):
     }
     field_validators = [field]
     field_validators.extend(getattr(field, 'validators', list()))
+
     validator_keys = ['max_value', 'min_value', 'max_length', 'min_length', 'max_digits', 'max_decimal_places',
                       'choices', 'regex', 'allowed_extensions', 'sep', 'child', 'is_list', 'children', 'serializer']
     for validator in field_validators:
         for k in validator_keys:
+            if k == 'choices' and not isinstance(field, fields.ChoiceField):
+                continue
             v = getattr(validator, k, None)
             if v is not None:
                 v = getattr(v, 'pattern', v)
