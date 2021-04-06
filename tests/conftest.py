@@ -21,7 +21,7 @@ def pytest_configure(config):
             'NAME': 'django_cool_test',
             'USER': 'django_cool',
             'PASSWORD': 'django_cool',
-            'HOST': 'localhost',
+            'HOST': '127.0.0.1',
             'PORT': '3306',
         }
     elif db == 'postgresql':
@@ -30,7 +30,7 @@ def pytest_configure(config):
             'NAME': 'django_cool_test',
             'USER': 'django_cool',
             'PASSWORD': 'django_cool',
-            'HOST': 'localhost',
+            'HOST': '127.0.0.1',
             'PORT': '5432',
         }
     elif db == 'oracle':
@@ -39,12 +39,11 @@ def pytest_configure(config):
             'NAME': 'django_cool_test',
             'USER': 'django_cool',
             'PASSWORD': 'django_cool',
-            'HOST': 'localhost',
+            'HOST': '127.0.0.1',
             'PORT': '1521',
         }
     else:
         raise ValueError()
-    print(database)
     settings.configure(
         DEBUG_PROPAGATE_EXCEPTIONS=True,
         DATABASES={
