@@ -44,6 +44,7 @@ def pytest_configure(config):
         }
     else:
         raise ValueError()
+    print(database)
     settings.configure(
         DEBUG_PROPAGATE_EXCEPTIONS=True,
         DATABASES={
