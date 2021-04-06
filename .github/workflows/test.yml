@@ -49,13 +49,13 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        sudo apt-get install gettext
         python -m pip install --upgrade pip
         pip install flake8 "isort>=5.1.0" pytest
-        pip install mysqlclient psycopg2
-        sudo apt-get install gettext
+        pip install mysqlclient psycopg2 cx_Oracle
     - name: Install Django 2.2
       run: |
-        pip install 'Django>=2.2,<3.0'
+        pip install 'Django>=2.2,<3'
       if: matrix.django-version == 'django-2.2'
     - name: Install Django 3.0
       run: |
@@ -64,6 +64,10 @@ jobs:
     - name: Install Django 3.1
       run: |
         pip install 'Django>=3.1,<3.2'
+      if: matrix.django-version == 'django-3.1'
+    - name: Install Django 3.2
+      run: |
+          pip install 'Django>=3.2,<4'
       if: matrix.django-version == 'django-3.1'
     - name: Install Django main
       run: |
