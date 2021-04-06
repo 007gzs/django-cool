@@ -3,7 +3,7 @@ import operator
 from functools import reduce
 
 from django.db import connections, models
-from django.db.models import Exists, Func, OuterRef, Q, Value
+from django.db.models import Func, Q, Value
 from django.utils.crypto import get_random_string
 
 from cool.core import cache
@@ -67,23 +67,16 @@ class ModelCache(cache.BaseCache):
         else:
             queryset = model_cls.objects
         many_queryset = None
+
         if len(field_names) > 1 and len(field_values) > 1:
             temp_name = "django_cool_temp_field_name_" + get_random_string(8)
-            if connections[queryset.db].vendor == "mysql":
-                many_queryset = queryset.filter(Exists(
-                    queryset.annotate(**{
-                        temp_name: Func(*field_names, function="ROW", output_field=models.CharField())
-                    }).filter(**{
-                        "pk": OuterRef('pk'),
-                        "%s__in" % temp_name: [Value(pair) for pair in field_values],
-                    }).values('pk')
-                ))
-            elif connections[queryset.db].vendor == "postgresql":
+            if connections[queryset.db].vendor in ("mysql", "postgresql"):
                 many_queryset = queryset.annotate(**{
                     temp_name: Func(*field_names, function="ROW", output_field=models.CharField())
                 }).filter(**{
-                    "%s__in" % temp_name: [Value(pair) for pair in field_values]
+                    "%s__in" % temp_name: [Value(value) for value in field_values]
                 })
+                many_queryset.query.set_annotation_mask(())
             # elif connections[queryset.db].vendor == "oracle":
             #     pass
         if many_queryset is None:
