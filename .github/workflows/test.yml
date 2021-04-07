@@ -53,12 +53,12 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        sudo apt-get install gettext
         mkdir -p /opt/oracle
         cd /opt/oracle
-        wget https://download.oracle.com/otn_software/linux/instantclient/211000/instantclient-basic-linux.x64-21.1.0.0.0.zip
+        wget -q https://download.oracle.com/otn_software/linux/instantclient/211000/instantclient-basic-linux.x64-21.1.0.0.0.zip
         unzip instantclient-basic-linux.x64-21.1.0.0.0.zip
-        export PATH=/opt/oracle/instantclient_21_1:${PATH}
+        export LD_LIBRARY_PATH=/opt/oracle/instantclient_21_1:${LD_LIBRARY_PATH}
+        sudo apt-get install gettext libaio1
         python -m pip install --upgrade pip
         pip install flake8 "isort>=5.1.0" pytest
         pip install mysqlclient psycopg2 cx_Oracle
