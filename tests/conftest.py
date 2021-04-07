@@ -1,6 +1,37 @@
 # encoding: utf-8
 import django
 
+DATABASE_CONFIG = {
+    'sqlite': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:'
+    },
+    'mysql': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'django_cool_test',
+        'USER': 'django_cool',
+        'PASSWORD': 'django_cool',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+    },
+    'postgresql': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'django_cool_test',
+        'USER': 'django_cool',
+        'PASSWORD': 'django_cool',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+    },
+    'oracle': {
+        'ENGINE': 'django.db.backends.oracle',
+        'NAME': 'xe',
+        'USER': 'system',
+        'PASSWORD': 'oracle',
+        'HOST': '127.0.0.1',
+        'PORT': '1521',
+    }
+}
+
 
 def pytest_addoption(parser):
     parser.addoption("--db", action="store", default="sqlite", choices=['sqlite', 'mysql', 'postgresql', 'oracle'])
@@ -10,44 +41,10 @@ def pytest_configure(config):
     from django.conf import settings
     db = config.getoption('--db')
 
-    if db == 'sqlite':
-        database = {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': ':memory:'
-        }
-    elif db == 'mysql':
-        database = {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'django_cool_test',
-            'USER': 'django_cool',
-            'PASSWORD': 'django_cool',
-            'HOST': '127.0.0.1',
-            'PORT': '3306',
-        }
-    elif db == 'postgresql':
-        database = {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'django_cool_test',
-            'USER': 'django_cool',
-            'PASSWORD': 'django_cool',
-            'HOST': '127.0.0.1',
-            'PORT': '5432',
-        }
-    elif db == 'oracle':
-        database = {
-            'ENGINE': 'django.db.backends.oracle',
-            'NAME': 'django_cool_test',
-            'USER': 'django_cool',
-            'PASSWORD': 'django_cool',
-            'HOST': '127.0.0.1',
-            'PORT': '1521',
-        }
-    else:
-        raise ValueError()
     settings.configure(
         DEBUG_PROPAGATE_EXCEPTIONS=True,
         DATABASES={
-            'default': database
+            'default': DATABASE_CONFIG[db]
         },
         SITE_ID=1,
         SECRET_KEY='not very secret in tests',

@@ -19,6 +19,10 @@ jobs:
           - python-version: 3.9
             django-version: django-main
     services:
+      oracle:
+        image: quay.io/maksymbilenko/oracle-12c
+        ports:
+          - 1521:1521
       postgres:
         image: postgres
         env:
@@ -91,6 +95,6 @@ jobs:
     - name: Test with pytest mysql
       run: |
           pytest --db mysql
-#    - name: Test with pytest oracle
-#      run: |
-#          pytest --db oracle
+    - name: Test with pytest oracle
+      run: |
+          pytest --db oracle
