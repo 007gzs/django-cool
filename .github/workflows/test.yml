@@ -19,11 +19,11 @@ jobs:
           - python-version: 3.9
             django-version: django-main
     services:
-      oracle:
-        image: quay.io/maksymbilenko/oracle-12c
-        ports:
-          - 1521:1521
-        options: --health-cmd "echo exit|sqlplus system/oracle@//localhost:1521/xe" --health-interval 10s --health-timeout 5s --health-retries 5
+#      oracle:
+#        image: quay.io/maksymbilenko/oracle-12c
+#        ports:
+#          - 1521:1521
+#        options: --health-cmd "echo exit|sqlplus system/oracle@//localhost:1521/xe" --health-interval 10s --health-timeout 5s --health-retries 5
       postgres:
         image: postgres
         env:
@@ -32,7 +32,6 @@ jobs:
           POSTGRES_DB: django_cool_test
         ports:
           - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       mysql:
         image: mysql
@@ -54,10 +53,10 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        mkdir -p /opt/oracle
-        cd /opt/oracle
-        wget -q https://download.oracle.com/otn_software/linux/instantclient/211000/instantclient-basic-linux.x64-21.1.0.0.0.zip
-        unzip instantclient-basic-linux.x64-21.1.0.0.0.zip
+#        mkdir -p /opt/oracle
+#        cd /opt/oracle
+#        wget -q https://download.oracle.com/otn_software/linux/instantclient/211000/instantclient-basic-linux.x64-21.1.0.0.0.zip
+#        unzip instantclient-basic-linux.x64-21.1.0.0.0.zip
         sudo apt-get install gettext libaio1
         python -m pip install --upgrade pip
         pip install flake8 "isort>=5.1.0" pytest
@@ -100,8 +99,8 @@ jobs:
     - name: Test with pytest mysql
       run: |
           pytest --db mysql
-    - name: Test with pytest oracle
-      run: |
-          export LD_LIBRARY_PATH=/opt/oracle/instantclient_21_1:${LD_LIBRARY_PATH}
-          echo ${LD_LIBRARY_PATH}
-          pytest --db oracle
+#    - name: Test with pytest oracle
+#      run: |
+#          export LD_LIBRARY_PATH=/opt/oracle/instantclient_21_1:${LD_LIBRARY_PATH}
+#          echo ${LD_LIBRARY_PATH}
+#          pytest --db oracle
