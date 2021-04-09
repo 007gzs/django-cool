@@ -35,8 +35,10 @@ class SplitCharField(CharField):
     def to_internal_value(self, data):
         if data is None:
             return data
-        ret = super().to_internal_value(data)
-        return self.run_child_validation(ret.split(self.sep))
+        if not isinstance(data, (list, tuple)):
+            data = super().to_internal_value(data)
+            data = data.split(self.sep)
+        return self.run_child_validation(data)
 
     def run_child_validation(self, data):
         result = []

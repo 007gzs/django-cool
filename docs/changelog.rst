@@ -4,6 +4,7 @@ Changelog
 Version 1.0.16
 ------------------
 + `CoolAutocompleteMixin` 兼容 django3.2
++ `SplitCharField` json 方式提交时，支持list
 
 Version 1.0.15
 ------------------
