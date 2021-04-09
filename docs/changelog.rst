@@ -1,9 +1,14 @@
 Changelog
 ================
 
-Version 1.1.0
+Version 1.0.16
 ------------------
-+ `ModelCacheMixin` 缓存重构， 支持联合唯一索引数据缓存获取
++ `CoolAutocompleteMixin` 兼容 django3.2
+
+Version 1.0.15
+------------------
++ `ModelCacheMixin` 缓存重构， 支持联合唯一索引数据缓存获取，联合唯一键使用`(key1, key2) in ((val1, val2), (val3, val4))`的方式
++ 测试用例增加不同数据库测试
 
 Version 1.0.13
 ------------------

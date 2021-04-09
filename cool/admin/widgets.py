@@ -2,6 +2,7 @@
 
 from urllib.parse import urlencode
 
+import django
 from django import forms
 from django.contrib.admin import widgets
 from django.forms.utils import flatatt
@@ -184,27 +185,39 @@ class DateRangeFilterWidget(RangeFilterWidget):
 class CoolAutocompleteMixin(widgets.AutocompleteMixin):
     url = None
 
-    def __init__(self, rel, admin_site=None, attrs=None, choices=(), using=None):
-        widgets.AutocompleteMixin.__init__(self, rel, admin_site, attrs=attrs, choices=choices, using=using)
-        self.to_field_name = getattr(self.rel, 'field_name', 'pk')
+    def __init__(self, field, *args, **kwargs):
+        if django.VERSION <= (3, 2):
+            super().__init__(field.remote_field, *args, **kwargs)
+        else:
+            super().__init__(field, *args, **kwargs)
+        remote_model_opts = self.remote_field.model._meta
+        to_field_name = getattr(self.remote_field, 'field_name', remote_model_opts.pk.attname)
+        self.to_field_name = remote_model_opts.get_field(to_field_name).attname
         if self.url is None:
             self.url = reverse('cool_admin_autocomplete')
 
+    @property
+    def remote_field(self):
+        if hasattr(self, 'rel'):
+            return self.rel
+        else:
+            return self.field.remote_field
+
     def get_limit_choices_to_params(self):
-        limit_choices_to = self.rel.limit_choices_to
+        limit_choices_to = self.remote_field.limit_choices_to
         if callable(limit_choices_to):
             limit_choices_to = limit_choices_to()
         return widgets.url_params_from_lookup_dict(limit_choices_to)
 
     def get_url(self):
         params = {
-            'to_field_name': self.to_field_name,
-            'app_label': self.rel.model._meta.app_label,
-            'model_name': self.rel.model._meta.model_name,
+            'cool_to_field_name': self.to_field_name,
+            'cool_app_label': self.remote_field.model._meta.app_label,
+            'cool_model_name': self.remote_field.model._meta.model_name,
         }
         limit_choices_to = self.get_limit_choices_to_params()
         if limit_choices_to:
-            params['limit_choices_to'] = urlencode(limit_choices_to)
+            params['cool_limit_choices_to'] = urlencode(limit_choices_to)
         return "%s?%s" % (self.url, urlencode(params))
 
     def optgroups(self, name, value, attr=None):

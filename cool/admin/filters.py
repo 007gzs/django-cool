@@ -196,7 +196,7 @@ class AutocompleteFieldFilter(WidgetFilterMixin, admin.RelatedFieldListFilter):
 
     def init_widget(self, field, *args, **kwargs):
         widget = CoolAutocompleteSelect(
-            field.remote_field, attrs=self.get_widget_attrs(self.get_param_name(), self.params, self.widget_attrs)
+            field, None, attrs=self.get_widget_attrs(self.get_param_name(), self.params, self.widget_attrs)
         )
         other_model = get_model_from_relation(field)
         field = forms.ModelChoiceField(

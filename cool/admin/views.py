@@ -25,10 +25,10 @@ class CoolAutocompleteJsonView(BaseListView):
             pagination: {more: true}
         }
         """
-        app_label = request.GET['app_label']
-        model_name = request.GET['model_name']
-        limit_choices_to = request.GET.get('limit_choices_to', None)
-        to_field_name = request.GET.get('to_field_name', 'pk')
+        app_label = request.GET['cool_app_label']
+        model_name = request.GET['cool_model_name']
+        limit_choices_to = request.GET.get('cool_limit_choices_to', None)
+        to_field_name = request.GET.get('cool_to_field_name', 'pk')
         term = request.GET.get('term', '')
 
         if not self.has_perm(request, app_label, model_name):

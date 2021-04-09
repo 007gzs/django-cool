@@ -298,7 +298,7 @@ class BaseModelAdmin(admin.ModelAdmin):
                 and cool_settings.ADMIN_FOREIGNKEY_FIELD_USE_AUTOCOMPLETE
                 and hasattr(db_field.remote_field.model, 'get_search_fields')
                 and db_field.name not in [*self.raw_id_fields, *self.radio_fields]):
-            kwargs['widget'] = widgets.CoolAutocompleteSelect(db_field.remote_field, self.admin_site, using=db)
+            kwargs['widget'] = widgets.CoolAutocompleteSelect(db_field, self.admin_site, using=db)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
@@ -307,7 +307,7 @@ class BaseModelAdmin(admin.ModelAdmin):
                 and cool_settings.ADMIN_MANYTOMANY_FIELD_USE_AUTOCOMPLETE
                 and hasattr(db_field.remote_field.model, 'get_search_fields')
                 and db_field.name not in [*self.raw_id_fields, *self.filter_vertical, *self.filter_horizontal]):
-            kwargs['widget'] = widgets.CoolAutocompleteSelectMultiple(db_field.remote_field, self.admin_site, using=db)
+            kwargs['widget'] = widgets.CoolAutocompleteSelectMultiple(db_field, self.admin_site, using=db)
         if django.VERSION >= (3, 1) or 'widget' not in kwargs:
             return super().formfield_for_manytomany(db_field, request, **kwargs)
         else:
