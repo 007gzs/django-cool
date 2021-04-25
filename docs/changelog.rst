@@ -1,6 +1,11 @@
 Changelog
 ================
 
+Version 1.1.0
+------------------
++ 拆分 `AutoCompleteMixin` 可供 `TabularInline`、`StackedInline`使用
++ `BaseModelAdmin` 是否可修改字段从 `changeable` 修改为 `editable` （2.0 将删除`changeable`字段）
+
 Version 1.0.16
 ------------------
 + `CoolAutocompleteMixin` 兼容 django3.2

@@ -1,5 +1,5 @@
 # encoding: utf-8
-
+import warnings
 from functools import reduce, wraps
 
 import django
@@ -25,6 +25,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from cool.admin import widgets
+from cool.core.deprecation import RemovedInDjangoCool20Warning
 from cool.settings import cool_settings
 
 
@@ -212,85 +213,7 @@ class AdminImageWidget(AdminFileWidget):
         return mark_safe(''.join(output))
 
 
-class BaseModelAdmin(admin.ModelAdmin):
-    """
-    自定义Admin基类，列表页显示默认字段，支持自定义功能
-    """
-
-    # remove "__str__"
-    list_display = []
-    list_display_links = ['id', ]
-
-    # Extend options to manage site
-    # extend field exclude RelatedField and PrimaryKey fields into list_display
-    empty_value_display = _('[None]')
-    with_related_items = True
-    extend_normal_fields = True
-    extend_related_fields = False
-    exclude_list_display = []
-    heads = ['id', ]
-    tails = []
-    # manage Add/Change view
-    addable = True
-    changeable = True
-    deletable = True
-    # manage Change view
-    change_view_readonly_fields = []
-    changeable_fields = forms.ALL_FIELDS
-
-    formset = StrictModelFormSet
-
-    def __getattr__(self, attr):
-        if ('__' in attr
-                and not attr.startswith('_')
-                and not attr.endswith('_boolean')
-                and not attr.endswith('_short_description')):
-
-            def dyn_lookup(instance):
-                # traverse all __ lookups
-                return reduce(lambda parent, child: getattr(parent, child), attr.split('__'), instance)
-
-            # get admin_order_field, boolean and short_description
-            dyn_lookup.admin_order_field = attr
-            dyn_lookup.boolean = getattr(self, '{}_boolean'.format(attr), False)
-            dyn_lookup.short_description = getattr(
-                self, '{}_short_description'.format(attr),
-                attr.replace('_', ' ').capitalize()
-            )
-
-            return dyn_lookup
-
-        # not dynamic lookup, default behaviour
-        return self.__getattribute__(attr)
-
-    def formfield_for_dbfield(self, db_field, **kwargs):
-        if cool_settings.ADMIN_SHOW_IMAGE_IN_FORM_PAGE and isinstance(db_field, models.ImageField):
-            kwargs.pop("request", None)
-            kwargs['widget'] = AdminImageWidget
-            return db_field.formfield(**kwargs)
-        return super().formfield_for_dbfield(db_field, **kwargs)
-
-    def get_changeable_fields(self, request, obj=None):
-        if not self.changeable:
-            return ()
-        if self.changeable_fields == forms.ALL_FIELDS:
-            return None
-        elif self.changeable_fields is None:
-            return ()
-
-        return self.changeable_fields
-
-    def has_delete_permission(self, request, obj=None):
-        return self.deletable and super().has_delete_permission(request, obj)
-
-    def has_change_permission(self, request, obj=None):
-        return self.changeable and super().has_change_permission(request, obj)
-
-    def has_add_permission(self, request):
-        return self.addable and super().has_add_permission(request)
-
-    def get_user_queryset(self, queryset):
-        return queryset
+class AutoCompleteMixin:
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         db = kwargs.get('using')
@@ -327,6 +250,98 @@ class BaseModelAdmin(admin.ModelAdmin):
         if get_search_fields_func and callable(get_search_fields_func):
             return tuple(set(get_search_fields_func()) | set(search_fields))
         return ()
+
+
+class BaseModelAdmin(AutoCompleteMixin, admin.ModelAdmin):
+    """
+    自定义Admin基类，列表页显示默认字段，支持自定义功能
+    """
+
+    # remove "__str__"
+    list_display = []
+    list_display_links = ['id', ]
+
+    # Extend options to manage site
+    # extend field exclude RelatedField and PrimaryKey fields into list_display
+    empty_value_display = _('[None]')
+    with_related_items = True
+    extend_normal_fields = True
+    extend_related_fields = False
+    exclude_list_display = []
+    heads = ['id', ]
+    tails = []
+    # manage Add/Change view
+    addable = True
+    changeable = None
+    editable = True
+    deletable = True
+    # manage Change view
+    change_view_readonly_fields = []
+    changeable_fields = forms.ALL_FIELDS
+
+    formset = StrictModelFormSet
+
+    def __getattr__(self, attr):
+        if ('__' in attr
+                and not attr.startswith('_')
+                and not attr.endswith('_boolean')
+                and not attr.endswith('_short_description')):
+
+            def dyn_lookup(instance):
+                # traverse all __ lookups
+                return reduce(lambda parent, child: getattr(parent, child), attr.split('__'), instance)
+
+            # get admin_order_field, boolean and short_description
+            dyn_lookup.admin_order_field = attr
+            dyn_lookup.boolean = getattr(self, '{}_boolean'.format(attr), False)
+            dyn_lookup.short_description = getattr(
+                self, '{}_short_description'.format(attr),
+                attr.replace('_', ' ').capitalize()
+            )
+
+            return dyn_lookup
+
+        # not dynamic lookup, default behaviour
+        return self.__getattribute__(attr)
+
+    def get_editable(self):
+        if self.changeable is not None:
+            warnings.warn(
+                "The changeable argument is deprecated in favor of editable",
+                RemovedInDjangoCool20Warning,
+                stacklevel=2
+            )
+            self.editable = self.changeable
+        return self.editable
+
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        if cool_settings.ADMIN_SHOW_IMAGE_IN_FORM_PAGE and isinstance(db_field, models.ImageField):
+            kwargs.pop("request", None)
+            kwargs['widget'] = AdminImageWidget
+            return db_field.formfield(**kwargs)
+        return super().formfield_for_dbfield(db_field, **kwargs)
+
+    def get_changeable_fields(self, request, obj=None):
+        if not self.get_editable():
+            return ()
+        if self.changeable_fields == forms.ALL_FIELDS:
+            return None
+        elif self.changeable_fields is None:
+            return ()
+
+        return self.changeable_fields
+
+    def has_delete_permission(self, request, obj=None):
+        return self.deletable and super().has_delete_permission(request, obj)
+
+    def has_change_permission(self, request, obj=None):
+        return self.get_editable() and super().has_change_permission(request, obj)
+
+    def has_add_permission(self, request):
+        return self.addable and super().has_add_permission(request)
+
+    def get_user_queryset(self, queryset):
+        return queryset
 
     def get_form(self, request, obj=None, **kwargs):
         if 'fields' in kwargs:

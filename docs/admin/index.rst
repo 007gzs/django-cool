@@ -37,7 +37,7 @@
 
     允许添加
 
-    .. attribute:: changeable
+    .. attribute:: editable
 
     允许修改
 
