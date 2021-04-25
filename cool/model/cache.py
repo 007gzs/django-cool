@@ -40,7 +40,6 @@ class ModelCache(cache.BaseCache):
             field = cls._get_field(model_cls, name)
             if isinstance(field, models.ForeignObject) and isinstance(value, field.related_model):
                 value = getattr(value, field.target_field.attname)
-            assert isinstance(value, (str, int))
             value = str(value)
             temp.append((field.name, value, field))
         field_names, field_values, fields = zip(*sorted(temp))
@@ -100,7 +99,6 @@ class ModelCache(cache.BaseCache):
             for field, value in zip(fields, field_value):
                 if isinstance(field, models.ForeignObject) and isinstance(value, field.related_model):
                     value = getattr(value, field.target_field.attname)
-                assert isinstance(value, (str, int))
                 value = str(value)
                 new_field_value.append(value)
             dict_keys_list.append(tuple(new_field_value))
