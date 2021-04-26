@@ -82,6 +82,10 @@ class CRIDMixin:
             setattr(cls, '_model_field_info', model_meta.get_field_info(cls.model))
         return getattr(cls, '_model_field_info')
 
+    @classmethod
+    def get_field_detail(cls, fields_list):
+        return [field if isinstance(field, (list, tuple)) else (field, field) for field in fields_list]
+
 
 class SearchListMixin(PageMixin, CRIDMixin):
     PAGE_SIZE_MAX = 1000
@@ -148,11 +152,11 @@ class InfoMixin(CRIDMixin):
                 ret.append((info.pk.name, get_rest_field_from_model_field(
                     cls.model, info.pk.name, **{'default': None} if num > 1 else {'required': True}
                 )))
-            for ex_unique_id in cls.ex_unique_ids:
+            for req_name, ex_unique_id in cls.get_field_detail(cls.ex_unique_ids):
                 assert ex_unique_id in info.fields_and_pk and info.fields_and_pk[ex_unique_id].unique, (
                     "Field %s not found in %s's unique fields" % (ex_unique_id, cls.model.__name__)
                 )
-                ret.append((ex_unique_id, get_rest_field_from_model_field(
+                ret.append((req_name, get_rest_field_from_model_field(
                     cls.model, ex_unique_id, **{'default': None} if num > 1 else {'required': True}
                 )))
             assert num > 0, 'Must set unique fields to ex_unique_ids or set True to pk_id'
@@ -163,17 +167,19 @@ class InfoMixin(CRIDMixin):
         if queryset is None:
             queryset = self.model.objects.all()
         blank = True
-        param_fields = [self.get_model_field_info().pk.name]
-        param_fields.extend(self.ex_unique_ids)
-        for field_name in param_fields:
-            field = getattr(request.params, field_name)
+        param_fields = [(self.get_model_field_info().pk.name, self.get_model_field_info().pk.name)]
+        param_fields.extend(self.get_field_detail(self.ex_unique_ids))
+        for req_name, field_name in param_fields:
+            field = getattr(request.params, req_name)
             if field is not None:
                 blank = False
                 queryset = queryset.filter(**{field_name: field})
         if blank:
             raise CoolAPIException(
                 ErrorCode.ERROR_BAD_PARAMETER,
-                data=_("{fields} cannot be empty at the same time").format(fields=",".join(param_fields))
+                data=_("{fields} cannot be empty at the same time").format(
+                    fields=",".join(map(lambda x: x[0], param_fields))
+                )
             )
         return queryset.first()
 
@@ -193,16 +199,16 @@ class AddMixin(CRIDMixin):
         ret = list()
         ret.extend(super().get_extend_param_fields())
         if cls.model is not None:
-            for add_field in cls.add_fields:
-                field = get_rest_field_from_model_field(cls.model, add_field)
-                ret.append((add_field, field))
+            for req_name, field_name in cls.get_field_detail(cls.add_fields):
+                field = get_rest_field_from_model_field(cls.model, field_name)
+                ret.append((req_name, field))
         return tuple(ret)
 
     def init_fields(self, request, obj):
-        for add_field in self.add_fields:
-            value = getattr(request.params, add_field, None)
+        for req_name, field_name in self.get_field_detail(self.add_fields):
+            value = getattr(request.params, req_name, None)
             if value is not None:
-                setattr(obj, add_field, value)
+                setattr(obj, field_name, value)
 
     def save_obj(self, request, obj):
         obj.full_clean()
@@ -238,18 +244,18 @@ class EditMixin(CRIDMixin):
         assert field.unique, "Field %s is not unique" % cls.unique_key
         ret.append((field.name, get_rest_field_from_model_field(cls.model, field, required=True)))
         if cls.model is not None:
-            for edit_field in cls.edit_fields:
-                ret.append((edit_field, get_rest_field_from_model_field(cls.model, edit_field, default=None)))
+            for req_name, field_name in cls.get_field_detail(cls.edit_fields):
+                ret.append((req_name, get_rest_field_from_model_field(cls.model, field_name, default=None)))
         return tuple(ret)
 
     def get_obj(self, request):
         return self.model.get_obj_by_pk_from_cache(request.params.id)
 
     def modify_obj(self, request, obj):
-        for edit_field in self.edit_fields:
-            value = getattr(request.params, edit_field, None)
+        for req_name, field_name in self.get_field_detail(self.edit_fields):
+            value = getattr(request.params, req_name, None)
             if value is not None:
-                setattr(obj, edit_field, value)
+                setattr(obj, field_name, value)
 
     def save_obj(self, request, obj):
         obj.full_clean()

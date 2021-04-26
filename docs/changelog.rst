@@ -1,5 +1,9 @@
 Changelog
 ================
+Version 1.1.3
+------------------
++ `InfoMixin` 的 `ex_unique_ids`、 `AddMixin` 的 `add_fields`、 `EditMixin` 的 `edit_fields` 字段支持['name', ('school_code', 'school_id)] 的方式设置请求参数和字段名称不一致的情况
+
 Version 1.1.2
 ------------------
 + Fixed `get_rest_field_from_model_field` 生成外键字段类型错误
