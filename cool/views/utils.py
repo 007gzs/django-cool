@@ -59,7 +59,7 @@ def get_rest_field_from_model_field(model, model_field, **kwargs):
         verbose_name = [target_field.verbose_name]
         help_text = [target_field.help_text]
         while target_field.remote_field:
-            target_field = target_field.remote_field.target_field
+            target_field = target_field.target_field
             verbose_name.append(target_field.verbose_name)
             help_text.append(target_field.help_text)
 

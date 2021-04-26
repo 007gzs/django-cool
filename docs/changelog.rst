@@ -1,5 +1,9 @@
 Changelog
 ================
+Version 1.1.2
+------------------
++ Fixed `get_rest_field_from_model_field` 生成外键字段类型错误
+
 Version 1.1.1
 ------------------
 + `ModelCache` 支持非简单字段
