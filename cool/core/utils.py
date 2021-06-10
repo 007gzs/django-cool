@@ -78,7 +78,9 @@ def get_search_results(queryset, search_term, search_fields, model):
     and a boolean indicating if the results may contain duplicates.
     """
     try:
-        from django.contrib.admin.utils import lookup_needs_distinct as lookup_spawns_duplicates
+        from django.contrib.admin.utils import (
+            lookup_needs_distinct as lookup_spawns_duplicates
+        )
     except ImportError:
         from django.contrib.admin.utils import lookup_spawns_duplicates
 
