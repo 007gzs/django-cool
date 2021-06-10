@@ -2,7 +2,6 @@
 import operator
 from functools import reduce
 
-from django.contrib.admin.utils import lookup_needs_distinct
 from django.core.exceptions import FieldDoesNotExist
 from django.db.models import Q
 from django.db.models.constants import LOOKUP_SEP
@@ -78,11 +77,16 @@ def get_search_results(queryset, search_term, search_fields, model):
     Return a tuple containing a queryset to implement the search
     and a boolean indicating if the results may contain duplicates.
     """
+    try:
+        from django.contrib.admin.utils import lookup_needs_distinct as lookup_spawns_duplicates
+    except ImportError:
+        from django.contrib.admin.utils import lookup_spawns_duplicates
+
     use_distinct = False
     if search_fields and search_term:
         orm_lookups = [construct_search(queryset, str(search_field)) for search_field in search_fields]
         for bit in search_term.split():
             or_queries = [Q(**{orm_lookup: bit}) for orm_lookup in orm_lookups]
             queryset = queryset.filter(reduce(operator.or_, or_queries))
-        use_distinct |= any(lookup_needs_distinct(model._meta, search_spec) for search_spec in orm_lookups)
+        use_distinct |= any(lookup_spawns_duplicates(model._meta, search_spec) for search_spec in orm_lookups)
     return queryset, use_distinct
