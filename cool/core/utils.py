@@ -79,7 +79,7 @@ def get_search_results(queryset, search_term, search_fields, model):
     """
     try:
         from django.contrib.admin.utils import (
-            lookup_needs_distinct as lookup_spawns_duplicates
+            lookup_needs_distinct as lookup_spawns_duplicates,
         )
     except ImportError:
         from django.contrib.admin.utils import lookup_spawns_duplicates
