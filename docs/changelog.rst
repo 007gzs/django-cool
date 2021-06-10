@@ -1,5 +1,11 @@
 Changelog
 ================
+
+Version 1.1.4
+------------------
++ `BaseModelAdmin`增加 `auto_set_list_select_related` 参数， 当`list_select_related`为`False`时，自动将`list_display`中外键字段自动写入`list_select_related`
+
+
 Version 1.1.3
 ------------------
 + `InfoMixin` 的 `ex_unique_ids`、 `AddMixin` 的 `add_fields`、 `EditMixin` 的 `edit_fields` 字段支持['name', ('school_code', 'school_id)] 的方式设置请求参数和字段名称不一致的情况

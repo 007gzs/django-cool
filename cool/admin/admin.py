@@ -6,6 +6,7 @@ import django
 from django import forms
 from django.contrib import admin
 from django.contrib.admin.utils import flatten_fieldsets
+from django.contrib.admin.views import main
 from django.contrib.admin.widgets import AdminFileWidget
 from django.contrib.auth import get_permission_codename
 from django.core.exceptions import (
@@ -13,6 +14,7 @@ from django.core.exceptions import (
 )
 from django.core.validators import EMPTY_VALUES
 from django.db import models
+from django.db.models import ManyToOneRel
 from django.db.models.constants import LOOKUP_SEP
 from django.db.models.fields.related import RelatedField
 from django.forms.models import (
@@ -252,6 +254,29 @@ class AutoCompleteMixin:
         return ()
 
 
+class AutoSetRelatedFieldChangeList(main.ChangeList):
+
+    def apply_select_related(self, qs):
+        if self.list_select_related is False:
+            related_fields = self.get_related_field_in_list_display()
+            if related_fields:
+                return qs.select_related(*related_fields)
+        return super().apply_select_related(qs)
+
+    def get_related_field_in_list_display(self):
+        ret = []
+        for field_name in self.list_display:
+            try:
+                field = self.lookup_opts.get_field(field_name)
+            except FieldDoesNotExist:
+                pass
+            else:
+                if isinstance(field.remote_field, ManyToOneRel):
+                    if field_name != field.get_attname():
+                        ret.append(field_name)
+        return ret
+
+
 class BaseModelAdmin(AutoCompleteMixin, admin.ModelAdmin):
     """
     自定义Admin基类，列表页显示默认字段，支持自定义功能
@@ -267,6 +292,7 @@ class BaseModelAdmin(AutoCompleteMixin, admin.ModelAdmin):
     with_related_items = True
     extend_normal_fields = True
     extend_related_fields = False
+    auto_set_list_select_related = True
     exclude_list_display = []
     heads = ['id', ]
     tails = []
@@ -544,6 +570,11 @@ class BaseModelAdmin(AutoCompleteMixin, admin.ModelAdmin):
         if list_display and not set(list_display_links) & set(list_display):
             return list(list_display)[:1]
         return list_display_links
+
+    def get_changelist(self, request, **kwargs):
+        if self.auto_set_list_select_related:
+            return AutoSetRelatedFieldChangeList
+        return super().get_changelist(request, **kwargs)
 
     def get_normal_fields(self):
         fields = []

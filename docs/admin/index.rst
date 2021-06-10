@@ -21,6 +21,10 @@
 
     列表自动列字段是否包含外键
 
+    .. attribute:: auto_set_list_select_related
+
+    当`list_select_related`为`False`时，自动将`list_display`中外键字段自动写入`list_select_related`
+
     .. attribute:: exclude_list_display
 
     列表自动列出字段时候排除字段列表
