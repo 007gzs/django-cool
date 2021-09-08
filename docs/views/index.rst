@@ -91,6 +91,10 @@ api接口扩展接口
 
     返回结果是否为列表
 
+    .. attribute:: support_methods
+
+    支持的请求类型 默认值为 `("get", "post")`
+
     .. automethod:: get_context
 
     参数验证通过后会请求该接口，`request.params` 为解析后参数内容

@@ -119,6 +119,16 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
     # 是否返回list
     response_many = False
 
+    # 支持请求类型
+    support_methods = ('get', 'post')
+
+    def __init__(self, *args, **kwargs):
+        super(CoolBFFAPIView, self).__init__(*args, **kwargs)
+        for method in self.support_methods:
+            assert method in self.http_method_names
+            if not hasattr(self, method):
+                setattr(self, method, self.view)
+
     @classmethod
     def get_extend_param_fields(cls):
         return ()
@@ -206,11 +216,6 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
         self.check_api_permissions(request, *args, **kwargs)
         context = self.get_context(request, *args, **kwargs)
         return self.get_response(context)
-
-    def get(self, request, *args, **kwargs):
-        return self.view(request, *args, **kwargs)
-
-    post = get
 
     def get_context(self, request, *args, **kwargs):
         """
