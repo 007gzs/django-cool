@@ -1,0 +1,813 @@
+/* autocomplete.css */
+.select2-container--admin-autocomplete.select2-container--focus .select2-selection,
+.select2-container--admin-autocomplete.select2-container--open .select2-selection {
+    border-color: var(--body-quiet-color);
+}
+
+.select2-container--admin-autocomplete .select2-selection--single {
+    background-color: var(--body-bg);
+    border-color: var(--border-color);
+}
+
+.select2-container--admin-autocomplete .select2-selection--single .select2-selection__rendered {
+    color: var(--body-fg);
+}
+
+.select2-container--admin-autocomplete .select2-selection--single .select2-selection__placeholder {
+    color: var(--body-quiet-color);
+}
+
+.select2-container--admin-autocomplete.select2-container--disabled .select2-selection--single {
+    background-color: var(--darkened-bg);
+}
+
+.select2-container--admin-autocomplete .select2-selection--multiple {
+    background-color: var(--body-bg);
+    border-color: var(--border-color);
+}
+
+.select2-container--admin-autocomplete .select2-selection--multiple .select2-selection__placeholder {
+    color: var(--body-quiet-color);
+}
+
+.select2-container--admin-autocomplete .select2-selection--multiple .select2-selection__choice {
+    background-color: var(--darkened-bg);
+    border-color: var(--border-color);
+}
+
+.select2-container--admin-autocomplete .select2-selection--multiple .select2-selection__choice__remove {
+    color: var(--body-quiet-color);
+}
+.select2-container--admin-autocomplete .select2-selection--multiple .select2-selection__choice__remove:hover {
+    color: var(--body-fg);
+}
+
+.select2-container--admin-autocomplete.select2-container--focus .select2-selection--multiple {
+    border-color: var(--body-quiet-color);
+}
+
+.select2-container--admin-autocomplete.select2-container--disabled .select2-selection--multiple {
+    background-color: var(--darkened-bg);
+}
+
+.select2-container--admin-autocomplete .select2-search--dropdown {
+    background-color: var(--darkened-bg);
+}
+
+.select2-container--admin-autocomplete .select2-search--dropdown .select2-search__field {
+    background-color: var(--body-bg);
+    color: var(--body-fg);
+    border-color: var(--border-color);
+}
+
+.select2-container--admin-autocomplete .select2-search--inline .select2-search__field {
+    color: var(--body-fg);
+}
+
+.select2-container--admin-autocomplete .select2-results > .select2-results__options {
+    color: var(--body-fg);
+    background-color: var(--body-bg);
+}
+
+.select2-container--admin-autocomplete .select2-results__option[aria-disabled=true] {
+    color: var(--body-quiet-color);
+}
+
+.select2-container--admin-autocomplete .select2-results__option[aria-selected=true] {
+    background-color: var(--selected-bg);
+    color: var(--body-fg);
+}
+
+.select2-container--admin-autocomplete .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--primary);
+    color: var(--primary-fg);
+}
+
+/* base.css */
+
+body {
+    color: var(--body-fg);
+    background-color: var(--body-bg);
+}
+
+a:link, a:visited {
+    color: var(--link-fg);
+}
+
+a:focus, a:hover {
+    color: var(--link-hover-color);
+}
+
+a.section:link, a.section:visited {
+    color: var(--header-link-color);
+}
+h1 {
+    color: var(--body-quiet-color);
+}
+
+h3 {
+    color: var(--body-quiet-color);
+}
+
+h5 {
+    color: var(--body-quiet-color);
+}
+
+fieldset {
+    border-top-color: var(--hairline-color);
+}
+code, pre {
+    color: var(--body-quiet-color);
+}
+
+pre.literal-block {
+    background-color: var(--darkened-bg);
+}
+
+hr {
+    color: var(--hairline-color);
+    background-color: var(--hairline-color);
+}
+
+.help, p.help, form p.help, div.help, form div.help, div.help li {
+    color: var(--body-quiet-color);
+}
+
+.quiet, a.quiet:link, a.quiet:visited {
+    color: var(--body-quiet-color);
+}
+
+table {
+    border-color: var(--border-color);
+}
+
+td, th {
+    border-bottom-color: var(--hairline-color);
+}
+
+thead th,
+tfoot td {
+    color: var(--body-quiet-color);;
+    background-color: var(--body-bg);
+    border-top-color: var(--hairline-color);
+    border-bottom-color: var(--hairline-color);
+}
+
+tfoot td {
+    border-top-color: var(--hairline-color);
+}
+
+thead th.required {
+    color: var(--body-loud-color);
+}
+
+tr.alt {
+    background-color: var(--darkened-bg);
+}
+
+tr:nth-child(odd), .row-form-errors {
+    background-color: var(--body-bg);
+}
+
+tr:nth-child(even),
+tr:nth-child(even) .errorlist,
+tr:nth-child(odd) + .row-form-errors,
+tr:nth-child(odd) + .row-form-errors .errorlist {
+    background-color: var(--darkened-bg);
+}
+
+thead th {
+    background-color: var(--darkened-bg);
+}
+
+thead th a:link, thead th a:visited {
+    color: var(--body-quiet-color);
+}
+
+thead th.sorted {
+    background-color: var(--selected-bg);
+}
+
+table thead th .text a:focus, table thead th .text a:hover {
+    background-color: var(--selected-bg);
+}
+
+table thead th.sorted .sortoptions a.sortremove:after {
+    color: var(--body-quiet-color);
+}
+
+table thead th.sorted .sortoptions a.sortremove:focus:after,
+table thead th.sorted .sortoptions a.sortremove:hover:after {
+    color: var(--link-fg);
+}
+
+input[type=text], input[type=password], input[type=email], input[type=url],
+input[type=number], input[type=tel], textarea, select, .vTextField {
+    border-color: var(--border-color);
+    color: var(--body-fg);
+    background-color: var(--body-bg);
+}
+
+input[type=text]:focus, input[type=password]:focus, input[type=email]:focus,
+input[type=url]:focus, input[type=number]:focus, input[type=tel]:focus,
+textarea:focus, select:focus, .vTextField:focus {
+    border-color: var(--body-quiet-color);
+}
+
+.button, input[type=submit], input[type=button], .submit-row input, a.button {
+    background-color: var(--button-bg);
+    color: var(--button-fg);
+}
+
+.button:active, input[type=submit]:active, input[type=button]:active,
+.button:focus, input[type=submit]:focus, input[type=button]:focus,
+.button:hover, input[type=submit]:hover, input[type=button]:hover {
+    background-color: var(--button-hover-bg);
+}
+
+.button.default, input[type=submit].default, .submit-row input.default {
+    background-color: var(--default-button-bg);
+}
+
+.button.default:active, input[type=submit].default:active,
+.button.default:focus, input[type=submit].default:focus,
+.button.default:hover, input[type=submit].default:hover {
+    background-color: var(--default-button-hover-bg);
+}
+
+.module {
+    background-color: var(--body-bg);
+}
+
+.module h2, .module caption, .inline-group h2 {
+    background-color: var(--module-header-bg);
+    color: var(--module-header-fg);
+}
+
+ul.messagelist li {
+    background-color: var(--message-success-bg);
+    color: var(--body-fg);
+}
+
+ul.messagelist li.warning {
+    background-color: var(--message-warning-bg)
+}
+
+ul.messagelist li.error {
+    background-color: var(--message-error-bg);
+}
+
+.errornote {
+    color: var(--error-fg);
+    border-color: var(--error-fg);
+    background-color: var(--body-bg);
+}
+
+ul.errorlist {
+    color: var(--error-fg);
+    background-color: var(--body-bg);
+}
+
+.form-row.errors {
+    border-bottom-color: var(--hairline-color);
+}
+
+.errors input, .errors select, .errors textarea,
+td ul.errorlist + input, td ul.errorlist + select, td ul.errorlist + textarea {
+    border-color: var(--error-fg);
+}
+
+div.breadcrumbs {
+    background-color: var(--breadcrumbs-bg);
+    color: var(--breadcrumbs-fg);
+}
+
+div.breadcrumbs a {
+    color: var(--breadcrumbs-link-fg);
+}
+
+div.breadcrumbs a:focus, div.breadcrumbs a:hover {
+    color: var(--breadcrumbs-fg);
+}
+
+a.deletelink:link, a.deletelink:visited {
+    color: #CC3434; /* XXX Probably unused? */
+}
+
+a.deletelink:focus, a.deletelink:hover {
+    color: #993333; /* XXX Probably unused? */
+}
+
+.object-tools a:link, .object-tools a:visited {
+    background-color: var(--object-tools-bg);
+    color: var(--object-tools-fg);
+}
+
+.object-tools a:focus, .object-tools a:hover {
+    background-color: var(--object-tools-hover-bg);
+}
+
+#header {
+    background-color: var(--header-bg);
+    color: var(--header-color);
+}
+
+#header a:link, #header a:visited {
+    color: var(--header-link-color);
+}
+
+#branding h1 {
+    color: var(--accent);
+}
+
+#branding h1, #branding h1 a:link, #branding h1 a:visited {
+    color: var(--accent);
+}
+
+#branding h2 {
+    color: var(--header-color);
+}
+
+#user-tools a:focus, #user-tools a:hover {
+    border-bottom-color: var(--primary);
+    color: var(--primary);
+}
+
+#content-related {
+    background-color: var(--darkened-bg);
+}
+
+#content-related h3 {
+    color: var(--body-quiet-color);
+}
+
+#content-related .module h2 {
+    border-bottom-color: var(--hairline-color);
+    color: var(--body-fg);
+}
+
+.delete-confirmation form input[type="submit"] {
+    background-color: var(--delete-button-bg);
+    color: var(--button-fg);
+}
+
+.delete-confirmation form input[type="submit"]:active,
+.delete-confirmation form input[type="submit"]:focus,
+.delete-confirmation form input[type="submit"]:hover {
+    background-color: var(--delete-button-hover-bg);
+}
+
+.delete-confirmation form .cancel-link {
+    color: var(--button-fg);
+    background-color: var(--close-button-bg);
+}
+
+.delete-confirmation form .cancel-link:active,
+.delete-confirmation form .cancel-link:focus,
+.delete-confirmation form .cancel-link:hover {
+    background-color: var(--close-button-hover-bg);
+}
+
+/* changelists.css */
+
+#changelist .toplinks {
+    border-bottom-color: var(--hairline-color);
+}
+
+#changelist .paginator {
+    color: var(--body-quiet-color);
+    border-bottom-color: var(--hairline-color);
+    background-color: var(--body-bg);
+}
+
+#changelist table tfoot {
+    color: var(--body-quiet-color);
+}
+
+#toolbar {
+    border-top-color: var(--hairline-color);
+    border-bottom-color: var(--hairline-color);
+    background-color: var(--darkened-bg);
+    color: var(--body-quiet-color);
+}
+
+#toolbar form input {
+    color: var(--body-fg);
+}
+
+#toolbar #searchbar {
+    border-color: var(--border-color);
+}
+
+#toolbar #searchbar:focus {
+    border-color: var(--body-quiet-color);
+}
+
+#toolbar form input[type="submit"] {
+    border-color: var(--border-color);
+    background-color: var(--body-bg);
+    color: var(--body-fg);
+}
+
+#toolbar form input[type="submit"]:focus,
+#toolbar form input[type="submit"]:hover {
+    border-color: var(--body-quiet-color);
+}
+#changelist-filter {
+    background-color: var(--darkened-bg);
+}
+
+#changelist-filter ul {
+    border-bottom-color: var(--hairline-color);
+}
+
+#changelist-filter a {
+    color: var(--body-quiet-color);
+}
+
+#changelist-filter li.selected {
+    border-left-color: var(--hairline-color);
+}
+
+#changelist-filter li.selected a {
+    color: var(--link-selected-fg);
+}
+
+#changelist-filter a:focus, #changelist-filter a:hover,
+#changelist-filter li.selected a:focus,
+#changelist-filter li.selected a:hover {
+    color: var(--link-hover-color);
+}
+
+#changelist-filter #changelist-filter-clear a {
+    border-bottom-color: var(--hairline-color);
+}
+
+.change-list ul.toplinks .date-back a {
+    color: var(--body-quiet-color);
+}
+
+.change-list ul.toplinks .date-back a:focus,
+.change-list ul.toplinks .date-back a:hover {
+    color: var(--link-hover-color);
+}
+
+.paginator {
+    border-top-color: var(--hairline-color);
+}
+
+.paginator a:link, .paginator a:visited {
+    background-color: var(--button-bg);
+    color: var(--button-fg);
+}
+
+.paginator a.showall {
+    color: var(--link-fg);
+}
+
+.paginator a.showall:focus, .paginator a.showall:hover {
+    color: var(--link-hover-color);
+}
+
+.paginator a:focus, .paginator a:hover {
+    background-color: var(--link-hover-color);
+}
+
+#changelist table tbody tr.selected {
+    background-color: var(--selected-row);
+}
+
+#changelist .actions {
+    background-color: var(--body-bg);
+    color: var(--body-quiet-color);
+}
+
+#changelist .actions.selected { /* XXX Probably unused? */
+    background-color: var(--body-bg);
+    border-top-color: var(--body-bg);
+    border-bottom-color: #edecd6;
+}
+
+#changelist .actions select {
+    color: var(--body-fg);
+    border-color: var(--border-color);
+}
+
+#changelist .actions select:focus {
+    border-color: var(--body-quiet-color);
+}
+
+#changelist .actions .button {
+    border-color: var(--border-color);
+    background-color: var(--body-bg);
+    color: var(--body-fg);
+}
+
+#changelist .actions .button:focus, #changelist .actions .button:hover {
+    border-color: var(--body-quiet-color);
+}
+
+/* forms.css */
+
+.form-row {
+    border-bottom-color: var(--hairline-color);
+}
+
+label {
+    color: var(--body-quiet-color);
+}
+
+.required label, label.required {
+    color: var(--body-fg);
+}
+fieldset.collapsed {
+    border-color: var(--hairline-color);
+}
+
+fieldset.collapsed h2 {
+    background-color: var(--darkened-bg);
+    color: var(--body-quiet-color);
+}
+
+fieldset .collapse-toggle {
+    color: var(--header-link-color);
+}
+
+fieldset.collapsed .collapse-toggle {
+    color: var(--link-fg);
+}
+
+.submit-row {
+    background-color: var(--darkened-bg);
+    border-color: var(--hairline-color);
+}
+.submit-row a.deletelink {
+    background-color: var(--delete-button-bg);
+    color: var(--button-fg);
+}
+
+.submit-row a.closelink {
+    background-color: var(--close-button-bg);
+    color: var(--button-fg);
+}
+
+.submit-row a.deletelink:focus,
+.submit-row a.deletelink:hover,
+.submit-row a.deletelink:active {
+    background-color: var(--delete-button-hover-bg);
+}
+
+.submit-row a.closelink:focus,
+.submit-row a.closelink:hover,
+.submit-row a.closelink:active {
+    background-color: var(--close-button-hover-bg);
+}
+.inline-related h3 {
+    color: var(--body-quiet-color);
+    background-color: var(--darkened-bg);
+    border-top-color: var(--hairline-color);
+    border-bottom-color: var(--hairline-color);
+}
+.inline-related fieldset {
+    background-color: var(--body-bg);
+}
+
+.inline-related fieldset.module h3 {
+    background-color: #bcd;
+    color: var(--body-bg);
+}
+
+.inline-group .tabular td.original p {
+    color: var(--body-quiet-color);
+}
+
+.inline-group div.add-row,
+.inline-group .tabular tr.add-row td {
+    color: var(--body-quiet-color);
+    background-color: var(--darkened-bg);
+    border-bottom-color: var(--hairline-color);
+}
+
+.inline-group .tabular tr.add-row td {
+    border-bottom-color: var(--hairline-color);
+}
+/* login.css */
+
+.login {
+    background-color: var(--darkened-bg);
+}
+
+.login #header h1 a {
+    color: var(--header-link-color);
+}
+
+.login #container {
+    background-color: var(--body-bg);
+    border-color: var(--hairline-color);
+}
+/* nav_sidebar.css */
+
+.toggle-nav-sidebar {
+    border-right-color: var(--nav-hairline-color);
+    background-color: var(--nav-body-bg);
+    color: var(--nav-link-fg);
+    border: 0;
+}
+
+[dir="rtl"] .toggle-nav-sidebar {
+    border-left-color: var(--nav-hairline-color);
+}
+
+.toggle-nav-sidebar:hover,
+.toggle-nav-sidebar:focus {
+    background-color: var(--nav-darkened-bg);
+}
+
+#nav-sidebar {
+    border-right-color: var(--nav-hairline-color);
+    background-color: var(--nav-body-bg);
+}
+
+[dir="rtl"] #nav-sidebar {
+    border-left-color: var(--nav-hairline-color);
+}
+
+#nav-sidebar .current-app .section:link,
+#nav-sidebar .current-app .section:visited {
+    color: var(--nav-header-color);
+}
+
+#nav-sidebar .current-model {
+    background-color: var(--nav-selected-row)!important;
+}
+/* nav add */
+#nav-sidebar a.section:link, #nav-sidebar a.section:visited {
+    color: var(--nav-header-link-color);
+}
+#nav-sidebar .module h2, #nav-sidebar .module caption {
+    background-color: var(--nav-module-header-bg);
+    color: var(--nav-module-header-fg);
+}
+#nav-sidebar a:link, #nav-sidebar a:visited {
+    color: var(--nav-link-fg);
+}
+#nav-sidebar tr:nth-child(odd) {
+    background-color: var(--nav-body-bg);
+}
+#nav-sidebar tr:nth-child(even) {
+    background-color: var(--nav-darkened-bg);
+}
+#nav-sidebar td, #nav-sidebar th {
+    border-bottom-color: var(--nav-hairline-color);
+}
+/* responsive.css */
+#changelist .actions select {
+    background-color: var(--body-bg);
+}
+#changelist .paginator {
+    border-top-color: var(--hairline-color); /* XXX Is this used at all? */
+}
+fieldset .fieldBox + .fieldBox {
+    border-top-color: var(--hairline-color);
+}
+.datetime .timezonewarning {
+    color: var(--body-quiet-color);
+}
+
+.datetimeshortcuts {
+    color: var(--border-color); /* XXX Redundant, .datetime span also sets #ccc */
+}
+.inline-group[data-inline-type="stacked"] .inline-related {
+    border-color: var(--hairline-color);
+}
+.inline-group[data-inline-type="stacked"] .inline-related .module .form-row {
+    border-top-color: var(--hairline-color);
+}
+.inline-group[data-inline-type="stacked"] div.add-row {
+    border-color: var(--hairline-color);
+}
+.timelist a {
+    background-color: var(--body-bg);
+}
+
+/* rtl.css */
+
+#changelist-filter li.selected {
+    border-right-color: var(--hairline-color);
+}
+
+/* widgets.css */
+
+.selector-available h2, .selector-chosen h2 {
+    border-color: var(--border-color);
+}
+
+.selector-chosen h2 {
+    background-color: var(--primary);
+    color: var(--header-link-color);
+}
+
+.selector .selector-available h2 {
+    background-color: var(--darkened-bg);
+    color: var(--body-quiet-color);
+}
+
+.selector .selector-filter {
+    border-color: var(--border-color);
+    color: var(--body-quiet-color);
+}
+.selector ul.selector-chooser {
+    background-color: var(--selected-bg);
+}
+a.selector-chooseall, a.selector-clearall {
+    color: var(--body-quiet-color);
+}
+
+a.active.selector-chooseall:focus, a.active.selector-clearall:focus,
+a.active.selector-chooseall:hover, a.active.selector-clearall:hover {
+    color: var(--link-fg);
+}
+
+p.datetime {
+    color: var(--body-quiet-color);
+}
+
+.datetime span {
+    color: var(--body-quiet-color);
+}
+
+.timezonewarning {
+    color: var(--body-quiet-color);
+}
+
+p.url {
+    color: var(--body-quiet-color);
+}
+p.file-upload {
+    color: var(--body-quiet-color);
+}
+
+span.clearable-file-input label {
+    color: var(--body-fg);
+}
+
+.calendarbox, .clockbox {
+    background-color: var(--body-bg);
+    color: var(--body-fg);
+    border-color: var(--hairline-color);
+}
+
+.calendar caption, .calendarbox h2 {
+    background-color: var(--accent);
+}
+
+.calendar th {
+    background-color: var(--darkened-bg);
+    border-bottom-color: var(--border-color);
+    color: var(--body-quiet-color);
+}
+
+.calendar td {
+    border-top-color: var(--hairline-color);
+}
+
+.calendar td.selected a {
+    background-color: var(--primary);
+    color: var(--button-fg);
+}
+
+.calendar td.nonday {
+    background-color: var(--darkened-bg);
+}
+
+.calendar td a, .timelist a {
+    color: var(--body-quiet-color);
+}
+
+.calendar td a:focus, .timelist a:focus,
+.calendar td a:hover, .timelist a:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
+.calendar td a:active, .timelist a:active {
+    background-color: var(--header-bg);
+    color: white;
+}
+
+.calendarnav a:link, #calendarnav a:visited,
+#calendarnav a:focus, #calendarnav a:hover {
+    color: var(--body-quiet-color);
+}
+
+.calendar-shortcuts {
+    background-color: var(--body-bg);
+    color: var(--body-quiet-color);
+    border-top-color: var(--hairline-color);
+}
+
+.calendar-cancel {
+    background-color: #eee;
+    border-top-color: var(--border-color);
+    color: var(--body-fg);
+}

@@ -14,6 +14,10 @@ DEFAULTS = {
     'ADMIN_SHOW_IMAGE_IN_CHANGE_LIST': True,
     'ADMIN_SHOW_IMAGE_IN_FORM_PAGE': True,
     'ADMIN_DATE_FIELD_FILTER_USE_RANGE': True,
+    'ADMIN_SITE_TITLE': None,
+    'ADMIN_SITE_HEADER': None,
+    'ADMIN_INDEX_TITLE': None,
+    'ADMIN_THEME': None,
 
     # APIView
     'API_EXCEPTION_DEFAULT_STATUS_CODE': 400,
@@ -49,6 +53,34 @@ DEFAULTS = {
 IMPORT_STRINGS = [
     'API_RESPONSE_DICT_FUNCTION',
 ]
+
+
+def get_admin_theme(val, style=False):
+    from cool.admin import theme
+    if val is None:
+        return None
+    if isinstance(val, theme.Theme):
+        assert not style
+        return val
+    elif isinstance(val, theme.ThemeStyle):
+        return val if style else theme.Theme(val)
+    elif isinstance(val, (list, tuple)):
+        assert not style
+        if len(val) > 2:
+            raise AttributeError("ADMIN_THEME value error: '%s'" % val)
+        args = [get_admin_theme(v) for v in val]
+        return theme.Theme(*args)
+    elif isinstance(val, str):
+        val = val.upper()
+        if val not in theme.THEME_STYLES:
+            raise AttributeError("ADMIN_THEME value error: '%s'" % val)
+        val = theme.THEME_STYLES[val]
+        return val if style else theme.Theme(val)
+    elif isinstance(val, dict):
+        val = theme.ThemeStyle(**val)
+        return val if style else theme.Theme(val)
+    else:
+        raise AttributeError("ADMIN_THEME value error: '%r'" % val)
 
 
 def perform_import(val, setting_name):
@@ -94,6 +126,7 @@ class CoolSettings:
             self._user_settings = user_settings
         self.defaults = defaults or DEFAULTS
         self.import_strings = import_strings or IMPORT_STRINGS
+        self.admin_theme_string = "ADMIN_THEME"
         self._cached_attrs = set()
 
     @property
@@ -116,7 +149,8 @@ class CoolSettings:
         # Coerce import strings into classes
         if attr in self.import_strings:
             val = perform_import(val, attr)
-
+        if attr == self.admin_theme_string:
+            val = get_admin_theme(val)
         # Cache the result
         self._cached_attrs.add(attr)
         setattr(self, attr, val)
