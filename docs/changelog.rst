@@ -1,6 +1,12 @@
 Changelog
 ================
 
+Version 1.2.0
+------------------
++ `CoolBFFAPIView` 增加 `support_methods` 设置请求类型
++ 增加admin后台风格自定义
+
+
 Version 1.1.4
 ------------------
 + `BaseModelAdmin`增加 `auto_set_list_select_related` 参数， 当`list_select_related`为`False`时，自动将`list_display`中外键字段自动写入`list_select_related`
