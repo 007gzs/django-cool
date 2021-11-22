@@ -25,6 +25,9 @@ class CoolAutocompleteJsonView(BaseListView):
             pagination: {more: true}
         }
         """
+        if 'cool_app_label' not in request.GET or 'cool_model_name' not in request.GET:
+            return JsonResponse({'error': '400 Bad Request'}, status=400)
+
         app_label = request.GET['cool_app_label']
         model_name = request.GET['cool_model_name']
         limit_choices_to = request.GET.get('cool_limit_choices_to', None)

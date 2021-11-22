@@ -5,6 +5,7 @@ Version 1.2.0
 ------------------
 + `CoolBFFAPIView` 增加 `support_methods` 设置请求类型
 + 增加admin后台风格自定义
++ `View` 文档支持 `django.views.generic.base.View`
 
 
 Version 1.1.4

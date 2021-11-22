@@ -16,6 +16,7 @@ from rest_framework import fields, serializers, validators
 from rest_framework.fields import empty
 from rest_framework.serializers import ModelSerializer
 from rest_framework.utils import model_meta
+from rest_framework.utils.serializer_helpers import BindingDict
 
 from cool.views.error_code import ErrorCode
 from cool.views.view import CoolBFFAPIView
@@ -150,6 +151,9 @@ def get_field_info(field):
     if 'choices' in info['extend_info']:
         info['extend_info'].pop('max_value', None)
         info['extend_info'].pop('min_value', None)
+    if isinstance(field, serializers.BaseSerializer):
+        if 'child' not in info['extend_info'] and 'children' not in info['extend_info']:
+            info['extend_info']['detail'] = getattr(field, 'fields', None)
 
     def _format_info(_info):
         if isinstance(_info, list):
@@ -172,7 +176,7 @@ def get_field_info(field):
     def _format_value(_value):
         if isinstance(_value, list):
             return ",".join(map(lambda x: _format_value(x) if isinstance(x, dict) else x, _value))
-        elif isinstance(_value, dict):
+        elif isinstance(_value, (dict, BindingDict)):
             return ",".join(["%s:%s" % (_k, _format_value(_v)) for _k, _v in _value.items()])
         elif isinstance(_value, type) and issubclass(_value, serializers.Serializer):
             _info = get_serializer_field_info(_value())
@@ -276,8 +280,22 @@ def get_view_list(urlpattern=None, head='/', base_view=CoolBFFAPIView):
     if view_class is not None and issubclass(view_class, base_view):
         retdict = dict()
         retdict['view_class'] = view_class
-        retdict['params'] = view_class._meta.param_fields
-        retdict['name'] = view_class().get_view_name()
+        retdict['params'] = dict()
+        view = view_class()
+        get_serializer_class = getattr(view, 'get_serializer_class', None)
+        if get_serializer_class is not None and callable(get_serializer_class):
+            try:
+                serializer_class = get_serializer_class()
+                if serializer_class is not None:
+                    retdict['params'] = serializer_class().fields
+            except AssertionError:
+                pass
+        # retdict['params'] = view_class._meta.param_fields if issubclass(view_class, CoolBFFAPIView) else None
+        get_view_name = getattr(view, 'get_view_name', None)
+        if get_view_name is not None and callable(get_view_name):
+            retdict['name'] = get_view_name()
+        else:
+            retdict['name'] = view_class.__name__
         retdict['url'] = head.replace('//', '/').rstrip('/')
         ret.append(retdict)
 
@@ -286,6 +304,20 @@ def get_view_list(urlpattern=None, head='/', base_view=CoolBFFAPIView):
             ret += get_view_list(pattern, get_url(head, pattern), base_view=base_view)
 
     return ret
+
+
+def base_get_view_info(view_class):
+    request_info = OrderedDict()
+    serializer_class = getattr(view_class, 'serializer_class', None)
+    if serializer_class is not None:
+        serializer = serializer_class()
+        for key, field in serializer.fields.items():
+            request_info[key] = get_field_info(field)
+    return {
+        'request_info': request_info,
+        'response_info': {},
+        'response_info_format': ""
+    }
 
 
 def get_api_info(base_view=CoolBFFAPIView, base_params=(), add_base_view_params=True, exclude_views=()):
@@ -297,9 +329,8 @@ def get_api_info(base_view=CoolBFFAPIView, base_params=(), add_base_view_params=
     :param add_base_view_params: 基类中参数增加到公共参数
     :param exclude_views:  排除接口视图
     """
-    assert issubclass(base_view, CoolBFFAPIView)
     base_params = list(base_params)
-    if add_base_view_params:
+    if add_base_view_params and issubclass(base_view, CoolBFFAPIView):
         opt = getattr(base_view, '_meta', None)
         param_fields = getattr(opt, 'param_fields', dict())
         for param_field in param_fields.keys():
@@ -330,7 +361,11 @@ def get_api_info(base_view=CoolBFFAPIView, base_params=(), add_base_view_params=
 
         if no_len_count > 3 or length > 200:
             post = True
-        info = v['view_class'].get_view_info()
+        get_view_info = getattr(v['view_class'], 'get_view_info', None)
+        if get_view_info and callable(get_view_info):
+            info = get_view_info()
+        else:
+            info = base_get_view_info(v['view_class'])
         base_params_num = 0
         for base_param in base_params:
             if base_param in info['request_info']:
