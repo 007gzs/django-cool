@@ -40,23 +40,21 @@ def pytest_addoption(parser):
 def pytest_configure(config):
     from django.conf import settings
     db = config.getoption('--db')
-
-    settings.configure(
-        DEBUG_PROPAGATE_EXCEPTIONS=True,
-        DATABASES={
+    settings_config = {
+        'DEBUG_PROPAGATE_EXCEPTIONS': True,
+        'DATABASES': {
             'default': DATABASE_CONFIG[db]
         },
-        SITE_ID=1,
-        SECRET_KEY='not very secret in tests',
-        USE_I18N=True,
-        LANGUAGE_CODE='en',
-        USE_L10N=True,
-        STATIC_URL='/static/',
-        ROOT_URLCONF='tests.urls',
-        CACHES={
+        'SITE_ID': 1,
+        'SECRET_KEY': 'not very secret in tests',
+        'USE_I18N': True,
+        'LANGUAGE_CODE': 'en',
+        'STATIC_URL': '/static/',
+        'ROOT_URLCONF': 'tests.urls',
+        'CACHES': {
             'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'},
         },
-        TEMPLATES=[
+        'TEMPLATES': [
             {
                 'BACKEND': 'django.template.backends.django.DjangoTemplates',
                 'APP_DIRS': True,
@@ -65,13 +63,13 @@ def pytest_configure(config):
                 }
             },
         ],
-        MIDDLEWARE=(
+        'MIDDLEWARE': (
             'django.middleware.common.CommonMiddleware',
             'django.contrib.sessions.middleware.SessionMiddleware',
             'django.contrib.auth.middleware.AuthenticationMiddleware',
             'django.contrib.messages.middleware.MessageMiddleware',
         ),
-        INSTALLED_APPS=(
+        'INSTALLED_APPS': (
             'django.contrib.admin',
             'django.contrib.auth',
             'django.contrib.contenttypes',
@@ -82,10 +80,13 @@ def pytest_configure(config):
             'cool',
             'tests.model'
         ),
-        PASSWORD_HASHERS=(
+        'PASSWORD_HASHERS': (
             'django.contrib.auth.hashers.MD5PasswordHasher',
-        ),
-    )
+        )
+    }
+    if django.VERSION < (4, ):
+        settings_config['USE_L10N'] = True
+    settings.configure(**settings_config)
 
     django.setup()
     from django.core.management import call_command

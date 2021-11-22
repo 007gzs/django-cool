@@ -41,7 +41,7 @@ class ErrorCodeTests(TestCase):
         error_code = get_error_code()
         self.assertEqual(error_code.ErrorCode.SUCCESS.code, 1)
 
-    @override_settings(USE_L10N=True, LANGUAGE_CODE='en')
+    @override_settings(LANGUAGE_CODE='en')
     def test_error_code_desc_en(self):
         error_code = get_error_code()
         self.assertEqual(error_code.ErrorCode.SUCCESS.desc, 'Success')
@@ -51,7 +51,7 @@ class ErrorCodeTests(TestCase):
         self.assertEqual(error_code.ErrorCode.ERROR_BAD_FORMAT.desc, 'Bad Format Error')
         self.assertEqual(error_code.ErrorCode.ERROR_PERMISSION.desc, 'Permission Error')
 
-    @override_settings(USE_L10N=True, LANGUAGE_CODE='zh-hans')
+    @override_settings(LANGUAGE_CODE='zh-hans')
     def test_error_code_desc_hans(self):
         error_code = get_error_code()
         self.assertEqual(error_code.ErrorCode.SUCCESS.desc, '返回成功')
