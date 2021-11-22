@@ -1,6 +1,10 @@
 # encoding: utf-8
 
+import django
+
 __version__ = '1.1.4'
 __author__ = '007gzs'
 
-default_app_config = 'cool.apps.CoolConfig'
+
+if django.VERSION < (3, 2):
+    default_app_config = 'cool.apps.CoolConfig'
