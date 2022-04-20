@@ -1,6 +1,10 @@
 Changelog
 ================
 
+Version 1.2.1
+------------------
++ `_MODEL_WITH_CACHE` 设置不使用缓存时减少部分逻辑
+
 Version 1.2.0
 ------------------
 + `CoolBFFAPIView` 增加 `support_methods` 设置请求类型

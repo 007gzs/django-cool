@@ -174,6 +174,8 @@ class ModelCacheMixin:
         """
         清空对象所有缓存缓存
         """
+        if not self._MODEL_WITH_CACHE:
+            return
         self.flush_field_cache(field_names=['pk'], field_values=[(self.pk, )])
         for field in self._meta.fields:
             if field.unique:
@@ -199,9 +201,10 @@ class ModelCacheMixin:
         """
         清空缓存
         """
-        if cls._MODEL_WITH_CACHE:
-            cls._check_field_key(field_names=field_names, field_values=field_values)
-            model_cache.delete_many(model_cls=cls, field_names=field_names, field_values=field_values)
+        if not cls._MODEL_WITH_CACHE:
+            return
+        cls._check_field_key(field_names=field_names, field_values=field_values)
+        model_cache.delete_many(model_cls=cls, field_names=field_names, field_values=field_values)
 
     @classmethod
     def get_objs_from_cache(cls, *, field_names, field_values, _dict_keys_list=None):
@@ -209,7 +212,6 @@ class ModelCacheMixin:
         获取数据（优先从缓存获取）
         """
         cls._check_field_key(field_names=field_names, field_values=field_values)
-
         if cls._MODEL_WITH_CACHE:
             ret, dict_keys_list = model_cache.get_many(
                 model_cls=cls,
