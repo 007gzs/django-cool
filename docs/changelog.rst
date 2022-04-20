@@ -1,15 +1,12 @@
 Changelog
 ================
 
-Version 1.2.1
-------------------
-+ `_MODEL_WITH_CACHE` 设置不使用缓存时减少部分逻辑
-
 Version 1.2.0
 ------------------
 + `CoolBFFAPIView` 增加 `support_methods` 设置请求类型
 + 增加admin后台风格自定义
 + `View` 文档支持 `django.views.generic.base.View`
++ `_MODEL_WITH_CACHE` 设置不使用缓存时减少部分逻辑
 
 
 Version 1.1.4
