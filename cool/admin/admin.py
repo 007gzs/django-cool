@@ -638,23 +638,23 @@ def check_perms(*perms):
 def site_register(model_or_iterable, admin_class=None, site=None, **options):
     """
     将model通过admin_class注册到后台管理中，admin_class不传默认使用BaseModelAdmin
-    """
-    if site is None:
-        site = admin.site
-    if admin_class is None:
-        admin_class = BaseModelAdmin
-    if cool_settings.ADMIN_SITE_REGISTER_FILTER_FUNCTION is not None:
-        if not isinstance(model_or_iterable, (list, tuple, set)):
-            model_or_iterable = [model_or_iterable]
-        for model in model_or_iterable:
+"""
+    if not isinstance(model_or_iterable, (list, tuple, set)):
+        model_or_iterable = [model_or_iterable]
+    for model in model_or_iterable:
+        if cool_settings.ADMIN_SITE_REGISTER_FILTER_FUNCTION is not None:
             new_options = cool_settings.ADMIN_SITE_REGISTER_FILTER_FUNCTION(
                 model, admin_class=admin_class, site=site, **options
             )
-            new_options.pop('admin_class', None)
-            new_options.pop('site', None)
-            site.register(model_or_iterable, admin_class, **new_options)
-    else:
-        site.register(model_or_iterable, admin_class, **options)
+        else:
+            new_options = options
+        new_admin_class = new_options.pop('admin_class', admin_class)
+        new_site = new_options.pop('site', site)
+        if new_site is None:
+            new_site = admin.site
+        if new_admin_class is None:
+            new_admin_class = BaseModelAdmin
+        new_site.register(model_or_iterable, new_admin_class, **new_options)
 
 
 def admin_register(func=None, *, admin_class=None, site=None, **options):

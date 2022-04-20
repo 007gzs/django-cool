@@ -3,6 +3,10 @@ Changelog
 
 Version 1.2.1
 ------------------
++ `ADMIN_SITE_REGISTER_FILTER_FUNCTION` 支持 `site` `admin_class` 自定义
+
+Version 1.2.1
+------------------
 + 增加 `ADMIN_SITE_REGISTER_FILTER_FUNCTION` admin 注册 model 通用参数处理函数
 
 Version 1.2.0
