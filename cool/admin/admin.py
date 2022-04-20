@@ -643,7 +643,18 @@ def site_register(model_or_iterable, admin_class=None, site=None, **options):
         site = admin.site
     if admin_class is None:
         admin_class = BaseModelAdmin
-    site.register(model_or_iterable, admin_class, **options)
+    if cool_settings.ADMIN_SITE_REGISTER_FILTER_FUNCTION is not None:
+        if not isinstance(model_or_iterable, (list, tuple, set)):
+            model_or_iterable = [model_or_iterable]
+        for model in model_or_iterable:
+            new_options = cool_settings.ADMIN_SITE_REGISTER_FILTER_FUNCTION(
+                model, admin_class=admin_class, site=site, **options
+            )
+            new_options.pop('admin_class', None)
+            new_options.pop('site', None)
+            site.register(model_or_iterable, admin_class, **new_options)
+    else:
+        site.register(model_or_iterable, admin_class, **options)
 
 
 def admin_register(func=None, *, admin_class=None, site=None, **options):

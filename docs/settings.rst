@@ -119,6 +119,18 @@ Admin
 
 后台风格模板, 内置模板支持： `DEFAULT`: Django默认 `DARK`: Django黑暗模式 `BLANK`: 黑色风格
 
+``ADMIN_SITE_REGISTER_FILTER_FUNCTION``
+---------------------------------------------------------------
+默认值： ``None``
+
+admin 注册 model 通用参数处理函数
+
+.. code-block:: python
+
+    def site_register_filter(model_class, *, admin_class, site, **options):
+        # 通用 options 处理
+        return options
+
 APIView
 ====================
 :mod:`cool.views` 相关配置

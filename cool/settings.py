@@ -18,6 +18,7 @@ DEFAULTS = {
     'ADMIN_SITE_HEADER': None,
     'ADMIN_INDEX_TITLE': None,
     'ADMIN_THEME': None,
+    'ADMIN_SITE_REGISTER_FILTER_FUNCTION': None,
 
     # APIView
     'API_EXCEPTION_DEFAULT_STATUS_CODE': 400,
@@ -52,6 +53,7 @@ DEFAULTS = {
 # List of settings that may be in string import notation.
 IMPORT_STRINGS = [
     'API_RESPONSE_DICT_FUNCTION',
+    'ADMIN_SITE_REGISTER_FILTER_FUNCTION'
 ]
 
 
