@@ -3,6 +3,9 @@
 from collections import OrderedDict
 
 from django.contrib.admin.sites import AlreadyRegistered
+from django.urls import re_path
+
+from .options import ViewMetaclass
 
 
 class ViewSite:
@@ -28,6 +31,12 @@ class ViewSite:
             return wrapper
 
     def register(self, view_class, **options):
+        if not isinstance(type(view_class), ViewMetaclass):
+            if type(view_class) is type:
+                view_class = ViewMetaclass(
+                    view_class.__name__, (view_class, ),
+                    {'__module__': view_class.__module__}
+                )
         if options:
             class Meta:
                 pass
@@ -37,8 +46,7 @@ class ViewSite:
                 '__module__': view_class.__module__,
                 'Meta': Meta,
             }
-            view_class = type(view_class)(
-                view_class.__name__, (view_class, ), attrs)
+            view_class = type(view_class)(view_class.__name__, (view_class, ), attrs)
 
         path = view_class._meta.path.strip('/')
         if path in self._registry:
@@ -46,10 +54,9 @@ class ViewSite:
         self._registry[path] = view_class
 
     def get_urls(self):
-        from django.conf.urls import url
         urls = []
         for path, view_class in self._registry.items():
-            urls.append(url(r'^%s/?$' % path, view_class.as_view(), name=view_class._meta.name))
+            urls.append(re_path(r'^%s/?$' % path, view_class.as_view(), name=view_class._meta.name))
         return urls
 
     @property

@@ -1,7 +1,11 @@
 Changelog
 ================
 
-Version 1.2.1
+Version 1.2.3
+------------------
++ `SearchListMixin` 增加 `filter_fields`
+
+Version 1.2.2
 ------------------
 + `ADMIN_SITE_REGISTER_FILTER_FUNCTION` 支持 `site` `admin_class` 自定义
 

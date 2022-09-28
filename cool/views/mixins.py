@@ -91,6 +91,7 @@ class SearchListMixin(PageMixin, CRIDMixin):
     PAGE_SIZE_MAX = 1000
     model = None
     order_field = ('-pk', )
+    filter_fields = ()
 
     @classmethod
     def get_extend_param_fields(cls):
@@ -100,6 +101,12 @@ class SearchListMixin(PageMixin, CRIDMixin):
         ret = list()
         ret.extend(super().get_extend_param_fields())
         ret.append(('search_term', fields.CharField(label=_('Search key'), default='')))
+        if cls.model is not None and cls.filter_fields:
+            for req_name, filter_id in cls.get_field_detail(cls.filter_fields):
+                ret.append((req_name, get_rest_field_from_model_field(
+                    cls.model, filter_id, **{'default': None}
+                )))
+
         return tuple(ret)
 
     @property
@@ -118,6 +125,11 @@ class SearchListMixin(PageMixin, CRIDMixin):
     def get_queryset(self, request, queryset=None):
         if queryset is None:
             queryset = self.model.objects.order_by(*self.order_field)
+
+        for req_name, field_name in self.get_field_detail(self.filter_fields):
+            field = getattr(request.params, req_name)
+            if field is not None:
+                queryset = queryset.filter(**{field_name: field})
         if request.params.search_term:
             # 筛选搜索关键词
             queryset, use_distinct = get_search_results(
