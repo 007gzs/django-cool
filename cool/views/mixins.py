@@ -179,7 +179,10 @@ class InfoMixin(CRIDMixin):
         if queryset is None:
             queryset = self.model.objects.all()
         blank = True
-        param_fields = [(self.get_model_field_info().pk.name, self.get_model_field_info().pk.name)]
+        param_fields = []
+        if self.pk_id:
+            param_fields.append((self.get_model_field_info().pk.name, self.get_model_field_info().pk.name))
+
         param_fields.extend(self.get_field_detail(self.ex_unique_ids))
         for req_name, field_name in param_fields:
             field = getattr(request.params, req_name)

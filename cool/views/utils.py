@@ -369,6 +369,7 @@ def get_api_info(base_view=CoolBFFAPIView, base_params=(), add_base_view_params=
         base_params_num = 0
         for base_param in base_params:
             if base_param in info['request_info']:
+                info['request_info'][base_param]['base_param'] = True
                 info['request_info'].move_to_end(base_param, False)
                 base_params_num += 1
         params = list(info['request_info'].keys())[base_params_num:]

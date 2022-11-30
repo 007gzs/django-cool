@@ -3,6 +3,11 @@ Changelog
 
 Version 1.2.3
 ------------------
++ Fixed `InfoMixin` 中 `pk_id` 为 `False` 时报错
++ 接口文档中支持不展示基础字段
+
+Version 1.2.3
+------------------
 + `SearchListMixin` 增加 `filter_fields`
 
 Version 1.2.2
