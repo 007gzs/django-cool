@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         python-version: [3.8, 3.9, "3.10"]
-        django-version: [django-2.2, django-3.0, django-3.1, django-3.2, django-4.0, django-4.1, django-pre, django-main]
+        django-version: [django-2.2, django-3.0, django-3.1, django-3.2, django-4.0, django-4.1, django-4.2, django-pre, django-main]
         include:
           - python-version: 3.6
             django-version: django-2.2
@@ -21,7 +21,7 @@ jobs:
           - python-version: 3.6
             django-version: django-3.2
           - python-version: 3.7
-            django-version: django-4.2
+            django-version: django-3.2
     services:
 #      oracle:
 #        image: quay.io/maksymbilenko/oracle-12c
@@ -92,6 +92,10 @@ jobs:
       run: |
         pip install 'django>=4.1,<4.2'
       if: matrix.django-version == 'django-4.1'
+    - name: Install Django 4.2
+      run: |
+        pip install 'django>=4.2,<5'
+      if: matrix.django-version == 'django-4.2'
     - name: Install Django pre
       run: |
         pip install 'django' --pre
