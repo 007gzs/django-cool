@@ -12,14 +12,8 @@ jobs:
     strategy:
       matrix:
         python-version: [3.8, 3.9, "3.10"]
-        django-version: [django-2.2, django-3.0, django-3.1, django-3.2, django-4.0, django-4.1, django-4.2]
+        django-version: [django-2.2, django-3.0, django-3.1, django-3.2, django-4.0, django-4.1, django-4.2, django-pre, django-main]
         include:
-          - python-version: "3.11"
-            django-version: django-main
-          - python-version: "3.10"
-            django-version: django-main
-          - python-version: "3.10"
-            django-version: django-pre
           - python-version: 3.6
             django-version: django-2.2
           - python-version: 3.7
@@ -31,6 +25,14 @@ jobs:
         exclude:
           - python-version: "3.10"
             django-version: django-2.2
+          - python-version: "3.8"
+            django-version: django-main
+          - python-version: "3.9"
+            django-version: django-main
+          - python-version: "3.8"
+            django-version: django-pre
+          - python-version: "3.9"
+            django-version: django-pre
     services:
 #      oracle:
 #        image: quay.io/maksymbilenko/oracle-12c
@@ -59,9 +61,9 @@ jobs:
 
     steps:
     - name: Check Out
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
 #    - name: Install oracle instantclient
