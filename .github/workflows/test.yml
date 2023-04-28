@@ -18,8 +18,6 @@ jobs:
             django-version: django-main
           - python-version: "3.10"
             django-version: django-main
-          - python-version: "3.11"
-            django-version: django-pre
           - python-version: "3.10"
             django-version: django-pre
           - python-version: 3.6
