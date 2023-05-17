@@ -123,8 +123,8 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
     # 支持请求类型
     support_methods = ('get', 'post')
 
-    # 用于生成缓存可以的请求参数列表
-    KEY_FIELDS = ()
+    # 用于生成缓存可以的请求参数列表, 为空表示所有请求参数
+    KEY_FIELDS = None
 
     # 缓存内容 `cool.core.cache.CacheItem`，为空不缓存
     CACHE_ITEM = None
@@ -225,6 +225,9 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
         """
         获取缓存唯一标识
         """
+        key_fields = self.KEY_FIELDS
+        if key_fields is None:
+            key_fields = self.request_info_data().keys()
         params_key = tuple(copy.deepcopy([(key, getattr(params, key)) for key in self.KEY_FIELDS]))
         return (self.view_uniq_key(), ) + params_key
 

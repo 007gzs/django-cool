@@ -1,6 +1,10 @@
 Changelog
 ================
 
+Version 1.2.6
+------------------
++ `CoolBFFAPIView` 缓存默认所有请求参数为缓存key
+
 Version 1.2.5
 ------------------
 + `SearchListMixin` 中 增加 `order_fields` 排序方式
