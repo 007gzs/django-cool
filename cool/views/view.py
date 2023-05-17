@@ -204,13 +204,20 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
         """
         返回数据的校验和序列化
         """
+        context = self.get_response_data(context)
+        if isinstance(context, ResponseData):
+            return context.get_response()
+        return context
+
+    def get_response_data(self, context):
         if isinstance(context, HttpResponse):
             return context
         if isinstance(context, (Model, QuerySet)) and issubclass(self.response_info_serializer_class, ModelSerializer):
             context = self.response_info_serializer_class(context, many=self.response_many, request=self.request).data
         if not isinstance(context, ResponseData):
             context = ResponseData(context, success_with_code_msg=self.SUCCESS_WITH_CODE_MSG)
-        return context.get_response()
+        return context
+
 
     def check_api_permissions(self, request, *args, **kwargs):
         """
@@ -234,15 +241,17 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
     def view(self, request, *args, **kwargs):
         self.init_params(request, *args, **kwargs)
         self.check_api_permissions(request, *args, **kwargs)
+        context = None
         if self.CACHE_ITEM is not None:
             cache_key = self.gen_cache_key(request.params)
-            response = self.CACHE_ITEM.get(cache_key)
-            if response is not None:
-                return response
-        context = self.get_context(request, *args, **kwargs)
+            context = self.CACHE_ITEM.get(cache_key)
+        if context is None:
+            context = self.get_context(request, *args, **kwargs)
+            context = self.get_response_data(context)
+        if self.CACHE_ITEM is not None and isinstance(context, ResponseData):
+            self.CACHE_ITEM.set(cache_key, context)
+
         response = self.get_response(context)
-        if self.CACHE_ITEM is not None:
-            self.CACHE_ITEM.set(cache_key, response)
         return response
 
     def get_context(self, request, *args, **kwargs):

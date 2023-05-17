@@ -1,7 +1,7 @@
 Changelog
 ================
 
-Version 1.2.7
+Version 1.2.8
 ------------------
 + `SearchListMixin` 中 增加 `order_fields` 排序方式
 + 增加 `ListSerializer` 支持 `order_by`, `filter`, `limit` 参数, `BaseSerializer(many=True)`默认支持
