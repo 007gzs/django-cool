@@ -2,11 +2,56 @@
 import importlib
 import inspect
 
+from django.db import models
 from rest_framework import serializers
 from rest_framework.fields import empty
 
 
-class BaseSerializer(serializers.ModelSerializer):
+class ListSerializer(serializers.ListSerializer):
+
+    def __init__(self, *args, **kwargs):
+        self.order_by = kwargs.pop('order_by', None)
+        self.filter = kwargs.pop('filter', None)
+        self.limit = kwargs.pop('limit', None)
+        super().__init__(*args, **kwargs)
+
+    def get_attribute(self, instance):
+        attribute = super().get_attribute(instance)
+        if isinstance(attribute, models.Manager):
+            attribute = attribute.get_queryset()
+            if self.filter is not None and isinstance(self.filter, dict):
+                attribute = attribute.filter(**self.filter)
+            if self.order_by is not None:
+                order_by = self.order_by if isinstance(self.order_by, list) else [self.order_by]
+                attribute = attribute.order_by(*order_by)
+            if self.limit is not None:
+                attribute = attribute[:self.limit]
+
+        return attribute
+
+
+class ListSerializerMixin:
+
+    @classmethod
+    def many_init(cls, *args, **kwargs):
+        meta = getattr(cls, 'Meta', None)
+        order_by = kwargs.pop('order_by', None)
+        _filter = kwargs.pop('filter', None)
+        limit = kwargs.pop('limit', None)
+        if meta is not None and not hasattr(meta, 'list_serializer_class'):
+            meta.list_serializer_class = ListSerializer
+        ret = super().many_init(*args, **kwargs)
+        if isinstance(ret, ListSerializer):
+            getattr(ret, '_kwargs', dict())['order_by'] = order_by
+            getattr(ret, '_kwargs', dict())['filter'] = _filter
+            getattr(ret, '_kwargs', dict())['limit'] = limit
+            ret.order_by = order_by
+            ret.filter = _filter
+            ret.limit = limit
+        return ret
+
+
+class BaseSerializer(ListSerializerMixin, serializers.ModelSerializer):
     """
     序列化基类，文件字段会自动生成全路径url，property字段会用doc生成label或help_text
     """
@@ -46,7 +91,7 @@ class BaseSerializer(serializers.ModelSerializer):
         return self.context.get("request", None)
 
 
-class RecursiveField(serializers.BaseSerializer):
+class RecursiveField(ListSerializerMixin, serializers.BaseSerializer):
     """
     树型结构序列化
     """

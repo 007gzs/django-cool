@@ -91,6 +91,7 @@ class SearchListMixin(PageMixin, CRIDMixin):
     PAGE_SIZE_MAX = 1000
     model = None
     order_field = ('-pk', )
+    order_fields = ()
     filter_fields = ()
 
     @classmethod
@@ -101,6 +102,8 @@ class SearchListMixin(PageMixin, CRIDMixin):
         ret = list()
         ret.extend(super().get_extend_param_fields())
         ret.append(('search_term', fields.CharField(label=_('Search key'), default='')))
+        if cls.order_fields:
+            ret.append(('order', fields.JSONField(label=_('Order field'), default='', )))
         if cls.model is not None and cls.filter_fields:
             for req_name, filter_id in cls.get_field_detail(cls.filter_fields):
                 ret.append((req_name, get_rest_field_from_model_field(

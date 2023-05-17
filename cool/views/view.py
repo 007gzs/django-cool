@@ -1,6 +1,7 @@
 # encoding: utf-8
 from __future__ import absolute_import, unicode_literals
 
+import copy
 import json
 import logging
 import time
@@ -122,6 +123,12 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
     # 支持请求类型
     support_methods = ('get', 'post')
 
+    # 用于生成缓存可以的请求参数列表
+    KEY_FIELDS = ()
+
+    # 缓存内容 `cool.core.cache.CacheItem`，为空不缓存
+    CACHE_ITEM = None
+
     def __init__(self, *args, **kwargs):
         super(CoolBFFAPIView, self).__init__(*args, **kwargs)
         for method in self.support_methods:
@@ -211,11 +218,29 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
         """
         pass
 
+    def view_uniq_key(self):
+        return f'{self.__class__.__module__}.{self.__class__.__name__}'
+
+    def gen_cache_key(self, params):
+        """
+        获取缓存唯一标识
+        """
+        params_key = tuple(copy.deepcopy([(key, getattr(params, key)) for key in self.KEY_FIELDS]))
+        return (self.view_uniq_key(), ) + params_key
+
     def view(self, request, *args, **kwargs):
         self.init_params(request, *args, **kwargs)
         self.check_api_permissions(request, *args, **kwargs)
+        if self.CACHE_ITEM is not None:
+            cache_key = self.gen_cache_key(request.params)
+            response = self.CACHE_ITEM.get(cache_key)
+            if response is not None:
+                return response
         context = self.get_context(request, *args, **kwargs)
-        return self.get_response(context)
+        response = self.get_response(context)
+        if self.CACHE_ITEM is not None:
+            self.CACHE_ITEM.set(cache_key, response)
+        return response
 
     def get_context(self, request, *args, **kwargs):
         """

@@ -1,7 +1,13 @@
 Changelog
 ================
 
-Version 1.2.3
+Version 1.2.5
+------------------
++ `SearchListMixin` 中 增加 `order_fields` 排序方式
++ 增加 `ListSerializer` 支持 `order_by`, `filter`, `limit` 参数, `BaseSerializer(many=True)`默认支持
++ `CoolBFFAPIView` 增加缓存功能，统计类接口可设置同请求参数接口数据缓存
+
+Version 1.2.4
 ------------------
 + Fixed `InfoMixin` 中 `pk_id` 为 `False` 时报错
 + 接口文档中支持不展示基础字段
