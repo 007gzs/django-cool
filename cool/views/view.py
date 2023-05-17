@@ -228,7 +228,7 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
         key_fields = self.KEY_FIELDS
         if key_fields is None:
             key_fields = self.request_info_data().keys()
-        params_key = tuple(copy.deepcopy([(key, getattr(params, key)) for key in self.KEY_FIELDS]))
+        params_key = tuple(copy.deepcopy([(key, getattr(params, key)) for key in key_fields]))
         return (self.view_uniq_key(), ) + params_key
 
     def view(self, request, *args, **kwargs):

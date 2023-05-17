@@ -1,11 +1,7 @@
 Changelog
 ================
 
-Version 1.2.6
-------------------
-+ `CoolBFFAPIView` 缓存默认所有请求参数为缓存key
-
-Version 1.2.5
+Version 1.2.7
 ------------------
 + `SearchListMixin` 中 增加 `order_fields` 排序方式
 + 增加 `ListSerializer` 支持 `order_by`, `filter`, `limit` 参数, `BaseSerializer(many=True)`默认支持
