@@ -57,12 +57,12 @@ def get_rest_field_from_model_field(model, model_field, **kwargs):
             continue
         field = relation_info.model_field
         target_field = field
-        verbose_name = [target_field.verbose_name]
+        verbose_name = [str(target_field.verbose_name)]
         help_text = [target_field.help_text]
         while target_field.remote_field:
             target_field = target_field.target_field
-            verbose_name.append(target_field.verbose_name)
-            help_text.append(target_field.help_text)
+            verbose_name.append(str(target_field.verbose_name))
+            help_text.append(str(target_field.help_text))
 
         target_field = copy.deepcopy(target_field)
         target_field.verbose_name = " - ".join(filter(lambda x: x, verbose_name))

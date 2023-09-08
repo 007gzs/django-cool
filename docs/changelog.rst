@@ -1,6 +1,10 @@
 Changelog
 ================
 
+Version 1.2.9
+------------------
++ 修复 `verbose_name` 或 `help_text` 为 `lazy_str` 时候 `view`相关接口可能报错
+
 Version 1.2.8
 ------------------
 + `SearchListMixin` 中 增加 `order_fields` 排序方式

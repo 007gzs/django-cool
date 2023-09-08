@@ -187,7 +187,6 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
                 ret[key] = get_field_info(field)
         return ret
 
-    #
     def init_params(self, request, *args, **kwargs):
         """
         兼容post和get请求
@@ -217,7 +216,6 @@ class CoolBFFAPIView(APIView, metaclass=ViewMetaclass):
         if not isinstance(context, ResponseData):
             context = ResponseData(context, success_with_code_msg=self.SUCCESS_WITH_CODE_MSG)
         return context
-
 
     def check_api_permissions(self, request, *args, **kwargs):
         """
