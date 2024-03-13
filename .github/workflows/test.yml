@@ -11,28 +11,34 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python-version: [3.8, 3.9, "3.10"]
-        django-version: [django-2.2, django-3.0, django-3.1, django-3.2, django-4.0, django-4.1, django-4.2, django-pre, django-main]
+        python-version: ["3.10", "3.11", "3.12"]
+        django-version: [django-3.2, django-4.2, django-5.0, django-pre, django-main]
         include:
-          - python-version: 3.6
+          - python-version: "3.6"
             django-version: django-2.2
-          - python-version: 3.7
+          - python-version: "3.7"
             django-version: django-2.2
-          - python-version: 3.6
+          - python-version: "3.8"
+            django-version: django-2.2
+          - python-version: "3.9"
+            django-version: django-2.2
+          - python-version: "3.6"
             django-version: django-3.2
-          - python-version: 3.7
+          - python-version: "3.7"
             django-version: django-3.2
+          - python-version: "3.8"
+            django-version: django-3.2
+          - python-version: "3.9"
+            django-version: django-3.2
+          - python-version: "3.8"
+            django-version: django-4.2
+          - python-version: "3.9"
+            django-version: django-4.2
         exclude:
-          - python-version: "3.10"
-            django-version: django-2.2
-          - python-version: "3.8"
-            django-version: django-main
-          - python-version: "3.9"
-            django-version: django-main
-          - python-version: "3.8"
-            django-version: django-pre
-          - python-version: "3.9"
-            django-version: django-pre
+          - python-version: "3.11"
+            django-version: django-3.2
+          - python-version: "3.12"
+            django-version: django-3.2
     services:
 #      oracle:
 #        image: quay.io/maksymbilenko/oracle-12c
@@ -107,6 +113,10 @@ jobs:
       run: |
         pip install 'django>=4.2,<5'
       if: matrix.django-version == 'django-4.2'
+    - name: Install Django 5.0
+      run: |
+        pip install 'django>=5,<5.1'
+      if: matrix.django-version == 'django-5.0'
     - name: Install Django pre
       run: |
         pip install 'django' --pre

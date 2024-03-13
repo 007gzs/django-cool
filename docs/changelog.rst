@@ -1,6 +1,10 @@
 Changelog
 ================
 
+Version 1.3.0
+------------------
++ Django 4.0 删除 `request.get_raw_uri()`, 使用 `request.build_absolute_uri()` 替代
+
 Version 1.2.9
 ------------------
 + 修复 `verbose_name` 或 `help_text` 为 `lazy_str` 时候 `view`相关接口可能报错
