@@ -1,7 +1,7 @@
 Changelog
 ================
 
-Version 1.3.0
+Version 1.2.10
 ------------------
 + Django 4.0 删除 `request.get_raw_uri()`, 使用 `request.build_absolute_uri()` 替代
 
