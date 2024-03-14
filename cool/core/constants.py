@@ -5,8 +5,8 @@ import enum
 
 class ConstantsMeta(enum.EnumMeta):
 
-    def __new__(metacls, classname, bases, classdict):
-        cls = super().__new__(metacls, classname, bases, classdict)
+    def __new__(metacls, classname, bases, classdict, **kwargs):
+        cls = super().__new__(metacls, classname, bases, classdict, **kwargs)
         return enum.unique(cls)
 
 
