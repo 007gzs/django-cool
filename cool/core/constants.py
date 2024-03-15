@@ -30,8 +30,19 @@ class ConstantsItem:
     def __init__(self, code, desc):
         self.code = code
         self.desc = desc
-        if hasattr(self, '_value_'):
-            self._value_ = ConstantsItemWrapper(self._value_)
+        if hasattr(self, '_value_') and not isinstance(self._value_, ConstantsItemWrapper):
+            self.__value__ = ConstantsItemWrapper(self._value_)
+
+    def __setattr__(self, key, value):
+        if key == '_value_':
+            setattr(self, '__value__', ConstantsItemWrapper(value))
+        else:
+            super().__setattr__(key, value)
+
+    def __getattribute__(self, item):
+        if item == '_value_' and hasattr(self, '__value__'):
+            return getattr(self, '__value__')
+        return super().__getattribute__(item)
 
     def __str__(self):
         return str(self.code)
