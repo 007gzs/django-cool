@@ -11,11 +11,33 @@ from cool.checks import register_checks
 from cool.settings import cool_settings
 
 
+def set_verbose_name_to_db_comment():
+    import django
+    from django.db.models.fields import Field
+    if django.VERSION < (4, 2):
+        import warnings
+        warnings.warn(
+            "Not support db_comment in Django " + django.__version__ + " < 4.2",
+            stacklevel=2
+        )
+        return
+    init = Field.__init__
+
+    def init_wrapper(*_args, **_kwargs):
+        if 'verbose_name' in _kwargs and 'db_comment' not in _kwargs:
+            _kwargs['db_comment'] = _kwargs['verbose_name']
+        init(*_args, **_kwargs)
+
+    Field.__init__ = init_wrapper
+
+
 class CoolConfig(AppConfig):
     name = 'cool'
     verbose_name = _("Django Cool")
 
     def ready(self):
+        if cool_settings.MODEL_SET_VERBOSE_NAME_TO_DB_COMMENT:
+            set_verbose_name_to_db_comment()
         register_checks()
         if cool_settings.ADMIN_FILTER_USE_SELECT:
             ListFilter.template = 'cool/admin/select_filter.html'

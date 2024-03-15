@@ -1,6 +1,10 @@
 Changelog
 ================
 
+Version 1.2.11
+------------------
+增加 `MODEL_SET_VERBOSE_NAME_TO_DB_COMMENT`配置， 当 model 的 field 未设置 `db_comment` 时, 自动将 `db_comment` 设置为 `verbose_name` 的值
+
 Version 1.2.10
 ------------------
 + Django 4.0 删除 `request.get_raw_uri()`, 使用 `request.build_absolute_uri()` 替代

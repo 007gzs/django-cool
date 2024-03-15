@@ -5,6 +5,9 @@ from django.test.signals import setting_changed
 from django.utils.module_loading import import_string
 
 DEFAULTS = {
+    # Model
+    'MODEL_SET_VERBOSE_NAME_TO_DB_COMMENT': False,
+
     # Admin
     'ADMIN_AUTOCOMPLETE_CHECK_PERM': True,
     'ADMIN_FILTER_USE_SELECT': True,

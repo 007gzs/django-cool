@@ -25,6 +25,20 @@ Admin
 
 :mod:`cool.admin` 配置
 
+.. setting:: MODEL_SET_VERBOSE_NAME_TO_DB_COMMENT
+
+``MODEL_SET_VERBOSE_NAME_TO_DB_COMMENT``
+---------------------------------------------------------------
+默认值： ``False``
+
+设置为 ``True`` 当 model 的 field 未设置 `db_comment` 时, 自动将 `db_comment` 设置为 `verbose_name` 的值
+
+
+Admin
+====================
+
+:mod:`cool.admin` 配置
+
 .. setting:: ADMIN_AUTOCOMPLETE_CHECK_PERM
 
 ``ADMIN_AUTOCOMPLETE_CHECK_PERM``
