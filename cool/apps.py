@@ -4,6 +4,7 @@ from django.apps import AppConfig, apps
 from django.contrib import admin
 from django.contrib.admin.filters import FieldListFilter, ListFilter
 from django.db import models
+from django.db.models import NOT_PROVIDED
 from django.utils.translation import gettext_lazy as _
 
 from cool.admin import filters
@@ -11,21 +12,51 @@ from cool.checks import register_checks
 from cool.settings import cool_settings
 
 
-def set_verbose_name_to_db_comment():
+def get_field_value(field_name, field_index, default=None, *args, **kwargs):
+    ret = default
+    if field_name in kwargs:
+        ret = kwargs[field_name]
+    elif len(args) > field_index:
+        ret = args[field_index]
+    return ret
+
+
+def set_filed_init_wrapper():
     import django
     from django.db.models.fields import Field
-    if django.VERSION < (4, 2):
+    verbose_name_to_db_comment = cool_settings.MODEL_SET_VERBOSE_NAME_TO_DB_COMMENT
+    default_to_db_default = cool_settings.MODEL_SET_DEFAULT_TO_DB_DEFAULT
+    if verbose_name_to_db_comment and django.VERSION < (4, 2):
         import warnings
         warnings.warn(
-            "Not support db_comment in Django " + django.__version__ + " < 4.2",
+            "Field.__init__ not support db_comment in Django " + django.__version__ + " < 4.2",
             stacklevel=2
         )
+        verbose_name_to_db_comment = False
+
+    if default_to_db_default and django.VERSION < (5, 0):
+        import warnings
+        warnings.warn(
+            "Field.__init__ not support db_default in Django " + django.__version__ + " < 5.0",
+            stacklevel=2
+        )
+        default_to_db_default = False
+
+    if not verbose_name_to_db_comment and not default_to_db_default:
         return
     init = Field.__init__
 
     def init_wrapper(*_args, **_kwargs):
-        if 'verbose_name' in _kwargs and 'db_comment' not in _kwargs:
-            _kwargs['db_comment'] = _kwargs['verbose_name']
+        if verbose_name_to_db_comment:
+            verbose_name = get_field_value('verbose_name', 1, NOT_PROVIDED, *_args, **_kwargs)
+            db_comment = get_field_value('db_comment', 23, NOT_PROVIDED, *_args, **_kwargs)
+            if db_comment is NOT_PROVIDED and verbose_name is not NOT_PROVIDED:
+                _kwargs['db_comment'] = verbose_name
+        if default_to_db_default:
+            default = get_field_value('default', 10, NOT_PROVIDED, *_args, **_kwargs)
+            db_default = get_field_value('db_default', 24, NOT_PROVIDED, *_args, **_kwargs)
+            if db_default is NOT_PROVIDED and default is not NOT_PROVIDED:
+                _kwargs['db_default'] = default
         init(*_args, **_kwargs)
 
     Field.__init__ = init_wrapper
@@ -36,8 +67,7 @@ class CoolConfig(AppConfig):
     verbose_name = _("Django Cool")
 
     def ready(self):
-        if cool_settings.MODEL_SET_VERBOSE_NAME_TO_DB_COMMENT:
-            set_verbose_name_to_db_comment()
+        set_filed_init_wrapper()
         register_checks()
         if cool_settings.ADMIN_FILTER_USE_SELECT:
             ListFilter.template = 'cool/admin/select_filter.html'

@@ -7,7 +7,7 @@ from django.utils.module_loading import import_string
 DEFAULTS = {
     # Model
     'MODEL_SET_VERBOSE_NAME_TO_DB_COMMENT': False,
-
+    'MODEL_SET_DEFAULT_TO_DB_DEFAULT': False,
     # Admin
     'ADMIN_AUTOCOMPLETE_CHECK_PERM': True,
     'ADMIN_FILTER_USE_SELECT': True,

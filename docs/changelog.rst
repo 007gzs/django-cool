@@ -1,6 +1,10 @@
 Changelog
 ================
 
+Version 1.2.12
+------------------
++ 增加 `MODEL_SET_DEFAULT_TO_DB_DEFAULT`配置， 当 model 的 field 未设置 `db_default` 时, 自动将 `db_default` 设置为 `default` 的值
+
 Version 1.2.11
 ------------------
 + 增加 `MODEL_SET_VERBOSE_NAME_TO_DB_COMMENT`配置， 当 model 的 field 未设置 `db_comment` 时, 自动将 `db_comment` 设置为 `verbose_name` 的值
