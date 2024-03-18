@@ -18,18 +18,22 @@ class ConstantsItemWrapper:
     def __eq__(self, other):
         if isinstance(other, ConstantsItemWrapper):
             other = other.value
-        if not isinstance(other, tuple) or not len(self.value) > 0:
-            return False
-        return self.value[0] == other[0]
+        if isinstance(other, (list, tuple)) and other:
+            other = other[0]
+        return self.value[0] == other
 
     def __repr__(self):
         return repr(self.value)
 
+    def __hash__(self):
+        return hash(self.value[0])
+
 
 class ConstantsItem:
-    def __init__(self, code, desc):
+    def __init__(self, code, desc, *ext_args):
         self.code = code
         self.desc = desc
+        self.ext_args = ext_args
         if hasattr(self, '_value_') and not isinstance(self._value_, ConstantsItemWrapper):
             self.__value__ = ConstantsItemWrapper(self._value_)
 
@@ -74,10 +78,6 @@ class Constants(ConstantsItem, enum.Enum, metaclass=ConstantsMeta):
             TEST2 = (2, _('test desc'))
         InlineConstants = Enum('InlineConstants', (('a', (1,2)), ('b', (3,4))))
     """
-
-    @classmethod
-    def _missing_(cls, value):
-        return ConstantsItem(*value)
 
     @classmethod
     def get_choices_list(cls):
