@@ -12,12 +12,12 @@ from cool.checks import register_checks
 from cool.settings import cool_settings
 
 
-def get_field_value(field_name, field_index, default=None, *args, **kwargs):
-    ret = default
-    if field_name in kwargs:
-        ret = kwargs[field_name]
-    elif len(args) > field_index:
-        ret = args[field_index]
+def get_field_value(__field_name, __field_index, __default=None, *args, **kwargs):
+    ret = __default
+    if __field_name in kwargs:
+        ret = kwargs[__field_name]
+    elif len(args) > __field_index:
+        ret = args[__field_index]
     return ret
 
 

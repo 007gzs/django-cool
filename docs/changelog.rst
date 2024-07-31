@@ -1,5 +1,9 @@
 Changelog
 ================
+Version 1.2.13=4
+------------------
++ `ListSerializer` 支持 `exclude` 参数
+
 Version 1.2.13
 ------------------
 + `Constants` 支持扩展属性

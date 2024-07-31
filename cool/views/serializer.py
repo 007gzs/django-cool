@@ -12,6 +12,7 @@ class ListSerializer(serializers.ListSerializer):
     def __init__(self, *args, **kwargs):
         self.order_by = kwargs.pop('order_by', None)
         self.filter = kwargs.pop('filter', None)
+        self.exclude = kwargs.pop('exclude', None)
         self.limit = kwargs.pop('limit', None)
         super().__init__(*args, **kwargs)
 
@@ -21,6 +22,8 @@ class ListSerializer(serializers.ListSerializer):
             attribute = attribute.get_queryset()
             if self.filter is not None and isinstance(self.filter, dict):
                 attribute = attribute.filter(**self.filter)
+            if self.exclude is not None and isinstance(self.exclude, dict):
+                attribute = attribute.exclude(**self.exclude)
             if self.order_by is not None:
                 order_by = self.order_by if isinstance(self.order_by, list) else [self.order_by]
                 attribute = attribute.order_by(*order_by)
@@ -35,8 +38,10 @@ class ListSerializerMixin:
     @classmethod
     def many_init(cls, *args, **kwargs):
         meta = getattr(cls, 'Meta', None)
+
         order_by = kwargs.pop('order_by', None)
         _filter = kwargs.pop('filter', None)
+        exclude = kwargs.pop('exclude', None)
         limit = kwargs.pop('limit', None)
         if meta is not None and not hasattr(meta, 'list_serializer_class'):
             meta.list_serializer_class = ListSerializer
@@ -44,10 +49,12 @@ class ListSerializerMixin:
         if isinstance(ret, ListSerializer):
             getattr(ret, '_kwargs', dict())['order_by'] = order_by
             getattr(ret, '_kwargs', dict())['filter'] = _filter
+            getattr(ret, '_kwargs', dict())['exclude'] = exclude
             getattr(ret, '_kwargs', dict())['limit'] = limit
             ret.order_by = order_by
             ret.filter = _filter
             ret.limit = limit
+            ret.exclude = exclude
         return ret
 
 
