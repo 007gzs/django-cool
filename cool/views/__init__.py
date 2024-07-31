@@ -7,7 +7,7 @@ from cool.views.mixins import (
     SearchListMixin,
 )
 from cool.views.response import ResponseData
-from cool.views.serializer import BaseSerializer
+from cool.views.serializer import BaseSerializer, RecursiveField
 from cool.views.sites import ViewSite
 from cool.views.utils import get_api_doc, get_api_doc_html, get_api_info
 from cool.views.view import CoolBFFAPIView
@@ -17,5 +17,5 @@ __all__ = [
     'AddMixin', 'DeleteMixin', 'EditMixin', 'ExtManyToOneMixin', 'InfoMixin', 'PageMixin', 'SearchListMixin',
     'ResponseData', 'BaseSerializer', 'ViewSite',
     'get_api_doc', 'get_api_doc_html', 'get_api_info',
-    'CoolBFFAPIView',
+    'CoolBFFAPIView', 'RecursiveField'
 ]
