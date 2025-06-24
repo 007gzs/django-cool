@@ -1,10 +1,12 @@
 Changelog
 ================
+
 Version 1.2.15
 ------------------
 + 增加 `ADMIN_FILTER_WITH_HUMAN_TITLE` 配置， 关联表字段场景筛选器显示内容优化
 + `BaseModelAdmin` 中 `list_display` 出现关联表字段时，标题、内容显示优化
-+ 单元测试增加 Python3.13 Django5.2
++ 单元测试增加 `Python 3.13` `Django 5.2`
+
 Version 1.2.14
 ------------------
 + `ListSerializer` 支持 `exclude` 参数
@@ -60,11 +62,9 @@ Version 1.2.0
 + `View` 文档支持 `django.views.generic.base.View`
 + `_MODEL_WITH_CACHE` 设置不使用缓存时减少部分逻辑
 
-
 Version 1.1.4
 ------------------
 + `BaseModelAdmin`增加 `auto_set_list_select_related` 参数， 当`list_select_related`为`False`时，自动将`list_display`中外键字段自动写入`list_select_related`
-
 
 Version 1.1.3
 ------------------
@@ -126,37 +126,30 @@ Version 1.0.7
 
 Version 1.0.6
 ------------------
-
 + `ModelFieldChangeMixin` 增加批量操作
 + `RecursiveField` 字段说明父级出现过两次以上就不显示字段说明内容
 
 Version 1.0.5
 ------------------
-
 + 增加 `RecursiveField` 支持树树型结构序列化
 
 Version 1.0.4
 ------------------
-
 + 增加序列化请求字段 `SerializerField`
 
 Version 1.0.3
 ------------------
-
 + `WidgetFilterMixin` 组件防止数据库查询
 + `AbstractUserMixin` 中 `get_username` 优先从父类获取
 
 Version 1.0.2
 ------------------
-
 + `get_rest_field_from_model_field` 中 `BooleanField` 默认为 `None` 时候 类型设置为 `NullBooleanField`
 
 Version 1.0.1
 ------------------
-
 + Fixed 增加 data 类型判断
 
 Version 1.0.0
 ------------------
-
 + 初始化版本
