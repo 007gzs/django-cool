@@ -1,10 +1,12 @@
 # encoding: utf-8
+import warnings
 
 from django.contrib.auth.models import Group, Permission
 from django.db import DatabaseError, models
 from django.db.models.manager import EmptyManager
 from django.utils.functional import cached_property
 
+from cool.core.deprecation import RemovedInDjangoCool20Warning
 from cool.model.cache import model_cache
 
 
@@ -269,20 +271,15 @@ class BaseModel(ModelFieldChangeMixin, ModelCacheMixin, SearchModelMixin, models
 
     @classmethod
     def get_child_field(cls, attr):
-        field_names = attr.split('__')
-        head_model = cls
-        name = ''
-        field = None
-        for field_name in field_names:
-            if head_model is None:
-                raise RuntimeError('%s not found %s' % (cls, attr))
-            field = head_model._meta.get_field(field_name)
-            head_model = field.remote_field.model if field.remote_field is not None else None
-            if name == '':
-                name = field.verbose_name
-            else:
-                name += ' ' + field.verbose_name
-        return isinstance(field, models.BooleanField), name
+
+        warnings.warn(
+            "The Model.get_child_field is deprecated in favor of cool.model.utils.get_child_field",
+            RemovedInDjangoCool20Warning,
+            stacklevel=2
+        )
+        from cool.model.utils import get_child_field
+        boolean, name, _ = get_child_field(cls, attr)
+        return boolean, name
 
     def __str__(self):
         return '%s%s(%s)' % (self.__class__.__name__, self._meta.verbose_name, self.pk)

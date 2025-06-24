@@ -315,15 +315,21 @@ class BaseModelAdmin(AutoCompleteMixin, admin.ModelAdmin):
 
             def dyn_lookup(instance):
                 # traverse all __ lookups
-                return reduce(lambda parent, child: getattr(parent, child), attr.split('__'), instance)
+                def _get_child(parent, child):
+                    child_display = 'get_' + child + '_display'
+                    if hasattr(parent, child_display):
+                        return getattr(parent, child_display)()
+                    else:
+                        return getattr(parent, child)
+                return reduce(_get_child, attr.split('__'), instance)
+
+            from cool.model.utils import get_child_field
+            boolean, short_description, _ = get_child_field(self.model, attr)
 
             # get admin_order_field, boolean and short_description
             dyn_lookup.admin_order_field = attr
-            dyn_lookup.boolean = getattr(self, '{}_boolean'.format(attr), False)
-            dyn_lookup.short_description = getattr(
-                self, '{}_short_description'.format(attr),
-                attr.replace('_', ' ').capitalize()
-            )
+            dyn_lookup.boolean = getattr(self, '{}_boolean'.format(attr), boolean)
+            dyn_lookup.short_description = getattr(self, '{}_short_description'.format(attr), short_description)
 
             return dyn_lookup
 

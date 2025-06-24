@@ -69,6 +69,36 @@ class CoolConfig(AppConfig):
     def ready(self):
         set_filed_init_wrapper()
         register_checks()
+
+        if cool_settings.ADMIN_FILTER_WITH_HUMAN_TITLE:
+            field_list_filter_init = FieldListFilter.__init__
+
+            def field_list_filter_init_with_human_title(
+                this,
+                field=None, request=None, params=None, model=None, model_admin=None, field_path=None,
+                *args, **kwargs
+            ):
+                field_list_filter_init(
+                    this, field, request, params, model, model_admin, field_path, *args, **kwargs
+                )
+                if field_path and model:
+                    from cool.model.utils import get_child_field
+                    boolean, title, null = get_child_field(model, field_path)
+                    this.lookup_title = this.title = title
+                    if null:
+                        this.field.null = True
+                        if this.field.choices:
+                            flatchoices = list(this.field.flatchoices)
+                            has_null = False
+                            for choice in flatchoices:
+                                if choice is None:
+                                    has_null = True
+                            if not has_null:
+                                flatchoices.append((None, _('[None]')))
+                                this.field.choices = flatchoices
+
+            FieldListFilter.__init__ = field_list_filter_init_with_human_title
+
         if cool_settings.ADMIN_FILTER_USE_SELECT:
             ListFilter.template = 'cool/admin/select_filter.html'
         if cool_settings.ADMIN_RELATED_FIELD_FILTER_USE_AUTOCOMPLETE:

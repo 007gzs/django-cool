@@ -63,6 +63,14 @@ Admin
 
 筛选器列表展示为下拉框
 
+.. setting:: ADMIN_FILTER_WITH_HUMAN_TITLE
+
+``ADMIN_FILTER_WITH_HUMAN_TITLE``
+---------------------------------------------------------------
+默认值： ``True``
+
+关联表字段场景筛选器显示内容优化
+
 .. setting:: ADMIN_FOREIGNKEY_FIELD_USE_AUTOCOMPLETE
 
 ``ADMIN_FOREIGNKEY_FIELD_USE_AUTOCOMPLETE``

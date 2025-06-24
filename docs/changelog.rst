@@ -1,6 +1,11 @@
 Changelog
 ================
-Version 1.2.13=4
+Version 1.2.15
+------------------
++ 增加 `ADMIN_FILTER_WITH_HUMAN_TITLE` 配置， 关联表字段场景筛选器显示内容优化
++ `BaseModelAdmin` 中 `list_display` 出现关联表字段时，标题、内容显示优化
++ 单元测试增加 Python3.13 Django5.2
+Version 1.2.14
 ------------------
 + `ListSerializer` 支持 `exclude` 参数
 
