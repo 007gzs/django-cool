@@ -1,4 +1,5 @@
 # encoding: utf-8
+import copy
 
 from django.apps import AppConfig, apps
 from django.contrib import admin
@@ -78,24 +79,27 @@ class CoolConfig(AppConfig):
                 field=None, request=None, params=None, model=None, model_admin=None, field_path=None,
                 *args, **kwargs
             ):
-                field_list_filter_init(
-                    this, field, request, params, model, model_admin, field_path, *args, **kwargs
-                )
+                title = None
                 if field_path and model:
                     from cool.model.utils import get_child_field
                     boolean, title, null = get_child_field(model, field_path)
-                    this.lookup_title = this.title = title
                     if null:
-                        this.field.null = True
-                        if this.field.choices:
-                            flatchoices = list(this.field.flatchoices)
+                        field = copy.copy(field)
+                        field.null = True
+                        if field.choices:
+                            flatchoices = list(field.flatchoices)
                             has_null = False
                             for choice in flatchoices:
                                 if choice is None:
                                     has_null = True
                             if not has_null:
                                 flatchoices.append((None, _('[None]')))
-                                this.field.choices = flatchoices
+                                field.choices = flatchoices
+                field_list_filter_init(
+                    this, field, request, params, model, model_admin, field_path, *args, **kwargs
+                )
+                if title is not None:
+                    this.lookup_title = this.title = title
 
             FieldListFilter.__init__ = field_list_filter_init_with_human_title
 

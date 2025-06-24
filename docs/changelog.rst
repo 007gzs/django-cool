@@ -1,6 +1,10 @@
 Changelog
 ================
 
+Version 1.3.1
+------------------
++ Fixed 外键包含空时处理逻辑优化
+
 Version 1.3.0
 ------------------
 + 增加 `ADMIN_FILTER_WITH_HUMAN_TITLE` 配置， 关联表字段场景筛选器显示内容优化
