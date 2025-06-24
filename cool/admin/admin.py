@@ -529,7 +529,6 @@ class BaseModelAdmin(AutoCompleteMixin, admin.ModelAdmin):
 
         field_names = []
         heads = []
-        middles = []
         tails = []
 
         def _get_field(field_name):
@@ -544,28 +543,22 @@ class BaseModelAdmin(AutoCompleteMixin, admin.ModelAdmin):
             except FieldDoesNotExist:
                 return field_name
 
-        while list_display:
-            name = list_display.pop(0)
-            if name in self.tails:
-                tails.append(_get_field(name))
-            elif name in self.heads:
-                heads.append(_get_field(name))
-            else:
-                middles.append(_get_field(name))
-
         for field in self.get_normal_fields():
-            if field.name in heads or field.name in middles or field.name in tails:
+            if field.name in list_display:
                 continue
             if in_change_view and field.name in self.exclude_list_display:
-                pass
-            elif field.name in self.tails:
-                tails.append(_get_field(field.name))
-            elif field.name in self.heads:
-                heads.append(_get_field(field.name))
-            else:
-                middles.append(_get_field(field.name))
+                continue
+            list_display.append(field.name)
+        for name in self.heads:
+            if name in list_display:
+                list_display.remove(name)
+                heads.append(_get_field(name))
+        for name in self.tails:
+            if name in list_display:
+                list_display.remove(name)
+                tails.append(_get_field(name))
         field_names.extend(heads)
-        field_names.extend(middles)
+        field_names.extend(list_display)
         field_names.extend(tails)
         if hasattr(request, '_access_rels'):
             field_names.append('get_all_relations')

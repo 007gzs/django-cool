@@ -1,6 +1,10 @@
 Changelog
 ================
 
+Version 1.3.2
+------------------
++ `BaseModelAdmin` 中 `heads` `tails` 的配置按顺序展示
+
 Version 1.3.1
 ------------------
 + Fixed 外键包含空时处理逻辑优化
