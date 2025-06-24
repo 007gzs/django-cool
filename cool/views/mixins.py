@@ -1,4 +1,5 @@
 # encoding: utf-8
+import warnings
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -7,6 +8,7 @@ from rest_framework import fields
 from rest_framework.exceptions import ValidationError as RestValidationError
 from rest_framework.utils import model_meta
 
+from cool.core.deprecation import RemovedInDjangoCool20Warning
 from cool.core.utils import get_search_results
 from cool.views import CoolAPIException, ErrorCode
 from cool.views.fields import JSONCheckField, SplitCharField
@@ -84,12 +86,18 @@ class CRIDMixin:
 
     @classmethod
     def get_field_detail(cls, fields_list):
-        return [field if isinstance(field, (list, tuple)) else (field, field) for field in fields_list]
+        pk_name = cls.get_model_field_info().pk.name
+        return [
+            field if isinstance(field, (list, tuple)) else (pk_name if field == 'pk' else field, field)
+            for field in fields_list
+        ]
+
+    def get_queryset(self, request, queryset=None):
+        return queryset
 
 
 class SearchListMixin(PageMixin, CRIDMixin):
     PAGE_SIZE_MAX = 1000
-    model = None
     order_field = ('-pk', )
     order_fields = ()
     filter_fields = ()
@@ -126,6 +134,7 @@ class SearchListMixin(PageMixin, CRIDMixin):
         return self.model.get_search_fields()
 
     def get_queryset(self, request, queryset=None):
+        queryset = super().get_queryset(request, queryset)
         if queryset is None:
             queryset = self.model.objects.order_by(*self.order_field)
 
@@ -146,63 +155,85 @@ class SearchListMixin(PageMixin, CRIDMixin):
         return self.get_page_context(request, self.get_queryset(request), self.response_info_serializer_class)
 
 
-class InfoMixin(CRIDMixin):
-    model = None
-    pk_id = True
-    ex_unique_ids = []
-
-    @property
-    def name(self):
-        return _("{model_name} Info").format(model_name=self.model._meta.verbose_name)
+class GetOneMixin(CRIDMixin):
+    unique_keys = ['pk']
 
     @classmethod
     def get_extend_param_fields(cls):
         ret = list()
         ret.extend(super().get_extend_param_fields())
+
         if cls.model is not None:
-            num = len(cls.ex_unique_ids)
             info = cls.get_model_field_info()
-            if cls.pk_id:
-                num += 1
-                ret.append((info.pk.name, get_rest_field_from_model_field(
-                    cls.model, info.pk.name, **{'default': None} if num > 1 else {'required': True}
-                )))
-            for req_name, ex_unique_id in cls.get_field_detail(cls.ex_unique_ids):
+            field_details = cls.get_field_detail(cls.unique_keys)
+            for req_name, ex_unique_id in field_details:
                 assert ex_unique_id in info.fields_and_pk and info.fields_and_pk[ex_unique_id].unique, (
                     "Field %s not found in %s's unique fields" % (ex_unique_id, cls.model.__name__)
                 )
                 ret.append((req_name, get_rest_field_from_model_field(
-                    cls.model, ex_unique_id, **{'default': None} if num > 1 else {'required': True}
+                    cls.model, ex_unique_id, **{'default': None} if len(field_details) > 1 else {'required': True}
                 )))
-            assert num > 0, 'Must set unique fields to ex_unique_ids or set True to pk_id'
 
         return tuple(ret)
 
-    def get_obj(self, request, queryset=None):
+    def get_queryset(self, request, queryset=None):
         if queryset is None:
             queryset = self.model.objects.all()
         blank = True
-        param_fields = []
-        if self.pk_id:
-            param_fields.append((self.get_model_field_info().pk.name, self.get_model_field_info().pk.name))
-
-        param_fields.extend(self.get_field_detail(self.ex_unique_ids))
-        for req_name, field_name in param_fields:
-            field = getattr(request.params, req_name)
-            if field is not None:
+        field_details = self.get_field_detail(self.unique_keys)
+        for req_name, field_name in field_details:
+            value = getattr(request.params, req_name)
+            if value is not None:
                 blank = False
-                queryset = queryset.filter(**{field_name: field})
+                queryset = queryset.filter(**{field_name: value})
         if blank:
             raise CoolAPIException(
                 ErrorCode.ERROR_BAD_PARAMETER,
                 data=_("{fields} cannot be empty at the same time").format(
-                    fields=",".join(map(lambda x: x[0], param_fields))
+                    fields=",".join(map(lambda x: x[0], field_details))
                 )
             )
-        return queryset.first()
+        return queryset
+
+
+class BaseInfoMixin(CRIDMixin):
+    @property
+    def name(self):
+        return _("{model_name} Info").format(model_name=self.model._meta.verbose_name)
+
+    def get_queryset(self, request, queryset=None):
+        return super().get_queryset(request, queryset)
+
+    def get_obj(self, request, queryset=None):
+        queryset = self.get_queryset(request, queryset)
+        if queryset is None:
+            raise NotImplementedError
+        try:
+            return queryset.get()
+        except self.model.DoesNotExist:
+            return None
+        except self.model.MultipleObjectsReturned:
+            raise CoolAPIException(ErrorCode.ERROR_BAD_PARAMETER, data=_("Got more than one result"))
 
     def get_context(self, request, *args, **kwargs):
         return self.response_info_serializer_class(self.get_obj(request), request=request).data
+
+
+class InfoMixin(GetOneMixin, BaseInfoMixin):
+
+    def __new__(cls, *args, **kwargs):
+        if getattr(cls, 'pk_id') or getattr(cls, 'ex_unique_ids'):
+            warnings.warn(
+                "The pk_id and ex_unique_ids in InfoMixin is deprecated in favor of unique_keys",
+                RemovedInDjangoCool20Warning,
+                stacklevel=2
+            )
+            assert cls.unique_keys == GetOneMixin.unique_keys
+            cls.unique_keys = []
+            if getattr(cls, 'pk_id', True):
+                cls.unique_keys.append('pk')
+            cls.unique_keys.extend(getattr(cls, 'ex_unique_ids', []))
+        return super().__new__(cls, *args, **kwargs)
 
 
 class AddMixin(CRIDMixin):
@@ -228,7 +259,11 @@ class AddMixin(CRIDMixin):
             if value is not None:
                 setattr(obj, field_name, value)
 
+    def clean(self, request, obj):
+        pass
+
     def save_obj(self, request, obj):
+        self.clean(request, obj)
         obj.full_clean()
         obj.save(force_insert=True)
 
@@ -246,8 +281,7 @@ class AddMixin(CRIDMixin):
         return self.serializer_response(obj, request=request)
 
 
-class EditMixin(CRIDMixin):
-    unique_key = 'pk'
+class BaseEditMixin(CRIDMixin):
     edit_fields = []
 
     @property
@@ -258,16 +292,10 @@ class EditMixin(CRIDMixin):
     def get_extend_param_fields(cls):
         ret = list()
         ret.extend(super().get_extend_param_fields())
-        field = cls.get_model_field_info().fields_and_pk[cls.unique_key]
-        assert field.unique, "Field %s is not unique" % cls.unique_key
-        ret.append((field.name, get_rest_field_from_model_field(cls.model, field, required=True)))
         if cls.model is not None:
             for req_name, field_name in cls.get_field_detail(cls.edit_fields):
                 ret.append((req_name, get_rest_field_from_model_field(cls.model, field_name, default=None)))
         return tuple(ret)
-
-    def get_obj(self, request):
-        return self.model.get_obj_by_pk_from_cache(request.params.id)
 
     def modify_obj(self, request, obj):
         for req_name, field_name in self.get_field_detail(self.edit_fields):
@@ -275,12 +303,30 @@ class EditMixin(CRIDMixin):
             if value is not None:
                 setattr(obj, field_name, value)
 
+    def clean(self, request, obj):
+        pass
+
     def save_obj(self, request, obj):
+        self.clean(request, obj)
         obj.full_clean()
         obj.save_changed()
 
     def serializer_response(self, data, request):
         return self.response_info_serializer_class(data, request=request).data
+
+    def get_queryset(self, request, queryset=None):
+        return super().get_queryset(request, queryset)
+
+    def get_obj(self, request, queryset=None):
+        queryset = self.get_queryset(request, queryset)
+        if queryset is None:
+            raise NotImplementedError
+        try:
+            return queryset.get()
+        except self.model.DoesNotExist:
+            raise CoolAPIException(ErrorCode.ERROR_BAD_PARAMETER, data=_('Not found result'))
+        except self.model.MultipleObjectsReturned:
+            raise CoolAPIException(ErrorCode.ERROR_BAD_PARAMETER, data=_('Got more than one result'))
 
     def get_context(self, request, *args, **kwargs):
         with transaction.atomic():
@@ -288,6 +334,20 @@ class EditMixin(CRIDMixin):
             self.modify_obj(request, obj)
             self.save_obj(request, obj)
         return self.serializer_response(obj, request=request)
+
+
+class EditMixin(GetOneMixin, BaseEditMixin):
+
+    def __new__(cls, *args, **kwargs):
+        if hasattr(cls, 'unique_key'):
+            warnings.warn(
+                "The pk_id and ex_unique_ids in InfoMixin is deprecated in favor of unique_keys",
+                RemovedInDjangoCool20Warning,
+                stacklevel=2
+            )
+            assert cls.unique_keys == GetOneMixin.unique_keys
+            cls.unique_keys = [cls.unique_key]
+        return super().__new__(cls, *args, **kwargs)
 
 
 class DeleteMixin(CRIDMixin):
@@ -311,8 +371,11 @@ class DeleteMixin(CRIDMixin):
         )))
         return tuple(ret)
 
-    def get_queryset(self, request):
-        return self.model.objects.filter(id__in=request.params.ids)
+    def get_queryset(self, request, queryset=None):
+        queryset = super().get_queryset(request, queryset)
+        if queryset is None:
+            queryset = self.model.objects.all()
+        return queryset.filter(id__in=request.params.ids)
 
     def delete_object(self, request, obj):
         obj.delete()

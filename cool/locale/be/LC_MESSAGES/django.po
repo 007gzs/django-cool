@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-cool\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-24 16:00+0800\n"
+"POT-Creation-Date: 2025-06-24 18:48+0800\n"
 "PO-Revision-Date: 2020-04-03 10:34+0800\n"
 "Last-Translator: 007gzs <007gzs@gmail.com>\n"
 "Language-Team: 007gzs <007gzs@gmail.com>\n"
@@ -17,15 +17,15 @@ msgstr ""
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
 "%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: .\admin\admin.py:191
+#: .\admin\admin.py:194
 msgid "Page data has been updated, please modify and save again"
 msgstr ""
 
-#: .\admin\admin.py:226
+#: .\admin\admin.py:291 .\apps.py:97
 msgid "[None]"
 msgstr ""
 
-#: .\admin\admin.py:569
+#: .\admin\admin.py:621
 msgid "Related items"
 msgstr ""
 
@@ -34,7 +34,7 @@ msgstr ""
 msgid "Please select %(title)s"
 msgstr ""
 
-#: .\apps.py:15
+#: .\apps.py:67
 msgid "Django Cool"
 msgstr ""
 
@@ -83,7 +83,7 @@ msgstr ""
 msgid "Response Info :"
 msgstr ""
 
-#: .\templates\cool\views\api_doc.md:3 .\views\utils.py:384
+#: .\templates\cool\views\api_doc.md:3 .\views\utils.py:423
 msgid "Api Document"
 msgstr ""
 
@@ -139,113 +139,125 @@ msgstr ""
 msgid "Permission Error"
 msgstr ""
 
-#: .\views\fields.py:61
+#: .\views\fields.py:63
 #, python-brace-format
 msgid "Expected a list of items but got type \"{input_type}\"."
 msgstr ""
 
-#: .\views\fields.py:62
+#: .\views\fields.py:64
 #, python-brace-format
 msgid "Expected a dictionary of items but got type \"{input_type}\"."
 msgstr ""
 
-#: .\views\fields.py:63
+#: .\views\fields.py:65
 msgid "This list may not be empty."
 msgstr ""
 
-#: .\views\mixins.py:32 .\views\mixins.py:52
+#: .\views\mixins.py:35 .\views\mixins.py:55
 msgid "Page number"
 msgstr ""
 
-#: .\views\mixins.py:34
+#: .\views\mixins.py:37
 #, python-format
 msgid "Start with %(start)s"
 msgstr ""
 
-#: .\views\mixins.py:39 .\views\mixins.py:50
+#: .\views\mixins.py:42 .\views\mixins.py:53
 msgid "Page size"
 msgstr ""
 
-#: .\views\mixins.py:53
+#: .\views\mixins.py:56
 msgid "Total page"
 msgstr ""
 
-#: .\views\mixins.py:54
+#: .\views\mixins.py:57
 msgid "Total data"
 msgstr ""
 
-#: .\views\mixins.py:95
+#: .\views\mixins.py:112
 msgid "Search key"
 msgstr ""
 
-#: .\views\mixins.py:100
+#: .\views\mixins.py:114
+msgid "Order field"
+msgstr ""
+
+#: .\views\mixins.py:128
 #, python-brace-format
 msgid "{model_name} List"
 msgstr ""
 
-#: .\views\mixins.py:127
-#, python-brace-format
-msgid "{model_name} Info"
-msgstr ""
-
-#: .\views\mixins.py:166
+#: .\views\mixins.py:192
 #, python-brace-format
 msgid "{fields} cannot be empty at the same time"
 msgstr ""
 
-#: .\views\mixins.py:180
+#: .\views\mixins.py:202
+#, python-brace-format
+msgid "{model_name} Info"
+msgstr ""
+
+#: .\views\mixins.py:216 .\views\mixins.py:330
+msgid "Got more than one result"
+msgstr ""
+
+#: .\views\mixins.py:245
 #, python-brace-format
 msgid "Add {model_name}"
 msgstr ""
 
-#: .\views\mixins.py:223
+#: .\views\mixins.py:290
 #, python-brace-format
 msgid "Edit {model_name}"
 msgstr ""
 
-#: .\views\mixins.py:268
+#: .\views\mixins.py:328
+msgid "Not found result"
+msgstr ""
+
+#: .\views\mixins.py:360
 #, python-brace-format
 msgid "Delete {model_name}"
 msgstr ""
 
-#: .\views\mixins.py:277
+#: .\views\mixins.py:369
 msgid "Primary keys"
 msgstr ""
 
-#: .\views\mixins.py:373
+#: .\views\mixins.py:465
 msgid ""
 "If the parameter has a value, it is modified; if it has no value, it is added"
 msgstr ""
 
-#: .\views\mixins.py:389
+#: .\views\mixins.py:481
 msgid "not required when add"
 msgstr ""
 
-#: .\views\mixins.py:389
+#: .\views\mixins.py:481
 msgid "required when add"
 msgstr ""
 
-#: .\views\mixins.py:391
+#: .\views\mixins.py:483
 msgid "not required when edit"
 msgstr ""
 
-#: .\views\mixins.py:415
+#: .\views\mixins.py:507
 msgid "Primary key duplicate"
 msgstr ""
 
-#: .\views\mixins.py:420 .\views\mixins.py:424
+#: .\views\mixins.py:512 .\views\mixins.py:516
 msgid "Modification item not found"
 msgstr ""
 
-#: .\views\utils.py:120
+#: .\views\utils.py:121
 msgid "Yes"
 msgstr ""
 
-#: .\views\utils.py:120
+#: .\views\utils.py:121
 msgid "No"
 msgstr ""
 
-#: .\views\utils.py:157
+#: .\views\utils.py:164
 #, python-format
 msgid "(%s %s default:%s,required:%s,%s %s)"
 msgstr ""

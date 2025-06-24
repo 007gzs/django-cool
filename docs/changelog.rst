@@ -1,11 +1,14 @@
 Changelog
 ================
 
-Version 1.2.15
+Version 1.3.0
 ------------------
 + 增加 `ADMIN_FILTER_WITH_HUMAN_TITLE` 配置， 关联表字段场景筛选器显示内容优化
 + `BaseModelAdmin` 中 `list_display` 出现关联表字段时，标题、内容显示优化
 + 单元测试增加 `Python 3.13` `Django 5.2`
++ `CRIDMixin` 增加 `get_queryset`
++ 抽离 `GetOneMixin` 获取单独信息，供 `InfoMixin` 和 `EditMixin`
++ 抽离 `BaseInfoMixin` 和 `BaseEditMixin` 供不需要传唯一键场景使用（如从登录信息中获取）
 
 Version 1.2.14
 ------------------
