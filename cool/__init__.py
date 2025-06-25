@@ -2,7 +2,7 @@
 
 import django
 
-__version__ = '1.3.3'
+__version__ = '1.3.4'
 __author__ = '007gzs'
 
 
