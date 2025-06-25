@@ -222,7 +222,7 @@ class BaseInfoMixin(CRIDMixin):
 class InfoMixin(GetOneMixin, BaseInfoMixin):
 
     def __new__(cls, *args, **kwargs):
-        if getattr(cls, 'pk_id') or getattr(cls, 'ex_unique_ids'):
+        if hasattr(cls, 'pk_id') or hasattr(cls, 'ex_unique_ids'):
             warnings.warn(
                 "The pk_id and ex_unique_ids in InfoMixin is deprecated in favor of unique_keys",
                 RemovedInDjangoCool20Warning,

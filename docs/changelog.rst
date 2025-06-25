@@ -1,6 +1,10 @@
 Changelog
 ================
 
+Version 1.3.3
+------------------
++ Fixed `InfoMixin` 兼容代码错误
+
 Version 1.3.2
 ------------------
 + `BaseModelAdmin` 中 `heads` `tails` 的配置按顺序展示
