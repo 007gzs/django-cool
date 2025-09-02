@@ -50,7 +50,7 @@ class CoolAutocompleteJsonView(BaseListView):
         if filters:
             queryset = queryset.filter(**filters)
 
-        get_search_fields = getattr(self.model, 'get_search_fields')
+        get_search_fields = getattr(self.model, 'get_search_fields', None)
         search_fields = None
         if get_search_fields and callable(get_search_fields):
             search_fields = get_search_fields()

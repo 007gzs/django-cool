@@ -1,6 +1,10 @@
 Changelog
 ================
 
+Version 1.3.6
+------------------
++ Fixed `CoolAutocomplete` 无 `get_search_fields` 时报错
+
 Version 1.3.5
 ------------------
 + Fixed 默认值为0时，view自动处理必填和默认值逻辑有问题
