@@ -1,6 +1,10 @@
 Changelog
 ================
 
+Version 1.3.7
+------------------
++ Fixed `normal_fields` 中的 `ImageField` 未进行缩略图
+
 Version 1.3.6
 ------------------
 + Fixed `CoolAutocomplete` 无 `get_search_fields` 时报错

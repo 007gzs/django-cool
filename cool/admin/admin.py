@@ -552,17 +552,17 @@ class BaseModelAdmin(AutoCompleteMixin, admin.ModelAdmin):
         for name in self.heads:
             if name in list_display:
                 list_display.remove(name)
-                heads.append(_get_field(name))
+                heads.append(name)
         for name in self.tails:
             if name in list_display:
                 list_display.remove(name)
-                tails.append(_get_field(name))
+                tails.append(name)
         field_names.extend(heads)
         field_names.extend(list_display)
         field_names.extend(tails)
         if hasattr(request, '_access_rels'):
             field_names.append('get_all_relations')
-        return field_names
+        return [_get_field(field_name) for field_name in field_names]
 
     def get_list_display_links(self, request, list_display):
         list_display_links = super().get_list_display_links(request, list_display)
