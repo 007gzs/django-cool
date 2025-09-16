@@ -1,6 +1,6 @@
 # encoding: utf-8
 import warnings
-from functools import reduce, wraps, cache
+from functools import cache, reduce, wraps
 
 import django
 from django import forms
