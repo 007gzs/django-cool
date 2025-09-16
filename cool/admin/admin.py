@@ -1,6 +1,6 @@
 # encoding: utf-8
 import warnings
-from functools import reduce, wraps
+from functools import reduce, wraps, cache
 
 import django
 from django import forms
@@ -63,6 +63,7 @@ def _lookup_field(name, obj):
     return field, label, getattr(obj, field.attname)
 
 
+@cache
 def format_field(verbose, field, options=None, **kwargs):
     """
     Format field with given widgets or default

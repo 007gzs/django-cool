@@ -1,6 +1,10 @@
 Changelog
 ================
 
+Version 1.3.8
+------------------
++ Fixed 图片类型只读字段详情页不显示
+
 Version 1.3.7
 ------------------
 + Fixed `normal_fields` 中的 `ImageField` 未进行缩略图
